@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আমার কুমিল্লা এক - মনিরুজ্জামান বাহলুল | কুমিল্লা-১</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #006a4e;
+            --primary-dark: #004d39;
+            --primary-light: #008f6b;
+            --secondary: #f42a41;
+            --accent: #ffd700;
+            --gold: #d4af37;
+            --dark: #0a0a0a;
+            --dark-light: #1a1a1a;
+            --light: #ffffff;
+            --gray: #f5f5f5;
+            --shadow: 0 10px 40px rgba(0,0,0,0.1);
+            --shadow-hover: 0 20px 60px rgba(0,0,0,0.15);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Hind Siliguri', 'Noto Sans Bengali', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--light); color: var(--dark); line-height: 1.6; overflow-x: hidden; }
+
+        /* Header */
+        header {
+            position: fixed; top: 0; width: 100%; background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px); box-shadow: 0 2px 30px rgba(0,0,0,0.08);
+            z-index: 1000; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center;
+            transition: var(--transition);
+        }
+        header.scrolled { padding: 0.8rem 5%; box-shadow: 0 5px 30px rgba(0,0,0,0.1); }
+        
+        .logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 0.8rem; text-decoration: none; }
+        .logo i { font-size: 2rem; color: var(--secondary); }
+        
+        .menu-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white;
+            border: none; width: 50px; height: 50px; border-radius: 12px; font-size: 1.3rem;
+            cursor: pointer; transition: var(--transition); box-shadow: 0 4px 15px rgba(0,106,78,0.3);
+        }
+        .menu-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,106,78,0.4); }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed; top: 0; right: -400px; width: 400px; height: 100vh;
+            background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
+            box-shadow: -10px 0 50px rgba(0,0,0,0.15); z-index: 2000; transition: right 0.4s ease;
+            padding: 3rem; overflow-y: auto;
+        }
+        .sidebar.active { right: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; padding-bottom: 1.5rem; border-bottom: 3px solid var(--primary); }
+        .sidebar-header h3 { font-size: 1.8rem; color: var(--primary); font-weight: 700; }
+        .close-btn { background: var(--gray); border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; transition: var(--transition); }
+        .close-btn:hover { background: var(--secondary); color: white; transform: rotate(90deg); }
+        .sidebar-menu { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+        .sidebar-menu a { display: flex; align-items: center; gap: 1.2rem; padding: 1.2rem 1.5rem; text-decoration: none; color: var(--dark); font-weight: 600; font-size: 1.1rem; border-radius: 16px; background: var(--gray); transition: var(--transition); border: 2px solid transparent; }
+        .sidebar-menu a:hover { background: var(--primary); color: white; transform: translateX(10px); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1500; display: none; opacity: 0; transition: opacity 0.3s; }
+        .overlay.active { display: block; opacity: 1; }
+
+        /* News Ticker */
+        .news-ticker { position: fixed; top: 80px; left: 0; width: 100%; background: linear-gradient(90deg, var(--secondary), #ff6b6b); color: white; z-index: 999; padding: 0.8rem 0; overflow: hidden; }
+        .news-ticker-content { display: flex; animation: scroll 30s linear infinite; white-space: nowrap; }
+        .news-item { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0 3rem; font-weight: 600; font-size: 1rem; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 130px; background: linear-gradient(135deg, rgba(0,106,78,0.95), rgba(0,79,59,0.95)), url('generated_image_1e3c039f-0264-48fd-8051-cd31c496e6fdu.png');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            color: white; padding: 8rem 5% 6rem; text-align: center; position: relative; overflow: hidden;
+        }
+        .hero-content { max-width: 900px; margin: 0 auto; position: relative; z-index: 2; }
+        .hero-badge { display: inline-block; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 0.5rem 1.5rem; border-radius: 50px; font-size: 1rem; margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.3); }
+        .hero h1 { font-size: 4rem; margin-bottom: 1rem; font-weight: 800; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .hero .candidate-name { font-size: 3rem; color: var(--accent); margin: 1.5rem 0; font-weight: 800; position: relative; display: inline-block; }
+        .hero .candidate-name::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 100px; height: 4px; background: var(--accent); border-radius: 2px; }
+        .hero-subtitle { font-size: 1.3rem; opacity: 0.95; margin-bottom: 2rem; }
+
+        .btn { display: inline-flex; align-items: center; gap: 0.8rem; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; font-weight: 700; transition: var(--transition); border: none; cursor: pointer; font-size: 1.1rem; margin: 0.5rem; position: relative; overflow: hidden; }
+        .btn-white { background: white; color: var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .btn-gold { background: linear-gradient(135deg, var(--gold), #f4d03f); color: var(--dark); box-shadow: 0 10px 30px rgba(212,175,55,0.3); }
+        .btn-outline { background: transparent; color: white; border: 2px solid white; }
+        .btn:hover { transform: translateY(-3px); }
+
+        /* Stats Section */
+        .stats-section { padding: 4rem 5%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; position: relative; overflow: hidden; }
+        .stats-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .stat-card { text-align: center; padding: 2rem; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); transition: var(--transition); }
+        .stat-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.15); }
+        .stat-icon { font-size: 3rem; margin-bottom: 1rem; color: var(--accent); }
+        .stat-number { font-size: 3.5rem; font-weight: 800; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Profile Section */
+        .candidate-profile { padding: 6rem 5%; background: linear-gradient(to bottom, #ffffff, #f8f9fa); }
+        .section-title { text-align: center; font-size: 2.8rem; margin-bottom: 4rem; color: var(--dark); font-weight: 800; position: relative; display: inline-block; left: 50%; transform: translateX(-50%); }
+        .section-title::after { content: ''; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); width: 80px; height: 4px; background: linear-gradient(to right, var(--primary), var(--gold)); border-radius: 2px; }
+        .profile-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 4rem; align-items: center; }
+        .profile-image { position: relative; text-align: center; }
+        .profile-image-wrapper { position: relative; display: inline-block; padding: 20px; background: linear-gradient(135deg, var(--primary), var(--gold)); border-radius: 50%; box-shadow: 0 20px 60px rgba(0,106,78,0.3); }
+        .profile-image img { width: 320px; height: 320px; border-radius: 50%; object-fit: cover; border: 5px solid white; }
+        .profile-badge { position: absolute; bottom: 30px; right: 30px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; border: 4px solid white; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        .profile-content h2 { font-size: 2.8rem; color: var(--primary); margin-bottom: 0.5rem; }
+        .profile-content .subtitle { font-size: 1.4rem; color: var(--gold); margin-bottom: 2rem; font-weight: 600; }
+        .profile-content p { font-size: 1.15rem; line-height: 1.9; color: #555; margin-bottom: 1.5rem; text-align: justify; }
+        .profile-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 2.5rem; }
+        .profile-stat-box { background: white; padding: 2rem; border-radius: 20px; text-align: center; box-shadow: var(--shadow); transition: var(--transition); }
+        .profile-stat-box:hover { transform: translateY(-5px); }
+        .profile-stat-box h4 { font-size: 2.5rem; background: linear-gradient(135deg, var(--primary), var(--primary-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Campaign Section */
+        .campaign { padding: 6rem 5%; background: linear-gradient(135deg, #f0f8f5 0%, #e8f5e9 100%); }
+        .campaign-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2.5rem; max-width: 1200px; margin: 0 auto; }
+        .campaign-card { background: white; border-radius: 24px; overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); cursor: pointer; }
+        .campaign-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-hover); }
+        .campaign-img { height: 280px; position: relative; overflow: hidden; }
+        .campaign-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .campaign-card:hover .campaign-img img { transform: scale(1.1); }
+        .campaign-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; background: rgba(255,255,255,0.95); width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); }
+        .campaign-content { padding: 2.5rem; }
+        .btn-campaign { width: 100%; padding: 1rem; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 700; transition: var(--transition); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1.1rem; }
+        .btn-campaign:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,106,78,0.4); }
+
+        /* Pledge Section */
+        .pledge-section { padding: 6rem 5%; background: linear-gradient(135deg, #fff5f5 0%, #fff 100%); }
+        .pledge-form { background: white; padding: 3rem; border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 3rem; max-width: 800px; margin: 0 auto 3rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--dark); font-size: 1.1rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 1rem 1.5rem; border: 2px solid #e0e0e0; border-radius: 12px; font-size: 1rem; transition: var(--transition); }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0,106,78,0.1); }
+        .btn-submit { width: 100%; padding: 1.2rem; background: linear-gradient(135deg, var(--secondary), #ff6b6b); color: white; border: none; border-radius: 12px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: var(--transition); }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(244,42,65,0.3); }
+        .pledge-wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto; }
+        .pledge-item { background: white; padding: 1.5rem; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-left: 4px solid var(--primary); }
+        .pledge-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .pledge-avatar { width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 1.2rem; }
+
+        /* Volunteer Section */
+        .volunteer-section { padding: 6rem 5%; background: linear-gradient(135deg, var(--dark) 0%, #1a1a2e 100%); color: white; }
+        .volunteer-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .volunteer-content h2 { font-size: 2.8rem; margin-bottom: 1.5rem; background: linear-gradient(to right, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .volunteer-form { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 3rem; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); }
+        .volunteer-form .form-group input, .volunteer-form .form-group select { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: white; }
+
+        /* Gallery Section */
+        .gallery-section { padding: 6rem 5%; background: linear-gradient(to bottom, #f8f9fa, #ffffff); }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto; }
+        .gallery-item { position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 4/3; cursor: pointer; box-shadow: var(--shadow); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .gallery-item:hover img { transform: scale(1.1); }
+        .gallery-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); display: flex; align-items: flex-end; padding: 1.5rem; opacity: 0; transition: var(--transition); }
+        .gallery-item:hover .gallery-overlay { opacity: 1; }
+        .gallery-overlay p { color: white; font-weight: 600; font-size: 1.1rem; }
+
+        /* Social Kit Section */
+        .social-kit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto; }
+        .social-kit-item { background: white; border-radius: 16px; padding: 1.5rem; display: flex; align-items: center; gap: 1.2rem; text-decoration: none; color: var(--dark); transition: var(--transition); border: 2px solid #f0f0f0; }
+        .social-kit-item:hover { border-color: #1877f2; transform: translateX(10px); }
+        .social-kit-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #1877f2, #166fe5); color: white; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+
+        /* Hashtags Section */
+        .hashtags-section { padding: 5rem 5%; background: white; }
+        .hashtags-grid { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 2rem; }
+        .hashtag-item { display: inline-flex; align-items: center; gap: 0.5rem; padding: 1rem 1.5rem; background: var(--gray); border-radius: 50px; cursor: pointer; transition: var(--transition); font-weight: 600; }
+        .hashtag-item:hover { background: var(--primary); color: white; transform: translateY(-2px); }
+
+        /* Services Section */
+        .services { padding: 6rem 5%; background: linear-gradient(to bottom, #ffffff, #f8f9fa); max-width: 1200px; margin: 0 auto; }
+        .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .service-card { background: white; padding: 2.5rem 2rem; border-radius: 24px; text-align: center; box-shadow: var(--shadow); cursor: pointer; transition: var(--transition); }
+        .service-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-hover); }
+        .service-icon { width: 90px; height: 90px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 1.5rem; transition: var(--transition); }
+        .service-card:hover .service-icon { transform: scale(1.1) rotate(5deg); background: linear-gradient(135deg, var(--gold), #f4d03f); color: var(--dark); }
+
+        /* Contact Section */
+        .contact { padding: 6rem 5%; background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%); color: white; }
+        .contact-container { max-width: 900px; margin: 0 auto; text-align: center; }
+        .contact h2 { font-size: 2.8rem; margin-bottom: 1rem; }
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .contact-card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 2.5rem; border-radius: 24px; text-decoration: none; color: white; display: block; transition: var(--transition); border: 1px solid rgba(255,255,255,0.1); }
+        .contact-card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .contact-card i { font-size: 3.5rem; margin-bottom: 1.5rem; display: block; transition: var(--transition); }
+        .contact-card:hover i { transform: scale(1.2); color: var(--gold); }
+
+        /* Footer */
+        footer { background: #050505; color: white; text-align: center; padding: 4rem 2rem; }
+        .social-links { margin: 2rem 0; display: flex; justify-content: center; gap: 1.5rem; }
+        .social-links a { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem; text-decoration: none; transition: var(--transition); }
+        .social-links a.facebook { background: linear-gradient(135deg, #1877f2, #166fe5); }
+        .social-links a.whatsapp { background: linear-gradient(135deg, #25d366, #128c7e); }
+        .social-links a:hover { transform: translateY(-5px) scale(1.1); }
+
+        /* Toast */
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--dark); color: white; padding: 1rem 2rem; border-radius: 50px; font-weight: 600; z-index: 3000; opacity: 0; transition: all 0.3s; display: flex; align-items: center; gap: 0.8rem; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* Animations */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .profile-container, .volunteer-container { grid-template-columns: 1fr; text-align: center; }
+            .profile-image { order: -1; }
+            .hero h1 { font-size: 3rem; }
+            .hero .candidate-name { font-size: 2.2rem; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { width: 100%; right: -100%; }
+            .hero { padding: 6rem 1.5rem 4rem; margin-top: 110px; }
+            .hero h1 { font-size: 2.2rem; }
+            .section-title { font-size: 2rem; }
+            .news-ticker { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" onclick="closeSidebar()"></div>
+
+    <!-- News Ticker -->
+    <div class="news-ticker">
+        <div class="news-ticker-content">
+            <div class="news-item"><i class="fas fa-bullhorn"></i> দাঁড়িপাল্লা প্রতীকে ভোট দিন - মনিরুজ্জামান বাহলুলকে বিজয়ী করুন</div>
+            <div class="news-item"><i class="fas fa-calendar"></i> নির্বাচনী প্রচারণা চলছে - আমাদের সাথে যুক্ত হোন</div>
+            <div class="news-item"><i class="fas fa-users"></i> স্বেচ্ছাসেবক নিয়োগ চলছে - এখনই নিবন্ধন করুন</div>
+            <div class="news-item"><i class="fas fa-handshake"></i> আগামীর কুমিল্লা গড়তে আপনার সমর্থন দিন</div>
+            <div class="news-item"><i class="fas fa-star"></i> কুমিল্লা-১ (দাউদকান্দি-মেঘনা) আসন</div>
+            <div class="news-item"><i class="fas fa-bullhorn"></i> দাঁড়িপাল্লা প্রতীকে ভোট দিন - মনিরুজ্জামান বাহলুলকে বিজয়ী করুন</div>
+            <div class="news-item"><i class="fas fa-calendar"></i> নির্বাচনী প্রচারণা চলছে - আমাদের সাথে যুক্ত হোন</div>
+            <div class="news-item"><i class="fas fa-users"></i> স্বেচ্ছাসেবক নিয়োগ চলছে - এখনই নিবন্ধন করুন</div>
+            <div class="news-item"><i class="fas fa-handshake"></i> আগামীর কুমিল্লা গড়তে আপনার সমর্থন দিন</div>
+            <div class="news-item"><i class="fas fa-star"></i> কুমিল্লা-১ (দাউদকান্দি-মেঘনা) আসন</div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header id="header">
+        <a href="#" class="logo">
+            <i class="fas fa-flag"></i>
+            <span>আমার কুমিল্লা এক</span>
+        </a>
+        <button class="menu-btn" onclick="openSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>মেনু</h3>
+            <button class="close-btn" onclick="closeSidebar()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#profile" onclick="closeSidebar()"><i class="fas fa-user"></i> প্রার্থী পরিচয়</a></li>
+            <li><a href="#stats" onclick="closeSidebar()"><i class="fas fa-chart-line"></i> অগ্রগতি</a></li>
+            <li><a href="#campaign" onclick="closeSidebar()"><i class="fas fa-bullhorn"></i> প্রচারণা</a></li>
+            <li><a href="#pledge" onclick="closeSidebar()"><i class="fas fa-hand-holding-heart"></i> শপথের দেয়াল</a></li>
+            <li><a href="#volunteer" onclick="closeSidebar()"><i class="fas fa-handshake"></i> ভলান্টিয়ার হোন</a></li>
+            <li><a href="#gallery" onclick="closeSidebar()"><i class="fas fa-images"></i> গ্যালারি</a></li>
+            <li><a href="frame-editor.html" onclick="closeSidebar()"><i class="fas fa-camera"></i> ফটো ফ্রেম</a></li>
+            <li><a href="#hashtags" onclick="closeSidebar()"><i class="fas fa-hashtag"></i> হ্যাশট্যাগ</a></li>
+            <li><a href="#services" onclick="closeSidebar()"><i class="fas fa-cogs"></i> সেবাসমূহ</a></li>
+            <li><a href="#contact" onclick="closeSidebar()"><i class="fas fa-address-book"></i> যোগাযোগ</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-vote-yea"></i> দাঁড়িপাল্লা প্রতীকে ভোট দিন
+            </div>
+            <h1>আগামীর কুমিল্লা গড়তে</h1>
+            <h2 class="candidate-name">মোহাম্মদ মনিরুজ্জামান বাহলুল</h2>
+            <p class="hero-subtitle">কুমিল্লা ১ (দাউদকান্দি-মেঘনা) আসন | সংসদ সদস্য প্রার্থী</p>
+            <div style="margin-top: 2.5rem;">
+                <a href="frame-editor.html" class="btn btn-white">
+                    <i class="fas fa-camera"></i> ফ্রেম তৈরি করুন
+                </a>
+                <a href="#volunteer" class="btn btn-gold">
+                    <i class="fas fa-handshake"></i> ভলান্টিয়ার হোন
+                </a>
+                <a href="#pledge" class="btn btn-outline">
+                    <i class="fas fa-hand-holding-heart"></i> শপথ নিন
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section" id="stats">
+        <div class="stats-grid">
+            <div class="stat-card fade-in">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-number" data-target="12500">০</div>
+                <div class="stat-label">মোট ভিজিট</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                <div class="stat-number" data-target="3500">০</div>
+                <div class="stat-label">শপথ নিয়েছেন</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-icon"><i class="fas fa-download"></i></div>
+                <div class="stat-number" data-target="8900">০</div>
+                <div class="stat-label">মোট ডাউনলোড</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-icon"><i class="fas fa-share-alt"></i></div>
+                <div class="stat-number" data-target="5600">০</div>
+                <div class="stat-label">সোশ্যাল শেয়ার</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Profile Section -->
+    <section class="candidate-profile" id="profile">
+        <h2 class="section-title fade-in">প্রার্থী পরিচয়</h2>
+        <div class="profile-container fade-in">
+            <div class="profile-image">
+                <div class="profile-image-wrapper">
+                    <img src="https://i.postimg.cc/ncC8nXDd/IMG-20260107-WA0003.jpg" alt="মনিরুজ্জামান বাহলুল">
+                </div>
+                <div class="profile-badge">
+                    <i class="fas fa-check"></i>
+                </div>
+            </div>
+            <div class="profile-content">
+                <h2>মোহাম্মদ মনিরুজ্জামান বাহলুল</h2>
+                <div class="subtitle">
+                    <i class="fas fa-award"></i> বাংলাদেশ জামায়াত ইসলামী মনোনীত প্রার্থী | কুমিল্লা-১
+                </div>
+                <p>
+                    দাউদকান্দি-মেঘনার সন্তান মনিরুজ্জামান বাহলুল দীর্ঘদিন ধরে এলাকার উন্নয়ন ও জনকল্যাণে নিয়োজিত। 
+                    তিনি একজন শিক্ষাবিদ, সমাজসেবক এবং রাজনীতিবিদ হিসেবে এলাকায় ব্যাপক পরিচিত ও জনপ্রিয়।
+                </p>
+                <p>
+                    শিক্ষা, স্বাস্থ্য, যোগাযোগ ব্যবস্থার উন্নয়ন এবং যুব সমাজের কর্মসংস্থান সৃষ্টিতে তার বিশেষ অবদান রয়েছে। 
+                    দাঁড়িপাল্লা প্রতীকে ভোট দিয়ে তাকে বিজয়ী করে এলাকার উন্নয়নে অংশীদার হোন।
+                </p>
+                <div class="profile-stats">
+                    <div class="profile-stat-box">
+                        <h4>১৫+</h4>
+                        <p>বছরের রাজনৈতিক অভিজ্ঞতা</p>
+                    </div>
+                    <div class="profile-stat-box">
+                        <h4>১০০%</h4>
+                        <p>স্বচ্ছতা ও জবাবদিহিতা</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Campaign Section -->
+    <section class="campaign" id="campaign">
+        <h2 class="section-title fade-in">প্রচারণা সামগ্রী</h2>
+        <div class="campaign-grid fade-in">
+            <div class="campaign-card" onclick="location.href='frame-editor.html'">
+                <div class="campaign-img">
+                    <img src="generated_image_1e3c039f-0264-48fd-8051-cd31c496e6fdu.png" alt="ফ্রেম">
+                    <div class="campaign-icon"><i class="fas fa-camera"></i></div>
+                </div>
+                <div class="campaign-content">
+                    <h3>প্রোফাইল ফ্রেম</h3>
+                    <p>আপনার ছবিতে ক্যাম্পেইন ফ্রেম যোগ করে সোশ্যাল মিডিয়ায় শেয়ার করুন</p>
+                    <button class="btn-campaign">ফ্রেম তৈরি করুন <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <div class="campaign-card">
+                <div class="campaign-img" style="background: #f0f0f0;">
+                    <img src="https://i.postimg.cc/DztK8s90/1769345670467.jpg" alt="লিফলেট" style="object-fit: contain; padding: 20px;">
+                    <div class="campaign-icon"><i class="fas fa-file-alt"></i></div>
+                </div>
+                <div class="campaign-content">
+                    <h3>প্রচার লিফলেট</h3>
+                    <p>নির্বাচনী লিফলেট ও পোস্টার ডাউনলোড করে প্রচারণায় অংশ নিন</p>
+                    <a href="https://i.postimg.cc/DztK8s90/1769345670467.jpg" target="_blank" class="btn-campaign">দেখুন <i class="fas fa-external-link-alt"></i></a>
+                </div>
+            </div>
+            <div class="campaign-card">
+                <div class="campaign-img" style="background: linear-gradient(135deg, #1976d2, #2196f3);">
+                    <div class="campaign-icon"><i class="fas fa-video"></i></div>
+                </div>
+                <div class="campaign-content">
+                    <h3>ভিডিও কন্টেন্ট</h3>
+                    <p>প্রচারণা ভিডিও ও অডিও ক্লিপ দেখুন এবং শেয়ার করুন</p>
+                    <a href="#social-kit" class="btn-campaign">ভিডিও দেখুন <i class="fas fa-play-circle"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pledge Section -->
+    <section class="pledge-section" id="pledge">
+        <h2 class="section-title fade-in">শপথের দেয়াল</h2>
+        <div class="pledge-form fade-in">
+            <h3 style="text-align: center; margin-bottom: 1.5rem; color: var(--primary);">
+                <i class="fas fa-hand-holding-heart" style="color: var(--secondary);"></i> আপনার সমর্থন জানান
+            </h3>
+            <form id="pledgeForm" onsubmit="handlePledge(event)">
+                <div class="form-group">
+                    <label>আপনার নাম *</label>
+                    <input type="text" id="pledgeName" required placeholder="আপনার পূর্ণ নাম লিখুন">
+                </div>
+                <div class="form-group">
+                    <label>ফোন নম্বর (ঐচ্ছিক)</label>
+                    <input type="tel" id="pledgePhone" placeholder="০১XXXXXXXXX">
+                </div>
+                <div class="form-group">
+                    <label>আপনার বার্তা / প্রতিশ্রুতি *</label>
+                    <textarea id="pledgeMessage" required placeholder="দাঁড়িপাল্লা প্রতীকে সমর্থন জানিয়ে আপনার বার্তা লিখুন..."></textarea>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-paper-plane"></i> শপথ জমা দিন
+                </button>
+            </form>
+        </div>
+        <div class="pledge-wall" id="pledgeWall">
+            <div class="pledge-item">
+                <div class="pledge-header">
+                    <div class="pledge-avatar">ক</div>
+                    <div class="pledge-meta">
+                        <h4>কামাল হোসেন</h4>
+                        <span>২ ঘন্টা আগে</span>
+                    </div>
+                </div>
+                <p class="pledge-text">"আমি দাঁড়িপাল্লা প্রতীকে ভোট দিয়ে মনিরুজ্জামান বাহলুলকে বিজয়ী করতে প্রতিশ্রুতি দিচ্ছি।"</p>
+            </div>
+            <div class="pledge-item">
+                <div class="pledge-header">
+                    <div class="pledge-avatar">র</div>
+                    <div class="pledge-meta">
+                        <h4>রহিমা বেগম</h4>
+                        <span>৫ ঘন্টা আগে</span>
+                    </div>
+                </div>
+                <p class="pledge-text">"কুমিল্লার উন্নয়নের জন্য বাহলুল ভাইয়ের বিজয় কাম্য। ইনশাআল্লাহ আমরা সবাই দাঁড়িপাল্লায় ভোট দেব।"</p>
+            </div>
+            <div class="pledge-item">
+                <div class="pledge-header">
+                    <div class="pledge-avatar">ম</div>
+                    <div class="pledge-meta">
+                        <h4>মোঃ আলী</h4>
+                        <span>১ দিন আগে</span>
+                    </div>
+                </div>
+                <p class="pledge-text">"একটি সুন্দর কুমিল্লা গড়তে আমাদের প্রার্থী মনিরুজ্জামান বাহলুল। সবাই দোয়া করবেন।"</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Volunteer Section -->
+    <section class="volunteer-section" id="volunteer">
+        <div class="volunteer-container">
+            <div class="volunteer-content fade-in">
+                <h2>ভলান্টিয়ার হোন</h2>
+                <p>আমাদের সাথে যুক্ত হোন এবং কুমিল্লার পরিবর্তনে অংশীদার হোন। আপনার সময় এবং দক্ষতা দিয়ে ক্যাম্পেইনে সহায়তা করুন।</p>
+                <ul style="list-style: none; margin-bottom: 2rem;">
+                    <li style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;"><i class="fas fa-check-circle" style="color: var(--accent);"></i> নির্বাচনী প্রচারণায় অংশগ্রহণ</li>
+                    <li style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;"><i class="fas fa-check-circle" style="color: var(--accent);"></i> সোশ্যাল মিডিয়া ক্যাম্পেইন</li>
+                    <li style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;"><i class="fas fa-check-circle" style="color: var(--accent);"></i> এলাকার উন্নয়নে কাজ করার সুযোগ</li>
+                </ul>
+                <a href="#contact" class="btn btn-gold" style="display: inline-flex;">
+                    <i class="fas fa-phone"></i> যোগাযোগ করুন
+                </a>
+            </div>
+            <div class="volunteer-form fade-in">
+                <h3 style="text-align: center; margin-bottom: 2rem;">নিবন্ধন ফর্ম</h3>
+                <form onsubmit="handleVolunteer(event)">
+                    <div class="form-group">
+                        <label>পূর্ণ নাম *</label>
+                        <input type="text" required placeholder="আপনার নাম">
+                    </div>
+                    <div class="form-group">
+                        <label>মোবাইল নম্বর *</label>
+                        <input type="tel" required placeholder="০১XXXXXXXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>ঠিকানা *</label>
+                        <input type="text" required placeholder="গ্রাম/ইউনিয়ন, থানা">
+                    </div>
+                    <div class="form-group">
+                        <label>আগ্রহের ক্ষেত্র *</label>
+                        <select required style="width: 100%; padding: 1rem; border-radius: 8px; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                            <option value="" style="color: #333;">নির্বাচন করুন</option>
+                            <option value="door" style="color: #333;">দরজায় দরজায় প্রচারণা</option>
+                            <option value="social" style="color: #333;">সোশ্যাল মিডিয়া</option>
+                            <option value="event" style="color: #333;">ইভেন্ট ম্যানেজমেন্ট</option>
+                            <option value="design" style="color: #333;">ডিজাইন ও কন্টেন্ট</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, var(--gold), #f4d03f); color: var(--dark);">
+                        <i class="fas fa-user-plus"></i> নিবন্ধন করুন
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section" id="gallery">
+        <h2 class="section-title fade-in">ফটো গ্যালারি</h2>
+        <div class="gallery-grid fade-in">
+            <div class="gallery-item">
+                <img src="https://i.postimg.cc/ncC8nXDd/IMG-20260107-WA0003.jpg" alt="ক্যাম্পেইন">
+                <div class="gallery-overlay">
+                    <p><i class="fas fa-map-marker-alt"></i> দাউদকান্দি, কুমিল্লা</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://i.postimg.cc/DztK8s90/1769345670467.jpg" alt="প্রচারণা">
+                <div class="gallery-overlay">
+                    <p><i class="fas fa-users"></i> জনসভা</p>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="generated_image_1e3c039f-0264-48fd-8051-cd31c496e6fdu.png" alt="প্রতীক">
+                <div class="gallery-overlay">
+                    <p><i class="fas fa-flag"></i> দাঁড়িপাল্লা প্রতীক</p>
+                </div>
+            </div>
+            <div class="gallery-item" style="background: linear-gradient(135deg, var(--primary), var(--primary-light));">
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">
+                    <div style="text-align: center;">
+                        <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        <p>আরো ফোটো আসছে...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Kit Section -->
+    <section class="campaign" id="social-kit" style="background: white;">
+        <h2 class="section-title fade-in">সোশ্যাল মিডিয়া কিট</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+            নিচের ভিডিওগুলোতে ক্লিক করে ফেসবুক থেকে সরাসরি কন্টেন্ট দেখুন ও শেয়ার করুন
+        </p>
+        <div class="social-kit-grid fade-in">
+            <a href="https://www.facebook.com/share/v/17saEfbrph/" target="_blank" class="social-kit-item">
+                <div class="social-kit-icon"><i class="fab fa-facebook-f"></i></div>
+                <div class="social-kit-text">
+                    <h4>ভিডিও ১</h4>
+                    <p>ফেসবুকে দেখুন</p>
+                </div>
+            </a>
+            <a href="https://www.facebook.com/share/r/1Gf47UFWG2/" target="_blank" class="social-kit-item">
+                <div class="social-kit-icon"><i class="fab fa-facebook-f"></i></div>
+                <div class="social-kit-text">
+                    <h4>ভিডিও ২</h4>
+                    <p>ফেসবুকে দেখুন</p>
+                </div>
+            </a>
+            <a href="https://www.facebook.com/share/v/1C29VabZfQ/" target="_blank" class="social-kit-item">
+                <div class="social-kit-icon"><i class="fab fa-facebook-f"></i></div>
+                <div class="social-kit-text">
+                    <h4>ভিডিও ৩</h4>
+                    <p>ফেসবুকে দেখুন</p>
+                </div>
+            </a>
+            <a href="https://www.facebook.com/share/v/1C1PopFUmp/" target="_blank" class="social-kit-item">
+                <div class="social-kit-icon"><i class="fab fa-facebook-f"></i></div>
+                <div class="social-kit-text">
+                    <h4>ভিডিও ৪</h4>
+                    <p>ফেসবুকে দেখুন</p>
+                </div>
+            </a>
+            <a href="https://www.facebook.com/share/r/17MfXx7Lcx/" target="_blank" class="social-kit-item">
+                <div class="social-kit-icon"><i class="fab fa-facebook-f"></i></div>
+                <div class="social-kit-text">
+                    <h4>ভিডিও ৫</h4>
+                    <p>ফেসবুকে দেখুন</p>
+                </div>
+            </a>
+            <a href="https://www.facebook.com/share/v/1L5BX2zicJ/" target="_blank" class="social-kit-item">
+                <div class="social-kit-icon"><i class="fab fa-facebook-f"></i></div>
+                <div class="social-kit-text">
+                    <h4>ভিডিও ৬</h4>
+                    <p>ফেসবুকে দেখুন</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <!-- Hashtags Section -->
+    <section class="hashtags-section" id="hashtags">
+        <h2 class="section-title fade-in">ট্রেন্ডিং হ্যাশট্যাগসমূহ</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 2rem;">আপনার পোস্টে ব্যবহার করুন — বার্তা পৌঁছাবে আরও বেশি মানুষের কাছে 📢</p>
+        <div class="hashtags-container fade-in">
+            <div class="hashtags-grid">
+                <div class="hashtag-item" onclick="copyHashtag(this, '#দাঁড়িপাল্লা')">
+                    <i class="fas fa-hashtag"></i> #দাঁড়িপাল্লা
+                </div>
+                <div class="hashtag-item" onclick="copyHashtag(this, '#মনিরুজ্জামানবাহলুল')">
+                    <i class="fas fa-hashtag"></i> #মনিরুজ্জামানবাহলুল
+                </div>
+                <div class="hashtag-item" onclick="copyHashtag(this, '#কুমিল্লা১')">
+                    <i class="fas fa-hashtag"></i> #কুমিল্লা১
+                </div>
+                <div class="hashtag-item" onclick="copyHashtag(this, '#আমারকুমিল্লাএক')">
+                    <i class="fas fa-hashtag"></i> #আমারকুমিল্লাএক
+                </div>
+                <div class="hashtag-item" onclick="copyHashtag(this, '#ভোটদিন')">
+                    <i class="fas fa-hashtag"></i> #ভোটদিন
+                </div>
+                <div class="hashtag-item" onclick="copyHashtag(this, '#বিজয়ীকরুন')">
+                    <i class="fas fa-hashtag"></i> #বিজয়ীকরুন
+                </div>
+                <div class="hashtag-item" onclick="copyHashtag(this, '#দাউদকান্দি')">
+                    <i class="fas fa-hashtag"></i> #দাউদকান্দি
+                </div>
+                <div class="hashtag-item" onclick="copyHashtag(this, '#মেঘনা')">
+                    <i class="fas fa-hashtag"></i> #মেঘনা
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <h2 class="section-title fade-in">আমাদের সেবাসমূহ</h2>
+        <div class="service-grid fade-in">
+            <div class="service-card" onclick="location.href='frame-editor.html'">
+                <div class="service-icon"><i class="fas fa-camera"></i></div>
+                <h3>ফটো ফ্রেম এডিটর</h3>
+                <p>আপনার প্রোফাইল ছবিতে ক্যাম্পেইন ফ্রেম যোগ করে সোশ্যাল মিডিয়ায় শেয়ার করুন</p>
+            </div>
+            <div class="service-card" onclick="location.href='#volunteer'">
+                <div class="service-icon"><i class="fas fa-handshake"></i></div>
+                <h3>ভলান্টিয়ার হোন</h3>
+                <p>ক্যাম্পেইনের সাথে যুক্ত হয়ে স্বেচ্ছাসেবক হিসেবে কাজ করুন</p>
+            </div>
+            <div class="service-card" onclick="location.href='#pledge'">
+                <div class="service-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                <h3>শপথের দেয়াল</h3>
+                <p>আপনার প্রতিশ্রুতি জানান এবং সমর্থনের বার্তা দিন</p>
+            </div>
+            <div class="service-card" onclick="location.href='#campaign'">
+                <div class="service-icon"><i class="fas fa-download"></i></div>
+                <h3>মিডিয়া কিট</h3>
+                <p>লিফলেট, পোস্টার এবং ভিডিও কন্টেন্ট ডাউনলোড করুন</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="contact-container">
+            <h2 class="fade-in">যোগাযোগ করুন</h2>
+            <p class="fade-in" style="opacity: 0.8; margin-bottom: 3rem;">আমাদের সাথে সরাসরি যোগাযোগ করুন</p>
+            <div class="contact-grid fade-in">
+                <a href="https://www.facebook.com/profile.php?id=61582659390412" target="_blank" class="contact-card">
+                    <i class="fab fa-facebook-f"></i>
+                    <h3>ফেসবুক পেজ</h3>
+                    <p>আমাদের ফেসবুক পেজে ভিজিট করুন এবং লাইক দিন</p>
+                </a>
+                <a href="https://wa.me/8801XXXXXXXXX" target="_blank" class="contact-card">
+                    <i class="fab fa-whatsapp"></i>
+                    <h3>WhatsApp</h3>
+                    <p>সরাসরি মেসেজ পাঠান এবং তথ্য জানুন</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="social-links">
+            <a href="https://www.facebook.com/profile.php?id=61582659390412" target="_blank" class="facebook">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://wa.me/8801XXXXXXXXX" target="_blank" class="whatsapp">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+        <p style="opacity: 0.6;">© ২০২৫ আমার কুমিল্লা এক - সকল অধিকার সংরক্ষিত</p>
+        <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.4;">কুমিল্লা-১ (দাউদকান্দি-মেঘনা) আসন | বাংলাদেশ জামায়াত ইসলামী</p>
+    </footer>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">সফল হয়েছে!</span>
+    </div>
+
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            const ticker = document.querySelector('.news-ticker');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+                if(ticker) ticker.style.top = '60px';
+            } else {
+                header.classList.remove('scrolled');
+                if(ticker) ticker.style.top = '80px';
+            }
+        });
+
+        // Sidebar
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('active');
+            document.querySelector('.overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.querySelector('.overlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Intersection Observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Counter Animation
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString('bn-BD');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString('bn-BD');
+                }
+            }, 16);
+        }
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                    entry.target.classList.add('counted');
+                    animateCounter(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('.stat-number').forEach(el => counterObserver.observe(el));
+
+        // Pledge Form
+        function handlePledge(event) {
+            event.preventDefault();
+            const name = document.getElementById('pledgeName').value;
+            const message = document.getElementById('pledgeMessage').value;
+            const pledgeWall = document.getElementById('pledgeWall');
+            const newPledge = document.createElement('div');
+            newPledge.className = 'pledge-item';
+            newPledge.style.animation = 'fadeInUp 0.5s ease';
+            newPledge.innerHTML = `
+                <div class="pledge-header">
+                    <div class="pledge-avatar">${name.charAt(0)}</div>
+                    <div class="pledge-meta">
+                        <h4>${name}</h4>
+                        <span>এইমাত্র</span>
+                    </div>
+                </div>
+                <p class="pledge-text">"${message}"</p>
+            `;
+            pledgeWall.insertBefore(newPledge, pledgeWall.firstChild);
+            document.getElementById('pledgeForm').reset();
+            showToast('আপনার শপথ সফলভাবে জমা হয়েছে!');
+        }
+
+        // Volunteer Form
+        function handleVolunteer(event) {
+            event.preventDefault();
+            showToast('নিবন্ধন সফল! শীঘ্রই আমরা আপনার সাথে যোগাযোগ করবো।');
+            event.target.reset();
+        }
+
+        // Copy Hashtag
+        function copyHashtag(element, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast(`কপি হয়েছে: ${text}`);
+                element.style.background = 'var(--primary)';
+                element.style.color = 'white';
+                setTimeout(() => {
+                    element.style.background = '';
+                    element.style.color = '';
+                }, 1000);
+            });
+        }
+
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
