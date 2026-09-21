@@ -13,7 +13,7 @@ export async function generateMetadata({params}:Props):Promise<Metadata>{
   if(!a)return {title:'এলাকা পাওয়া যায়নি',robots:{index:false,follow:false}};
   const upazila=upazilaNames[a.upazila]??a.upazila;
   const title=`${a.name} | ${upazila}, কুমিল্লা-১`;
-  const description=(a.description||`${a.name}, ${upazিলা} উপজেলার পরিচিতি, স্থানীয় তথ্য, প্রতিষ্ঠান ও সেবাসংক্রান্ত প্রকাশিত তথ্য।`).replace(/\s+/g,' ').trim().slice(0,155);
+  const description=(a.description||`${a.name}, ${upazila} উপজেলার পরিচিতি, স্থানীয় তথ্য, প্রতিষ্ঠান ও সেবাসংক্রান্ত প্রকাশিত তথ্য।`).replace(/\s+/g,' ').trim().slice(0,155);
   const url=`https://amar-cumilla1.vercel.app/areas/${a.upazila}/${a.slug}`;
   return {title,description,alternates:{canonical:url},openGraph:{type:'website',url,title,description}};
 }
