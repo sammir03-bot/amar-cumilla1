@@ -1,7 +1,31 @@
+import type {Metadata} from 'next';
 import Link from 'next/link';
 import {getPosts} from '../lib/content';
 import {PostCards} from '../components/posts';
 import styles from './home.module.css';
+
+const siteUrl='https://amar-cumilla1.vercel.app';
+const title='আমার কুমিল্লা এক | কুমিল্লা-১, দাউদকান্দি ও মেঘনা';
+const description='কুমিল্লা-১ আসনের দাউদকান্দি ও মেঘনা উপজেলার এলাকা পরিচিতি, স্থানীয় সংবাদ, কর্মসূচি, প্রকাশনা ও সাংগঠনিক তথ্য।';
+
+export const metadata:Metadata={
+  title,
+  description,
+  keywords:[
+    'কুমিল্লা-১','কুমিল্লা ১','দাউদকান্দি','মেঘনা','কুমিল্লা-১ সংবাদ','দাউদকান্দি সংবাদ','মেঘনা সংবাদ','কুমিল্লা-১ কর্মসূচি','বাংলাদেশ জামায়াতে ইসলামী কুমিল্লা-১','জামায়াত কুমিল্লা ১','Cumilla-1','Daudkandi','Meghna Upazila'
+  ],
+  alternates:{canonical:siteUrl},
+  openGraph:{
+    type:'website',
+    locale:'bn_BD',
+    url:siteUrl,
+    siteName:'আমার কুমিল্লা এক',
+    title,
+    description,
+    images:[{url:`${siteUrl}/logo.svg`,width:256,height:256,alt:'আমার কুমিল্লা এক'}],
+  },
+  twitter:{card:'summary',title,description,images:[`${siteUrl}/logo.svg`]},
+};
 
 export const dynamic = 'force-dynamic';
 
@@ -14,15 +38,25 @@ const shortcuts = [
 
 export default async function Home(){
   const {posts}=await getPosts('news');
+  const websiteJsonLd={
+    '@context':'https://schema.org',
+    '@type':'WebSite',
+    name:'আমার কুমিল্লা এক',
+    alternateName:['কুমিল্লা-১','Cumilla-1'],
+    url:siteUrl,
+    inLanguage:'bn-BD',
+    description,
+  };
 
   return <div className={styles.page}>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(websiteJsonLd)}}/>
     <section className={styles.hero} aria-labelledby="home-title">
       <div className={styles.heroGlow} aria-hidden="true"/>
 
       <div className={styles.heroCopy}>
         <div className={styles.kicker}><span className={styles.kickerDot}/> কুমিল্লা–১ · দাউদকান্দি — মেঘনা</div>
         <h1 id="home-title">স্থানীয় তথ্য,<span>এক জায়গায় সহজভাবে।</span></h1>
-        <p className={styles.heroLead}>এলাকা পরিচিতি, প্রকাশিত সংবাদ, কর্মসূচি ও সাংগঠনিক তথ্য—পরিষ্কার কাঠামোতে, দ্রুত খুঁজে দেখার জন্য।</p>
+        <p className={styles.heroLead}>কুমিল্লা-১ আসনের দাউদকান্দি ও মেঘনা উপজেলার এলাকা পরিচিতি, প্রকাশিত সংবাদ, কর্মসূচি ও সাংগঠনিক তথ্য—পরিষ্কার কাঠামোতে, দ্রুত খুঁজে দেখার জন্য।</p>
 
         <div className={styles.heroActions}>
           <Link className={styles.primaryAction} href="/areas">এলাকা দেখুন <span>↗</span></Link>
@@ -69,7 +103,7 @@ export default async function Home(){
         <div className={styles.sectionHeadCopy}>
           <p className={styles.eyebrow}>এলাকা পরিচিতি</p>
           <h2>দুই উপজেলার তথ্য দ্রুত খুঁজে দেখুন</h2>
-          <p>ইউনিয়ন, পৌরসভা, স্থানীয় প্রতিষ্ঠান ও সেবাসংক্রান্ত প্রকাশিত তথ্য উপজেলা অনুযায়ী সাজানো।</p>
+          <p>দাউদকান্দি ও মেঘনার ইউনিয়ন, পৌরসভা, স্থানীয় প্রতিষ্ঠান ও সেবাসংক্রান্ত প্রকাশিত তথ্য উপজেলা অনুযায়ী সাজানো।</p>
         </div>
         <Link className={styles.sectionLink} href="/areas">সব এলাকা <span>↗</span></Link>
       </div>
@@ -102,8 +136,8 @@ export default async function Home(){
         <div className={styles.sectionHead}>
           <div className={styles.sectionHeadCopy}>
             <p className={styles.eyebrow}>সর্বশেষ আপডেট</p>
-            <h2>প্রকাশিত সংবাদ</h2>
-            <p>শুধু বাস্তবে প্রকাশিত কনটেন্ট এখানে দেখানো হয়। নতুন কিছু না থাকলে নমুনা বা বানানো সংবাদ দেখানো হবে না।</p>
+            <h2>কুমিল্লা-১ এর প্রকাশিত সংবাদ</h2>
+            <p>দাউদকান্দি ও মেঘনার শুধু বাস্তবে প্রকাশিত কনটেন্ট এখানে দেখানো হয়। নতুন কিছু না থাকলে নমুনা বা বানানো সংবাদ দেখানো হবে না।</p>
           </div>
           <Link className={styles.sectionLink} href="/news">সংবাদ বিভাগ <span>→</span></Link>
         </div>
