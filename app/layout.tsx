@@ -33,6 +33,7 @@ const navItems=[
   ['/news','সংবাদ'],
   ['/sections/event','কর্মসূচি'],
   ['/areas','এলাকা'],
+  ['/sections/gallery','গ্যালারি'],
   ['/contact','যোগাযোগ'],
 ] as const;
 
@@ -70,7 +71,7 @@ export default function Layout({children}:{children:React.ReactNode}){
           <BrandLogo/>
           <div><strong>আমার কুমিল্লা এক</strong><p>বাংলাদেশ জামায়াতে ইসলামী · কুমিল্লা–১</p></div>
         </div>
-        <div className="footer-block"><span>তথ্য</span><nav aria-label="তথ্য বিভাগ"><Link href="/areas">এলাকা</Link><Link href="/news">সংবাদ</Link><Link href="/sections/event">কর্মসূচি</Link><Link href="/sections/document">প্রকাশনা</Link></nav></div>
+        <div className="footer-block"><span>তথ্য</span><nav aria-label="তথ্য বিভাগ"><Link href="/areas">এলাকা</Link><Link href="/news">সংবাদ</Link><Link href="/sections/event">কর্মসূচি</Link><Link href="/sections/document">প্রকাশনা</Link><Link href="/sections/archive">আর্কাইভ</Link></nav></div>
         <div className="footer-block"><span>সংগঠন</span><nav aria-label="সংগঠন বিভাগ"><Link href="/about">পরিচিতি</Link><Link href="/sections/leader">নেতৃত্ব</Link><Link href="/sections/gallery">গ্যালারি</Link><Link href="/contact">যোগাযোগ</Link></nav></div>
       </div>
       <div className="footer-bottom"><p>কুমিল্লা-১ এলাকার দলীয় তথ্য ও কার্যক্রমের ওয়েবসাইট</p><div><span>এটি সরকারি ওয়েবসাইট নয় · উৎসভিত্তিক তথ্য প্রকাশ করা হয়</span><Link href="/admin">Admin</Link></div></div>
