@@ -26,6 +26,12 @@ export default async function Area({params}:Props){
   if(!a)notFound();
   const areaKey=a.upazila+'/'+a.slug;
   const [{posts},{posts:leaders}]=await Promise.all([getPosts(undefined,areaKey),getPosts('leader',areaKey)]);
+  const sortedLeaders=[...leaders].sort((x,y)=>{
+    const xLocal=x.area_keys?.length===1&&x.area_keys[0]===areaKey?0:1;
+    const yLocal=y.area_keys?.length===1&&y.area_keys[0]===areaKey?0:1;
+    if(xLocal!==yLocal)return xLocal-yLocal;
+    return new Date(y.published_at??0).valueOf()-new Date(x.published_at??0).valueOf();
+  });
   const upazila=upazilaNames[a.upazila]??a.upazila;
   const sections=[[a.description,'পরিচিতি'],[a.villages,'গ্রাম ও ওয়ার্ড'],[a.institutions,'শিক্ষাপ্রতিষ্ঠান ও গুরুত্বপূর্ণ স্থান'],[a.services,'জনসেবার তথ্য']] as const;
 
@@ -42,7 +48,7 @@ export default async function Area({params}:Props){
 
     {a.source_url&&<div className={styles.sourceBox}><div><strong>সরকারি/প্রাথমিক তথ্যসূত্র</strong><span>তথ্য পরিবর্তিত হতে পারে—সর্বশেষ অবস্থা উৎস পেজে যাচাই করুন।</span></div><a href={a.source_url} target="_blank" rel="noopener noreferrer">অফিসিয়াল উৎস দেখুন ↗</a></div>}
 
-    {leaders.length>0&&<section className={styles.news}><div className={styles.newsHead}><div><p className="eyebrow">সাংগঠনিক পরিচিতি</p><h2>এই এলাকার সঙ্গে সংশ্লিষ্ট নেতৃত্ব</h2></div></div><PostCards posts={leaders.slice(0,6)}/></section>}
+    {sortedLeaders.length>0&&<section className={styles.news}><div className={styles.newsHead}><div><p className="eyebrow">সাংগঠনিক পরিচিতি</p><h2>এই এলাকার সঙ্গে সংশ্লিষ্ট নেতৃত্ব</h2><p>ইউনিয়ন/পৌরসভাভিত্তিক পরিচিতিকে আগে দেখানো হয়, এরপর উপজেলা পর্যায়ের সংশ্লিষ্ট নেতৃত্ব।</p></div></div><PostCards posts={sortedLeaders.slice(0,6)}/></section>}
 
     <section className={styles.news}><div className={styles.newsHead}><div><p className="eyebrow">স্থানীয় আপডেট</p><h2>এই এলাকার সংবাদ ও কার্যক্রম</h2></div></div><PostCards posts={posts}/></section>
   </div>;
