@@ -8,7 +8,8 @@ export async function PostCards({posts}:{posts:Post[]}){
   if(!posts.length)return <p className="notice">এই বিভাগে এখনো কোনো তথ্য প্রকাশিত হয়নি।</p>;
   const cards=await Promise.all(posts.map(async p=>{
     const imagePath=firstImagePath(p.media_paths??[]);
-    const imageUrl=imagePath?await mediaUrl(imagePath):null;
+    const uploadedUrl=imagePath?await mediaUrl(imagePath):null;
+    const imageUrl=uploadedUrl??p.cover_url??null;
     return {p,imageUrl};
   }));
   return <div className="grid">{cards.map(({p,imageUrl})=><Link className={`card ${styles.card}`} key={p.id} href={'/posts/'+p.slug}>
@@ -30,9 +31,12 @@ export async function PostCards({posts}:{posts:Post[]}){
 
 export async function PostView({post:p,sign=mediaUrl}:{post:Post;sign?:(path:string)=>Promise<string|null>}){
   const files=await Promise.all((p.media_paths??[]).map(async path=>({path,url:await sign(path)})));
+  const uploadedImage=files.find(f=>f.url&&!f.path.endsWith('.pdf'))?.url??null;
+  const cover=!uploadedImage?p.cover_url:null;
   return <article className="prose">
     <p className="eyebrow">{kinds[p.kind]}{p.published_at?' · '+bnDate(p.published_at):''}</p>
     <h1>{p.title}</h1>
+    {cover&&<figure className={styles.articleCover}><img src={cover} alt={`${p.title} — প্রতিনিধি ছবি`}/>{(p.cover_credit||p.cover_source_url)&&<figcaption>{p.cover_credit||'ছবির উৎস'}{p.cover_license?` · ${p.cover_license}`:''}{p.cover_source_url&&<> · <a href={p.cover_source_url} target="_blank" rel="noopener noreferrer">ছবির উৎস ↗</a></>}</figcaption>}</figure>}
     {p.event_at&&<p>সময়: {new Date(p.event_at).toLocaleString('bn-BD',{timeZone:'Asia/Dhaka'})} (বাংলাদেশ)</p>}
     {p.venue&&<p>স্থান: {p.venue}</p>}
     <div className="body-text">{p.body}</div>
