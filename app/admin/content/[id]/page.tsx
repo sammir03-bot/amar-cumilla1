@@ -3,6 +3,7 @@ import {notFound} from 'next/navigation';
 import {requireStaff} from '../../../../lib/supabase';
 import {kinds,Post} from '../../../../lib/content';
 import ActionForm from '../../../../components/action-form';
+import MediaPicker from '../../../../components/media-picker';
 import {savePost} from '../../actions';
 
 export default async function Editor({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{saved?:string}>}){
@@ -55,8 +56,8 @@ export default async function Editor({params,searchParams}:{params:Promise<{id:s
       </div>
 
       <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৫. ছবি ও PDF</h2><p>প্রথমে মিডিয়া বিভাগে ফাইল আপলোড করুন, তারপর পাওয়া path এখানে দিন।</p></div><Link className="admin-btn" href="/admin/media" target="_blank">মিডিয়া খুলুন ↗</Link></div>
-        <label>ফাইল path<textarea name="media_paths" rows={4} defaultValue={p?.media_paths.join('\n')} placeholder="প্রতি লাইনে একটি path"/><span className="admin-help">একাধিক ফাইল হলে প্রতি লাইনে একটি করে দিন।</span></label>
+        <div className="admin-form-section-head"><div><h2>৫. ছবি ও PDF</h2><p>আগে Media বিভাগে আলাদা করে আপলোড করতে হবে না। এখান থেকেই ছবি নির্বাচন করুন।</p></div><Link className="admin-btn" href="/admin/media" target="_blank">মিডিয়া লাইব্রেরি ↗</Link></div>
+        <MediaPicker existing={p?.media_paths??[]}/>
       </div>
     </ActionForm>
   </section>;
