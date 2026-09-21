@@ -1,0 +1,126 @@
+.card{
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  padding:0!important;
+}
+.cover{
+  position:relative;
+  min-height:190px;
+  overflow:hidden;
+  display:flex;
+  align-items:flex-end;
+  padding:20px;
+  background:
+    radial-gradient(circle at 85% 12%,rgba(231,180,77,.28),transparent 24%),
+    linear-gradient(135deg,#052e27 0%,#0b5545 68%,#11715b 100%);
+  color:white;
+}
+.cover:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity:.22;
+  background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);
+  background-size:34px 34px;
+}
+.coverImage{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.coverShade{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top,rgba(2,25,20,.72),rgba(2,25,20,.06) 65%);
+}
+.coverInner{
+  position:relative;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  width:100%;
+}
+.coverBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.16);
+  backdrop-filter:blur(8px);
+  font-size:11px;
+  font-weight:800;
+}
+.coverLogo{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  object-fit:cover;
+  flex:0 0 auto;
+  box-shadow:0 8px 20px rgba(0,0,0,.24);
+}
+.content{
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  padding:22px 24px 24px;
+}
+.content small{
+  margin-bottom:10px!important;
+}
+.content h2{
+  margin:0 0 10px!important;
+}
+.content p{
+  margin:0 0 20px!important;
+}
+.readMore{
+  margin-top:auto;
+  font-size:13px;
+  font-weight:800;
+  color:#0b5545;
+}
+.sourceBox{
+  margin:24px 0 10px;
+  padding:16px 18px;
+  border:1px solid #dfe7e2;
+  border-radius:14px;
+  background:#f7faf8;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.sourceBox span{
+  display:grid;
+  line-height:1.4;
+}
+.sourceBox small{
+  color:#7c8b84;
+  font-size:11px;
+}
+.sourceBox strong{
+  color:#17382f;
+  font-size:14px;
+}
+.sourceBox a{
+  flex:0 0 auto;
+  padding:8px 11px;
+  border-radius:10px;
+  background:#073f34;
+  color:white;
+  font-size:12px;
+  font-weight:800;
+}
+@media(max-width:520px){
+  .cover{min-height:165px;padding:16px}
+  .coverLogo{width:40px;height:40px}
+  .content{padding:18px}
+  .sourceBox{align-items:flex-start;flex-direction:column}
+}
