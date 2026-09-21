@@ -4,6 +4,8 @@ import {notFound} from 'next/navigation';
 import {upazilaNames} from '../../../../lib/areas';
 import {getAreas,getPosts} from '../../../../lib/content';
 import {PostCards} from '../../../../components/posts';
+import styles from '../../areas.module.css';
+
 export const dynamic='force-dynamic';
 type Props={params:Promise<{upazila:string;slug:string}>};
 
@@ -15,7 +17,51 @@ export async function generateMetadata({params}:Props):Promise<Metadata>{
   const title=`${a.name} | ${upazila}, কুমিল্লা-১`;
   const description=(a.description||`${a.name}, ${upazila} উপজেলার পরিচিতি, স্থানীয় তথ্য, প্রতিষ্ঠান ও সেবাসংক্রান্ত প্রকাশিত তথ্য।`).replace(/\s+/g,' ').trim().slice(0,155);
   const url=`https://amar-cumilla1.vercel.app/areas/${a.upazila}/${a.slug}`;
-  return {title,description,alternates:{canonical:url},openGraph:{type:'website',url,title,description}};
+  return {title,description,alternates:{canonical:url},openGraph:{type:'website',url,title,description,images:a.image_url?[{url:a.image_url,alt:`${a.name} এলাকার ছবি`}]:undefined}};
 }
 
-export default async function Area({params}:Props){const p=await params;const a=(await getAreas()).find(a=>a.upazila===p.upazila&&a.slug===p.slug);if(!a)notFound();const {posts}=await getPosts(undefined,a.upazila+'/'+a.slug);return <section><Link href={'/areas?upazila='+a.upazila}>← {upazilaNames[a.upazila]} উপজেলার এলাকা</Link><h1>{a.name}</h1><div className="grid two">{[[a.description,'পরিচিতি'],[a.villages,'গ্রাম ও ওয়ার্ড'],[a.institutions,'শিক্ষাপ্রতিষ্ঠান ও গুরুত্বপূর্ণ স্থান'],[a.services,'জনসেবার তথ্য']].map(([text,title])=>text?<article className="card" key={title}><h2>{title}</h2><div className="body-text">{text}</div></article>:null)}</div>{a.source_url&&<p><a href={a.source_url} target="_blank" rel="noopener noreferrer">তথ্যসূত্র ↗</a></p>}<h2>এলাকার সংবাদ ও কার্যক্রম</h2><PostCards posts={posts}/></section>;}
+export default async function Area({params}:Props){
+  const p=await params;
+  const a=(await getAreas()).find(a=>a.upazila===p.upazila&&a.slug===p.slug);
+  if(!a)notFound();
+  const {posts}=await getPosts(undefined,a.upazila+'/'+a.slug);
+  const upazila=upazilaNames[a.upazila]??a.upazila;
+  const sections=[
+    [a.description,'পরিচিতি'],
+    [a.villages,'গ্রাম ও ওয়ার্ড'],
+    [a.institutions,'শিক্ষাপ্রতিষ্ঠান ও গুরুত্বপূর্ণ স্থান'],
+    [a.services,'জনসেবার তথ্য'],
+  ] as const;
+
+  return <div className={styles.page}>
+    <div className={styles.top}>
+      <Link className={styles.back} href={'/areas?upazila='+a.upazila}>← {upazila} উপজেলার সব এলাকা</Link>
+      <span className={styles.count}>{a.kind==='municipality'?'পৌরসভা':'ইউনিয়ন'} · যাচাইকৃত তথ্য</span>
+    </div>
+
+    <section className={styles.hero}>
+      {a.image_url?<img className={styles.heroImage} src={a.image_url} alt={`${a.name} এলাকার দৃশ্য`}/>:<div className={styles.heroFallback}/>} 
+      <div className={styles.heroShade}/>
+      {a.image_url&&a.image_credit&&<div className={styles.credit}>ছবি: {a.image_credit}{a.image_license?` · ${a.image_license}`:''}{a.image_source_url&&<> · <a href={a.image_source_url} target="_blank" rel="noopener noreferrer">উৎস</a></>}</div>}
+      <div className={styles.heroCopy}>
+        <small>কুমিল্লা-১ · {upazila}</small>
+        <h1>{a.name}</h1>
+        <p>{a.description.split('\n')[0]}</p>
+      </div>
+    </section>
+
+    <div className={styles.grid}>
+      {sections.map(([text,title])=>text?<article className={styles.info} key={title}><h2>{title}</h2><div className={styles.infoText}>{text}</div></article>:null)}
+    </div>
+
+    {a.source_url&&<div className={styles.sourceBox}>
+      <div><strong>সরকারি/প্রাথমিক তথ্যসূত্র</strong><span>তথ্য পরিবর্তিত হতে পারে—সর্বশেষ অবস্থা উৎস পেজে যাচাই করুন।</span></div>
+      <a href={a.source_url} target="_blank" rel="noopener noreferrer">অফিসিয়াল উৎস দেখুন ↗</a>
+    </div>}
+
+    <section className={styles.news}>
+      <div className={styles.newsHead}><div><p className="eyebrow">স্থানীয় আপডেট</p><h2>এই এলাকার সংবাদ ও কার্যক্রম</h2></div></div>
+      <PostCards posts={posts}/>
+    </section>
+  </div>;
+}
