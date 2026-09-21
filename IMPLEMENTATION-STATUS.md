@@ -3,6 +3,7 @@
 ## Implemented
 
 - Next.js 16 / Node.js application with Bengali responsive public pages.
+- Premium Bengali editorial homepage with dark green / white / restrained orange visual system, responsive mobile menu, quick-access dashboard, area showcase, latest-news block and transparency section.
 - Supabase cookie authentication, session refresh proxy and server-side staff authorization.
 - Admin editors for news, events, leaders, galleries, documents, pages and campaign archive.
 - Area editor with source, verification, publication, village, institution and service information.
@@ -18,16 +19,17 @@
 - SQL anonymous-role test returned zero draft areas, zero staff and zero unpublished posts.
 - Transactional admin test saw 24 areas, inserted a publication and recorded one audit entry. All test writes rolled back.
 - Local production HTTP requests returned rendered responses for home, areas, news, events, about, contact, admin and missing-post paths. HTTP status alone does not prove complete UI behavior because Next.js streams responses.
-- Browser verification unavailable: agent-browser daemon exits during startup. Visual QA and real signed-in Admin form/upload testing remain pending; no real-user session was fabricated.
+- The latest homepage redesign passed the connected build/deployment checks and Vercel reported a successful deployment from `main`.
+- Direct browser visual QA is still environment-dependent. The Opera browser connector was unavailable during the latest check, so no claim is made about pixel-level rendering on a physical handset.
 
 ## Deployment and remaining setup
 
-- No live Next.js URL yet. Vercel deployment was rejected by automatic approval review because Vercel had not been explicitly approved as the destination. Do not bypass that decision; obtain explicit hosting approval.
-- Set the final SITE_URL and Supabase Auth allowed redirect URL before using password recovery.
+- Live deployment: `https://amar-cumilla1.vercel.app/`.
+- The current public pages intentionally remain `noindex` and display a preparation notice pending content approval.
+- Before relying on password recovery in production, confirm the final `SITE_URL` environment variable and Supabase Auth allowed redirect URL match the live origin.
 - Review official identity, area records, leaders, contact information and publish actual content. No invented people or details were seeded.
 - Public contact information is editable; no public message-collection form or inbox is implemented.
 - Per-area staff assignments and staff-management UI are not implemented; staff roles are assigned by a trusted database administrator.
 - Media upload returns a path to attach manually; a graphical media picker is not implemented.
-- Pages remain noindex and carry a preparation notice pending content approval.
 - SQL reference files are not a complete fresh-install Supabase migration history. Follow README order for a new database; do not replay on the configured project.
 - Service-role secrets are not used by this app. Local configuration is ignored by git.
