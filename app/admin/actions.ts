@@ -20,9 +20,18 @@ const postSchema=z.object({
   venue:z.string().max(500),
   source_url:z.string().max(2000),
   source_name:z.string().max(180),
+  cover_url:z.string().max(2000),
+  cover_source_url:z.string().max(2000),
+  cover_credit:z.string().max(300),
+  cover_license:z.string().max(120),
   area_keys:z.array(z.string().max(150)).max(24),
   media_paths:z.array(z.string().regex(mediaPath)).max(20),
 });
+
+function validHttps(value:string){
+  if(!value)return true;
+  try{return new URL(value).protocol==='https:';}catch{return false;}
+}
 
 async function inspectUpload(file:File){
   if(file.size===0||file.size>MAX_FILE)return null;
@@ -59,11 +68,13 @@ export async function savePost(_:FormState,f:FormData):Promise<FormState>{
   const id=text(f,'id');
   const existing=f.getAll('keep_media_paths').map(String).filter(Boolean);
   const parsed=postSchema.safeParse({
-    title:text(f,'title'),slug:text(f,'slug'),body:text(f,'body'),kind:text(f,'kind'),status:text(f,'status'),venue:text(f,'venue'),source_url:text(f,'source_url'),source_name:text(f,'source_name'),area_keys:f.getAll('area_keys').map(String),media_paths:existing
+    title:text(f,'title'),slug:text(f,'slug'),body:text(f,'body'),kind:text(f,'kind'),status:text(f,'status'),venue:text(f,'venue'),source_url:text(f,'source_url'),source_name:text(f,'source_name'),cover_url:text(f,'cover_url'),cover_source_url:text(f,'cover_source_url'),cover_credit:text(f,'cover_credit'),cover_license:text(f,'cover_license'),area_keys:f.getAll('area_keys').map(String),media_paths:existing
   });
   if(!parsed.success)return {error:'শিরোনাম, লিংক, লেখা বা প্রয়োজনীয় তথ্য সঠিক নয়। ঘরগুলো আবার পরীক্ষা করুন।'};
   const data=parsed.data;
-  if(data.source_url){try{const u=new URL(data.source_url);if(u.protocol!=='https:')return {error:'তথ্যসূত্রের লিংক অবশ্যই https:// হতে হবে।'};}catch{return {error:'তথ্যসূত্রের লিংক সঠিক নয়।'};}}
+  if(!validHttps(data.source_url))return {error:'তথ্যসূত্রের লিংক অবশ্যই পূর্ণ https:// লিংক হতে হবে।'};
+  if(!validHttps(data.cover_url)||!validHttps(data.cover_source_url))return {error:'কভার ছবির URL ও উৎস অবশ্যই পূর্ণ https:// লিংক হতে হবে।'};
+  if(data.cover_url&&!data.cover_source_url)return {error:'বাইরের কভার ছবি ব্যবহার করলে ছবির উৎস পেজ দিন।'};
   if(role==='editor'&&!['draft','review'].includes(data.status))return {error:'প্রকাশের জন্য Publisher বা Admin প্রয়োজন।'};
 
   if(data.area_keys.length){
@@ -96,7 +107,7 @@ export async function savePost(_:FormState,f:FormData):Promise<FormState>{
   const upload=await uploadFiles(db,user.id,newFiles);
   if(upload.error)return {error:upload.error};
   const uploaded=upload.paths;
-  const payload={...data,source_url:data.source_url||null,source_name:data.source_name||null,media_paths:[...data.media_paths,...uploaded],event_at:eventAt?.toISOString()??null,published_at:publishedAt};
+  const payload={...data,source_url:data.source_url||null,source_name:data.source_name||null,cover_url:data.cover_url||null,cover_source_url:data.cover_source_url||null,cover_credit:data.cover_credit||null,cover_license:data.cover_license||null,media_paths:[...data.media_paths,...uploaded],event_at:eventAt?.toISOString()??null,published_at:publishedAt};
 
   const result=id
     ?await db.from('cumilla_posts').update(payload).eq('id',id).eq('updated_at',text(f,'version')).select('id').maybeSingle()
@@ -122,7 +133,7 @@ export async function saveArea(_:FormState,f:FormData):Promise<FormState>{
  }).safeParse({id:text(f,'id'),name:text(f,'name'),description:text(f,'description'),villages:text(f,'villages'),institutions:text(f,'institutions'),services:text(f,'services'),image_credit:text(f,'image_credit'),image_license:text(f,'image_license')});
  if(!parsed.success)return {error:'নাম অথবা তথ্যের দৈর্ঘ্য সঠিক নয়।'};
  for(const [label,url] of [['তথ্যসূত্র',source],['ছবির URL',imageUrl],['ছবির উৎস',imageSourceUrl]] as const){
-   if(url){try{const u=new URL(url);if(u.protocol!=='https:')return {error:`${label} অবশ্যই https:// হতে হবে।`};}catch{return {error:`${label} সঠিক নয়।`};}}
+   if(url&&!validHttps(url))return {error:`${label} অবশ্যই পূর্ণ https:// লিংক হতে হবে।`};
  }
  if(published&&(!verified||!source||!parsed.data.description))return {error:'প্রকাশের আগে পরিচিতি, তথ্যসূত্র এবং যাচাইয়ের নিশ্চয়তা দিন।'};
  const {id,...details}=parsed.data;
