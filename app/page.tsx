@@ -6,7 +6,7 @@ import styles from './home.module.css';
 
 const siteUrl='https://amar-cumilla1.vercel.app';
 const title='আমার কুমিল্লা এক | কুমিল্লা-১, দাউদকান্দি ও মেঘনা';
-const description='কুমিল্লা-১ আসনের দাউদকান্দি ও মেঘনা উপজেলার এলাকা পরিচিতি, স্থানীয় সংবাদ, কর্মসূচি, প্রকাশনা ও সাংগঠনিক তথ্য।';
+const description='বাংলাদেশ জামায়াতে ইসলামী কুমিল্লা-১ এলাকার দাউদকান্দি ও মেঘনা উপজেলার এলাকা পরিচিতি, স্থানীয় সংবাদ, নেতৃত্ব, কর্মসূচি, প্রকাশনা ও সাংগঠনিক তথ্য।';
 
 export const metadata:Metadata={
   title,description,
@@ -18,6 +18,20 @@ export const metadata:Metadata={
 
 export const dynamic='force-dynamic';
 function firstImage(paths:string[]){return paths.find(x=>!x.endsWith('.pdf'))??null;}
+
+const activityHighlights=[
+  {label:'জনসেবা',title:'মেঘনা উপজেলায় সাঁকো নির্মাণ উদ্যোগ',description:'প্রকাশিত প্রতিবেদনে স্থানীয় চলাচলের সুবিধায় সাঁকো নির্মাণের উদ্যোগের কথা উল্লেখ করা হয়েছে।',href:'/posts/meghna-jamaat-bamboo-bridge-apr-2025',icon:'⌁'},
+  {label:'শিক্ষা',title:'জিপিএ-৫ পাওয়া শিক্ষার্থীদের সংবর্ধনা',description:'দাউদকান্দিতে কৃতী শিক্ষার্থীদের নিয়ে আয়োজিত সংবর্ধনার প্রকাশিত তথ্য।',href:'/posts/daudkandi-student-reception-jul-2025',icon:'✦'},
+  {label:'স্থানীয় উদ্যোগ',title:'মারুকায় সড়ক সংস্কার কার্যক্রম',description:'মারুকা এলাকায় যুব বিভাগের উদ্যোগে সড়ক সংস্কারের প্রকাশিত কার্যক্রম।',href:'/posts/maruka-jamaat-road-repair-oct-2025',icon:'↗'},
+  {label:'সামাজিক সম্প্রীতি',title:'বিভিন্ন পূজামণ্ডপ পরিদর্শন',description:'দাউদকান্দির বিভিন্ন পূজামণ্ডপ পরিদর্শন নিয়ে প্রকাশিত সংবাদ ও স্থানীয় কার্যক্রম।',href:'/posts/daudkandi-jamaat-puja-visit-oct-2025',icon:'◎'},
+] as const;
+
+const officialChannels=[
+  {label:'অফিসিয়াল ওয়েবসাইট',meta:'বাংলাদেশ জামায়াতে ইসলামী',href:'https://www.jamaat-e-islami.org/',icon:'↗'},
+  {label:'Facebook',meta:'bji.official',href:'https://www.facebook.com/bji.official/',icon:'f'},
+  {label:'YouTube',meta:'@bjiofficial',href:'https://www.youtube.com/@bjiofficial',icon:'▶'},
+  {label:'X / Twitter',meta:'@bji_official',href:'https://x.com/bji_official',icon:'𝕏'},
+] as const;
 
 export default async function Home(){
   const [{posts:news,count:newsCount},{posts:leaders,count:leaderCount},areas]=await Promise.all([getPosts('news'),getPosts('leader'),getAreas()]);
@@ -50,12 +64,22 @@ export default async function Home(){
     <section className={`${styles.section} ${styles.newsSection}`}><div className={styles.heading}><div><p className={styles.eyebrow}>সর্বশেষ আপডেট</p><h2>খবর ও কার্যক্রম</h2><p>দাউদকান্দি, মেঘনা ও কুমিল্লা-১ সম্পর্কিত যাচাইযোগ্য প্রকাশিত তথ্য।</p></div><Link href="/news">সব সংবাদ →</Link></div><PostCards posts={news.slice(0,6)}/></section>
 
     <section className={styles.section}>
+      <div className={styles.heading}><div><p className={styles.eyebrow}>কার্যক্রমের ক্ষেত্র</p><h2>প্রকাশিত স্থানীয় উদ্যোগ</h2><p>জনসেবা, শিক্ষা, স্থানীয় অবকাঠামো ও সামাজিক সম্প্রীতি—প্রকাশিত সংবাদসূত্রে পাওয়া কিছু কার্যক্রম এক নজরে।</p></div><Link href="/news">আরও কার্যক্রম →</Link></div>
+      <div className={styles.activityGrid}>{activityHighlights.map((item,index)=><Link className={styles.activityCard} href={item.href} key={item.href}><div className={styles.activityTop}><span className={styles.activityIcon}>{item.icon}</span><small>{String(index+1).padStart(2,'0')}</small></div><div><p>{item.label}</p><h3>{item.title}</h3><span>{item.description}</span></div><b>বিস্তারিত →</b></Link>)}</div>
+    </section>
+
+    <section className={styles.section}>
       <div className={styles.heading}><div><p className={styles.eyebrow}>কুমিল্লা-১</p><h2>এলাকাকে জানুন</h2><p>ইউনিয়ন ও পৌরসভার পরিচিতি, শিক্ষা প্রতিষ্ঠান, স্থানীয় সেবা এবং সরকারি/প্রাথমিক তথ্যসূত্র এক জায়গায়।</p></div><Link href="/areas">সব এলাকা দেখুন →</Link></div>
       <div className={styles.areaGrid}>{featuredAreas.map((area,index)=>area&&<Link className={styles.areaCard} href={`/areas/${area.upazila}/${area.slug}`} key={area.id}>{area.image_url&&<img src={area.image_url} alt={`${area.name} এলাকার দৃশ্য`} loading="lazy"/>}<span className={styles.areaShade}/><div className={styles.areaCopy}><small>{index===0?'দাউদকান্দি':'কুমিল্লা-১ এলাকা'}</small><h3>{area.name}</h3><p>{area.description.slice(0,90)}{area.description.length>90?'…':''}</p><b>এলাকার তথ্য →</b></div></Link>)}</div>
     </section>
 
     <section className={`${styles.section} ${styles.serviceSection}`}><div className={styles.serviceIntro}><p className={styles.eyebrow}>তথ্য ও জনসেবা</p><h2>যা দরকার,<br/>দ্রুত খুঁজুন</h2><p>শিক্ষা প্রতিষ্ঠান, নাগরিক সেবা, সরকারি উৎস, কর্মসূচি ও প্রকাশনা—সাইটের মূল তথ্যগুলো সরাসরি খুলুন।</p></div><div className={styles.serviceGrid}><Link href="/areas"><span>⌖</span><strong>ইউনিয়ন ও পৌরসভা</strong><small>পরিচিতি, প্রতিষ্ঠান ও স্থানীয় সেবা</small></Link><Link href="/sections/event"><span>◷</span><strong>কর্মসূচি</strong><small>তারিখ, সময় ও স্থানভিত্তিক তথ্য</small></Link><Link href="/sections/document"><span>▤</span><strong>প্রকাশনা</strong><small>নথি ও গুরুত্বপূর্ণ রেফারেন্স</small></Link><Link href="/contact"><span>↗</span><strong>যোগাযোগ</strong><small>অনুমোদিত যোগাযোগের তথ্য</small></Link></div></section>
 
-    <section className={`${styles.section} ${styles.connect}`}><div><p className={styles.eyebrow}>সংযুক্ত থাকুন</p><h2>নতুন তথ্য যোগ হবে নিয়মিত</h2><p>ওয়েবসাইটের Admin panel থেকে নতুন সংবাদ, ছবি, নেতৃত্ব, কর্মসূচি ও এলাকার তথ্য আপনি নিজেই সহজে যোগ করতে পারবেন।</p></div><div className={styles.connectActions}><Link className={styles.primaryDark} href="/news">খবর দেখুন</Link><Link className={styles.outlineDark} href="/sections/gallery">গ্যালারি</Link></div></section>
+    <section className={`${styles.section} ${styles.channels}`}>
+      <div className={styles.channelIntro}><p className={styles.eyebrow}>সংযুক্ত থাকুন</p><h2>অফিসিয়াল চ্যানেল</h2><p>কেন্দ্রীয় সংগঠনের যাচাইকৃত ওয়েবসাইট ও অফিসিয়াল সামাজিক মাধ্যমের লিংক। স্থানীয় কুমিল্লা-১ তথ্য এই ওয়েবসাইটেই আলাদাভাবে প্রকাশ করা হয়।</p></div>
+      <div className={styles.channelGrid}>{officialChannels.map(item=><a href={item.href} target="_blank" rel="noopener noreferrer" key={item.href}><span>{item.icon}</span><div><strong>{item.label}</strong><small>{item.meta}</small></div><b>↗</b></a>)}</div>
+    </section>
+
+    <section className={`${styles.section} ${styles.connect}`}><div><p className={styles.eyebrow}>হালনাগাদ তথ্য</p><h2>নতুন কনটেন্ট যোগ হবে নিয়মিত</h2><p>Admin panel থেকে নতুন সংবাদ, নিজস্ব ছবি, নেতৃত্ব, কর্মসূচি ও এলাকার তথ্য সহজে যোগ ও হালনাগাদ করা যাবে।</p></div><div className={styles.connectActions}><Link className={styles.primaryDark} href="/news">খবর দেখুন</Link><Link className={styles.outlineDark} href="/sections/gallery">গ্যালারি</Link></div></section>
   </div>;
 }
