@@ -51,12 +51,23 @@ export default async function Editor({params,searchParams}:{params:Promise<{id:s
       </div>
 
       <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৪. এলাকা</h2><p>এই কনটেন্ট কোন কোন এলাকার সাথে সম্পর্কিত তা নির্বাচন করুন।</p></div></div>
+        <div className="admin-form-section-head"><div><h2>৪. কভার ছবি</h2><p>নিজস্ব ছবি না থাকলে Wikimedia Commons-এর মতো পুনঃব্যবহারের অনুমতি থাকা ছবি দিতে পারবেন। কপিরাইটেড সংবাদমাধ্যমের ছবি কপি করবেন না।</p></div></div>
+        {p?.cover_url&&<img src={p.cover_url} alt="বর্তমান কভার" style={{width:'100%',maxHeight:340,objectFit:'cover',borderRadius:16,marginBottom:18}}/>}
+        <label>কভার ছবির সরাসরি URL<input type="url" name="cover_url" maxLength={2000} defaultValue={p?.cover_url??''} placeholder="https://commons.wikimedia.org/wiki/Special:Redirect/file/..."/></label>
+        <label>ছবির উৎস পেজ<input type="url" name="cover_source_url" maxLength={2000} defaultValue={p?.cover_source_url??''} placeholder="https://commons.wikimedia.org/wiki/File:..."/><span className="admin-help">বাইরের ছবি ব্যবহার করলে উৎস পেজ অবশ্যই দিন।</span></label>
+        <div className="admin-form-grid">
+          <label>ফটো ক্রেডিট<input name="cover_credit" maxLength={300} defaultValue={p?.cover_credit??''} placeholder="যেমন: Rehana Sarker / Wikimedia Commons"/></label>
+          <label>লাইসেন্স<input name="cover_license" maxLength={120} defaultValue={p?.cover_license??''} placeholder="যেমন: CC BY-SA 4.0"/></label>
+        </div>
+      </div>
+
+      <div className="admin-form-section">
+        <div className="admin-form-section-head"><div><h2>৫. এলাকা</h2><p>এই কনটেন্ট কোন কোন এলাকার সাথে সম্পর্কিত তা নির্বাচন করুন।</p></div></div>
         <fieldset><legend>সংশ্লিষ্ট এলাকা</legend><div className="admin-check-grid">{areas.data?.map(a=>{const key=a.upazila+'/'+a.slug;return <label key={key}><input type="checkbox" name="area_keys" value={key} defaultChecked={p?.area_keys?.includes(key)}/>{a.name}</label>;})}</div></fieldset>
       </div>
 
       <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৫. কর্মসূচির তথ্য</h2><p>কেবল কর্মসূচির ক্ষেত্রে সময় ও স্থান দিন; অন্য কনটেন্টে ফাঁকা রাখুন।</p></div></div>
+        <div className="admin-form-section-head"><div><h2>৬. কর্মসূচির তথ্য</h2><p>কেবল কর্মসূচির ক্ষেত্রে সময় ও স্থান দিন; অন্য কনটেন্টে ফাঁকা রাখুন।</p></div></div>
         <div className="admin-form-grid">
           <label>তারিখ ও সময়<input type="datetime-local" name="event_at" defaultValue={p?.event_at?new Date(new Date(p.event_at).valueOf()+21600000).toISOString().slice(0,16):''}/><span className="admin-help">বাংলাদেশ সময়</span></label>
           <label>স্থান<input name="venue" maxLength={500} defaultValue={p?.venue} placeholder="স্থান বা ঠিকানা"/></label>
@@ -64,7 +75,7 @@ export default async function Editor({params,searchParams}:{params:Promise<{id:s
       </div>
 
       <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৬. ছবি ও PDF</h2><p>এখান থেকেই ছবি নির্বাচন করুন। প্রকাশিত পোস্টে প্রথম ছবিটি কভার হিসেবে দেখানো হবে।</p></div><Link className="admin-btn" href="/admin/media" target="_blank">মিডিয়া লাইব্রেরি ↗</Link></div>
+        <div className="admin-form-section-head"><div><h2>৭. নিজের ছবি ও PDF</h2><p>নিজের/অনুমোদিত ছবি এখানে আপলোড করুন। থাকলে প্রথম আপলোড করা ছবিটিই কভার হিসেবে অগ্রাধিকার পাবে।</p></div><Link className="admin-btn" href="/admin/media" target="_blank">মিডিয়া লাইব্রেরি ↗</Link></div>
         <MediaPicker existing={p?.media_paths??[]}/>
       </div>
     </ActionForm>
