@@ -3,6 +3,7 @@ import Link from 'next/link';
 import {getAreas,getPosts,mediaUrl} from '../lib/content';
 import {PostCards} from '../components/posts';
 import styles from './home.module.css';
+import extra from './home-sections.module.css';
 
 const siteUrl='https://amar-cumilla1.vercel.app';
 const title='আমার কুমিল্লা এক | কুমিল্লা-১, দাউদকান্দি ও মেঘনা';
@@ -65,7 +66,7 @@ export default async function Home(){
 
     <section className={styles.section}>
       <div className={styles.heading}><div><p className={styles.eyebrow}>কার্যক্রমের ক্ষেত্র</p><h2>প্রকাশিত স্থানীয় উদ্যোগ</h2><p>জনসেবা, শিক্ষা, স্থানীয় অবকাঠামো ও সামাজিক সম্প্রীতি—প্রকাশিত সংবাদসূত্রে পাওয়া কিছু কার্যক্রম এক নজরে।</p></div><Link href="/news">আরও কার্যক্রম →</Link></div>
-      <div className={styles.activityGrid}>{activityHighlights.map((item,index)=><Link className={styles.activityCard} href={item.href} key={item.href}><div className={styles.activityTop}><span className={styles.activityIcon}>{item.icon}</span><small>{String(index+1).padStart(2,'0')}</small></div><div><p>{item.label}</p><h3>{item.title}</h3><span>{item.description}</span></div><b>বিস্তারিত →</b></Link>)}</div>
+      <div className={extra.activityGrid}>{activityHighlights.map((item,index)=><Link className={extra.activityCard} href={item.href} key={item.href}><div className={extra.activityTop}><span className={extra.activityIcon}>{item.icon}</span><small>{String(index+1).padStart(2,'0')}</small></div><div><p>{item.label}</p><h3>{item.title}</h3><span>{item.description}</span></div><b>বিস্তারিত →</b></Link>)}</div>
     </section>
 
     <section className={styles.section}>
@@ -75,9 +76,9 @@ export default async function Home(){
 
     <section className={`${styles.section} ${styles.serviceSection}`}><div className={styles.serviceIntro}><p className={styles.eyebrow}>তথ্য ও জনসেবা</p><h2>যা দরকার,<br/>দ্রুত খুঁজুন</h2><p>শিক্ষা প্রতিষ্ঠান, নাগরিক সেবা, সরকারি উৎস, কর্মসূচি ও প্রকাশনা—সাইটের মূল তথ্যগুলো সরাসরি খুলুন।</p></div><div className={styles.serviceGrid}><Link href="/areas"><span>⌖</span><strong>ইউনিয়ন ও পৌরসভা</strong><small>পরিচিতি, প্রতিষ্ঠান ও স্থানীয় সেবা</small></Link><Link href="/sections/event"><span>◷</span><strong>কর্মসূচি</strong><small>তারিখ, সময় ও স্থানভিত্তিক তথ্য</small></Link><Link href="/sections/document"><span>▤</span><strong>প্রকাশনা</strong><small>নথি ও গুরুত্বপূর্ণ রেফারেন্স</small></Link><Link href="/contact"><span>↗</span><strong>যোগাযোগ</strong><small>অনুমোদিত যোগাযোগের তথ্য</small></Link></div></section>
 
-    <section className={`${styles.section} ${styles.channels}`}>
-      <div className={styles.channelIntro}><p className={styles.eyebrow}>সংযুক্ত থাকুন</p><h2>অফিসিয়াল চ্যানেল</h2><p>কেন্দ্রীয় সংগঠনের যাচাইকৃত ওয়েবসাইট ও অফিসিয়াল সামাজিক মাধ্যমের লিংক। স্থানীয় কুমিল্লা-১ তথ্য এই ওয়েবসাইটেই আলাদাভাবে প্রকাশ করা হয়।</p></div>
-      <div className={styles.channelGrid}>{officialChannels.map(item=><a href={item.href} target="_blank" rel="noopener noreferrer" key={item.href}><span>{item.icon}</span><div><strong>{item.label}</strong><small>{item.meta}</small></div><b>↗</b></a>)}</div>
+    <section className={`${styles.section} ${extra.channels}`}>
+      <div className={extra.channelIntro}><p className={styles.eyebrow}>সংযুক্ত থাকুন</p><h2>অফিসিয়াল চ্যানেল</h2><p>কেন্দ্রীয় সংগঠনের যাচাইকৃত ওয়েবসাইট ও অফিসিয়াল সামাজিক মাধ্যমের লিংক। স্থানীয় কুমিল্লা-১ তথ্য এই ওয়েবসাইটেই আলাদাভাবে প্রকাশ করা হয়।</p></div>
+      <div className={extra.channelGrid}>{officialChannels.map(item=><a href={item.href} target="_blank" rel="noopener noreferrer" key={item.href}><span>{item.icon}</span><div><strong>{item.label}</strong><small>{item.meta}</small></div><b>↗</b></a>)}</div>
     </section>
 
     <section className={`${styles.section} ${styles.connect}`}><div><p className={styles.eyebrow}>হালনাগাদ তথ্য</p><h2>নতুন কনটেন্ট যোগ হবে নিয়মিত</h2><p>Admin panel থেকে নতুন সংবাদ, নিজস্ব ছবি, নেতৃত্ব, কর্মসূচি ও এলাকার তথ্য সহজে যোগ ও হালনাগাদ করা যাবে।</p></div><div className={styles.connectActions}><Link className={styles.primaryDark} href="/news">খবর দেখুন</Link><Link className={styles.outlineDark} href="/sections/gallery">গ্যালারি</Link></div></section>
