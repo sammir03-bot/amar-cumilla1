@@ -46,7 +46,7 @@ export default async function AdminLayout({children}:{children:React.ReactNode})
         <div><span className="admin-topbar-kicker">কন্টেন্ট ম্যানেজমেন্ট</span><strong>সহজে সম্পাদনা ও প্রকাশ করুন</strong></div>
         <div className="admin-topbar-actions"><Link href="/" target="_blank">সাইট দেখুন ↗</Link><Link className="admin-topbar-primary" href="/admin/content/new">＋ নতুন</Link></div>
       </header>
-      <main className="admin-content">{children}</main>
+      <div className="admin-content">{children}</div>
     </div>
   </div>;
 }
