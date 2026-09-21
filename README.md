@@ -1,2 +1,23 @@
-# amar-cumilla1
-Election campaign website 
+# আমার কুমিল্লা এক
+
+বাংলাদেশ জামায়াতে ইসলামী, কুমিল্লা-১ (দাউদকান্দি–মেঘনা) এলাকার তথ্যভিত্তিক ওয়েবসাইট। Next.js / Node.js, Supabase Auth, Postgres ও private Storage ব্যবহার করা হয়েছে।
+
+## চালানো
+
+Node.js 22+ দিয়ে `npm ci` চালান। `.env.example` অনুসারে স্থানীয় environment configuration দিন। তারপর `npm run dev`। Production পরীক্ষা: `npm run build`, চালানো: `npm start`।
+
+## Admin
+
+`/admin` থেকে অনুমোদিত অ্যাকাউন্টে লগইন করুন। সংবাদ, কর্মসূচি, নেতৃত্ব, গ্যালারি, PDF, সাধারণ পাতা ও নির্বাচনী আর্কাইভ তৈরি করা যায়। Admin এলাকার তথ্য যাচাই ও প্রকাশ করতে পারেন। Editor খসড়া ও review জমা দিতে পারেন; Publisher ও Admin প্রকাশ করতে পারেন। সাধারণ পরিচিতির জন্য `about` এবং যোগাযোগের জন্য `contact` slug ব্যবহার করুন।
+
+২৪টি প্রাথমিক এলাকার রেকর্ড খসড়া হিসেবে আছে। পরিচিতি, গ্রাম/ওয়ার্ড, গুরুত্বপূর্ণ প্রতিষ্ঠান, জনসেবা ও তথ্যসূত্র যাচাই করে প্রকাশ করুন। এগুলো চূড়ান্ত প্রশাসনিক তালিকা হিসেবে দাবি করা হয়নি।
+
+ছবি/PDF সর্বোচ্চ ২ MB। Media বিভাগে আপলোডের পরে পাওয়া path প্রকাশনার ফাইল ঘরে দিন। সংযুক্ত ফাইল প্রকাশিত পোস্টের মাধ্যমেই সাধারণ দর্শক দেখতে পারবেন।
+
+## ডেটাবেস ও হোস্টিং
+
+বর্তমান Supabase প্রকল্পে schema ইতিমধ্যে প্রয়োগ করা হয়েছে; সেখানে পুনরায় চালাবেন না। সম্পূর্ণ নতুন প্রকল্পে প্রথমে `db/schema.sql`, পরে `db/content-extension.sql`, তারপর `db/seed-areas.sql` চালাতে হবে। Staff role শুধু বিশ্বস্ত database প্রশাসক নির্ধারণ করবেন।
+
+GitHub Pages Node.js server চালাতে পারে না। Next.js সমর্থিত host প্রয়োজন। Host-এ public Supabase URL/key এবং `SITE_URL` দিন; Supabase Auth URL configuration-এ চূড়ান্ত origin এবং `/auth/callback` redirect অনুমোদন করুন। Password recovery চালুর জন্য এটি প্রয়োজন। Service-role key এই app-এর প্রয়োজন নেই।
+
+মূল campaign HTML ফাইলগুলো ঐতিহাসিক কপি হিসেবে আছে। প্রকাশযোগ্য লেখা অনুমোদন না হওয়া পর্যন্ত নতুন সাইট noindex এবং প্রস্তুতিমূলক পরিচয়ে থাকবে। বর্তমান পরীক্ষা ও সীমাবদ্ধতা `IMPLEMENTATION-STATUS.md`-এ আছে।
