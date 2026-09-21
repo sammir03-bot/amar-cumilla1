@@ -12,7 +12,7 @@ export default async function AdminLayout({children}:{children:React.ReactNode})
   return <div className="admin-app">
     <aside className="admin-sidebar">
       <div className="admin-brand">
-        <span className="admin-brand-mark">ক১</span>
+        <img className="admin-brand-logo" src="/logo.svg" alt="আমার কুমিল্লা এক লোগো" width="46" height="46"/>
         <span><strong>সম্পাদনা কেন্দ্র</strong><small>আমার কুমিল্লা এক</small></span>
       </div>
 
