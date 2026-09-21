@@ -115,14 +115,18 @@ export async function savePost(_:FormState,f:FormData):Promise<FormState>{
 
 export async function saveArea(_:FormState,f:FormData):Promise<FormState>{
  const {db,role}=await requireStaff();if(role!=='admin')return {error:'শুধু Admin এলাকার তথ্য পরিবর্তন করতে পারবেন।'};
- const published=f.get('published')==='on',verified=f.get('verified')==='on';const source=text(f,'source_url');
- const parsed=z.object({id:z.string().uuid(),name:z.string().min(1).max(180),description:z.string().max(20000),villages:z.string().max(20000),institutions:z.string().max(20000),services:z.string().max(20000)}).safeParse({id:text(f,'id'),name:text(f,'name'),description:text(f,'description'),villages:text(f,'villages'),institutions:text(f,'institutions'),services:text(f,'services')});
+ const published=f.get('published')==='on',verified=f.get('verified')==='on';
+ const source=text(f,'source_url'),imageUrl=text(f,'image_url'),imageSourceUrl=text(f,'image_source_url');
+ const parsed=z.object({
+   id:z.string().uuid(),name:z.string().min(1).max(180),description:z.string().max(20000),villages:z.string().max(20000),institutions:z.string().max(20000),services:z.string().max(20000),image_credit:z.string().max(300),image_license:z.string().max(120)
+ }).safeParse({id:text(f,'id'),name:text(f,'name'),description:text(f,'description'),villages:text(f,'villages'),institutions:text(f,'institutions'),services:text(f,'services'),image_credit:text(f,'image_credit'),image_license:text(f,'image_license')});
  if(!parsed.success)return {error:'নাম অথবা তথ্যের দৈর্ঘ্য সঠিক নয়।'};
- if(source&&!/^https:\/\//.test(source))return {error:'তথ্যসূত্রে পূর্ণ https:// লিংক দিন।'};
- if(source){try{new URL(source);}catch{return {error:'তথ্যসূত্রের লিংক সঠিক নয়।'};}}
+ for(const [label,url] of [['তথ্যসূত্র',source],['ছবির URL',imageUrl],['ছবির উৎস',imageSourceUrl]] as const){
+   if(url){try{const u=new URL(url);if(u.protocol!=='https:')return {error:`${label} অবশ্যই https:// হতে হবে।`};}catch{return {error:`${label} সঠিক নয়।`};}}
+ }
  if(published&&(!verified||!source||!parsed.data.description))return {error:'প্রকাশের আগে পরিচিতি, তথ্যসূত্র এবং যাচাইয়ের নিশ্চয়তা দিন।'};
  const {id,...details}=parsed.data;
- const {data,error}=await db.from('cumilla_areas').update({...details,source_url:source||null,verified_at:verified?new Date().toISOString():null,published}).eq('id',id).eq('updated_at',text(f,'version')).select('id').maybeSingle();
+ const {data,error}=await db.from('cumilla_areas').update({...details,source_url:source||null,image_url:imageUrl||null,image_source_url:imageSourceUrl||null,verified_at:verified?new Date().toISOString():null,published}).eq('id',id).eq('updated_at',text(f,'version')).select('id').maybeSingle();
  if(error||!data)return {error:'সংরক্ষণ হয়নি অথবা তথ্য অন্য কেউ পরিবর্তন করেছেন। রিফ্রেশ করে চেষ্টা করুন।'};
  revalidatePath('/','layout');redirect('/admin/areas/'+id+'?saved=1');
 }
