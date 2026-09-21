@@ -2,6 +2,7 @@ import Link from 'next/link';
 import {requireStaff} from '../../lib/supabase';
 import {logout} from '../login/actions';
 import './admin.css';
+import './admin-fixes.css';
 
 export const metadata={title:'Admin',robots:{index:false,follow:false}};
 
