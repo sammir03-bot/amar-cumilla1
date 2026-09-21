@@ -1,112 +1,138 @@
 import Link from 'next/link';
 import {getPosts} from '../lib/content';
 import {PostCards} from '../components/posts';
+import styles from './home.module.css';
 
 export const dynamic = 'force-dynamic';
 
 const shortcuts = [
-  {href: '/areas', label: 'এলাকা পরিচিতি', meta: 'ইউনিয়ন ও পৌরসভা', icon: '⌁'},
-  {href: '/news', label: 'সর্বশেষ সংবাদ', meta: 'প্রকাশিত ও যাচাইকৃত', icon: '↗'},
-  {href: '/sections/event', label: 'কর্মসূচি', meta: 'তারিখ, সময় ও স্থান', icon: '◷'},
-  {href: '/sections/leader', label: 'নেতৃত্ব', meta: 'প্রকাশিত পরিচিতি', icon: '◎'},
+  {href:'/areas',label:'এলাকা পরিচিতি',meta:'ইউনিয়ন ও পৌরসভা',icon:'⌖'},
+  {href:'/news',label:'সর্বশেষ সংবাদ',meta:'প্রকাশিত কনটেন্ট',icon:'↗'},
+  {href:'/sections/event',label:'কর্মসূচি',meta:'তারিখ, সময় ও স্থান',icon:'◷'},
+  {href:'/sections/leader',label:'নেতৃত্ব',meta:'প্রকাশিত পরিচিতি',icon:'◎'},
 ];
 
-export default async function Home() {
-  const {posts} = await getPosts('news');
+export default async function Home(){
+  const {posts}=await getPosts('news');
 
-  return <>
-    <section className="home-hero" aria-labelledby="home-title">
-      <div className="hero-orbit hero-orbit-one" aria-hidden="true" />
-      <div className="hero-orbit hero-orbit-two" aria-hidden="true" />
+  return <div className={styles.page}>
+    <section className={styles.hero} aria-labelledby="home-title">
+      <div className={styles.heroGlow} aria-hidden="true"/>
 
-      <div className="hero-copy">
-        <div className="hero-kicker"><span /> কুমিল্লা–১ · দাউদকান্দি — মেঘনা</div>
-        <h1 id="home-title">এলাকার তথ্য,<br/><em>মানুষের কাছে সহজভাবে।</em></h1>
-        <p className="hero-lead">স্থানীয় পরিচিতি, যাচাইকৃত সংবাদ, কর্মসূচি ও প্রকাশিত সাংগঠনিক তথ্য—একটি পরিষ্কার, দ্রুত ও মোবাইলবান্ধব প্ল্যাটফর্মে।</p>
-        <div className="hero-actions">
-          <Link className="button button-light" href="/areas">আপনার এলাকা দেখুন <span>↗</span></Link>
-          <Link className="text-link" href="/news">সর্বশেষ সংবাদ <span>→</span></Link>
+      <div className={styles.heroCopy}>
+        <div className={styles.kicker}><span className={styles.kickerDot}/> কুমিল্লা–১ · দাউদকান্দি — মেঘনা</div>
+        <h1 id="home-title">স্থানীয় তথ্য,<span>এক জায়গায় সহজভাবে।</span></h1>
+        <p className={styles.heroLead}>এলাকা পরিচিতি, প্রকাশিত সংবাদ, কর্মসূচি ও সাংগঠনিক তথ্য—পরিষ্কার কাঠামোতে, দ্রুত খুঁজে দেখার জন্য।</p>
+
+        <div className={styles.heroActions}>
+          <Link className={styles.primaryAction} href="/areas">এলাকা দেখুন <span>↗</span></Link>
+          <Link className={styles.secondaryAction} href="/news">সর্বশেষ সংবাদ <span>→</span></Link>
         </div>
-        <div className="hero-proof">
-          <div><span className="proof-dot" /> যাচাই ছাড়া তথ্য প্রকাশ নয়</div>
-          <div>সম্পাদকের অনুমোদনের পরেই কনটেন্ট দৃশ্যমান</div>
+
+        <div className={styles.heroMeta}>
+          <span><i/> প্রকাশিত তথ্য আলাদা রাখা হয়</span>
+          <span><i/> মোবাইল ও ডেস্কটপে দ্রুত ব্যবহার</span>
         </div>
       </div>
 
-      <aside className="hero-dashboard" aria-label="দ্রুত প্রবেশ">
-        <div className="dashboard-topline">
-          <span>দ্রুত প্রবেশ</span>
-          <span className="live-pill"><i /> তথ্যকেন্দ্র</span>
+      <aside className={styles.controlCard} aria-label="দ্রুত প্রবেশ">
+        <div className={styles.controlTop}>
+          <div className={styles.controlTitle}><strong>দ্রুত প্রবেশ</strong><small>প্রধান বিভাগগুলো এক নজরে</small></div>
+          <span className={styles.live}><i/> তথ্যকেন্দ্র</span>
         </div>
-        <div className="dashboard-metrics">
-          <div className="metric-card"><strong>০২</strong><span>উপজেলা</span></div>
-          <div className="metric-card"><strong>২৪</strong><span>প্রস্তুত এলাকা রেকর্ড</span></div>
+
+        <div className={styles.controlGrid}>
+          <div className={styles.metric}><strong>০২</strong><span>উপজেলা</span></div>
+          <div className={styles.metric}><strong>২৪</strong><span>এলাকার রেকর্ড</span></div>
         </div>
-        <div className="shortcut-list">
-          {shortcuts.map((item, index) => <Link href={item.href} className="shortcut-row" key={item.href}>
-            <span className="shortcut-index">{String(index + 1).padStart(2, '0')}</span>
-            <span className="shortcut-copy"><strong>{item.label}</strong><small>{item.meta}</small></span>
-            <span className="shortcut-icon" aria-hidden="true">{item.icon}</span>
+
+        <div className={styles.quickList}>
+          {shortcuts.map(item=><Link className={styles.quick} href={item.href} key={item.href}>
+            <span className={styles.quickIcon} aria-hidden="true">{item.icon}</span>
+            <span className={styles.quickCopy}><strong>{item.label}</strong><small>{item.meta}</small></span>
+            <span className={styles.quickArrow} aria-hidden="true">→</span>
           </Link>)}
         </div>
       </aside>
     </section>
 
-    <section className="home-ribbon" aria-label="ওয়েবসাইটের প্রধান বিভাগ">
-      <span>দাউদকান্দি</span><i />
-      <span>মেঘনা</span><i />
-      <span>সংবাদ</span><i />
-      <span>কর্মসূচি</span><i />
-      <span>প্রকাশনা</span>
-    </section>
+    <nav className={styles.signalBar} aria-label="প্রধান বিভাগ">
+      <Link href="/areas?upazila=daudkandi"><i/>দাউদকান্দি</Link>
+      <Link href="/areas?upazila=meghna"><i/>মেঘনা</Link>
+      <Link href="/news"><i/>সংবাদ</Link>
+      <Link href="/sections/event"><i/>কর্মসূচি</Link>
+      <Link href="/sections/document"><i/>প্রকাশনা</Link>
+    </nav>
 
-    <section className="home-section">
-      <div className="section-heading premium-heading">
-        <div>
-          <p className="eyebrow">এলাকা পরিচিতি</p>
-          <h2>দুই উপজেলা, এক তথ্যকেন্দ্র</h2>
-          <p>প্রকাশিত ও যাচাইকৃত এলাকার তথ্য দ্রুত খুঁজে দেখুন। প্রতিটি এলাকার জন্য আলাদা পরিচিতি পৃষ্ঠা রাখা হয়েছে।</p>
+    <section className={styles.section}>
+      <div className={styles.sectionHead}>
+        <div className={styles.sectionHeadCopy}>
+          <p className={styles.eyebrow}>এলাকা পরিচিতি</p>
+          <h2>দুই উপজেলার তথ্য দ্রুত খুঁজে দেখুন</h2>
+          <p>ইউনিয়ন, পৌরসভা, স্থানীয় প্রতিষ্ঠান ও সেবাসংক্রান্ত প্রকাশিত তথ্য উপজেলা অনুযায়ী সাজানো।</p>
         </div>
-        <Link className="section-link" href="/areas">সব এলাকা <span>↗</span></Link>
+        <Link className={styles.sectionLink} href="/areas">সব এলাকা <span>↗</span></Link>
       </div>
 
-      <div className="area-showcase">
-        <Link className="area-premium-card" href="/areas?upazila=daudkandi">
-          <div className="area-number">01</div>
-          <div className="area-card-content"><span className="eyebrow">উপজেলা</span><h3>দাউদকান্দি</h3><p>ইউনিয়ন ও পৌরসভার প্রকাশিত পরিচিতি, প্রতিষ্ঠান, সেবা ও স্থানীয় তথ্য।</p></div>
-          <div className="area-arrow" aria-hidden="true">↗</div>
+      <div className={styles.bento}>
+        <Link className={styles.areaCard} href="/areas?upazila=daudkandi">
+          <div className={styles.areaTop}><span className={styles.areaNumber}>01 / DAUDKANDI</span><span className={styles.areaArrow}>↗</span></div>
+          <div className={styles.areaContent}>
+            <span className={styles.areaLabel}>উপজেলা</span>
+            <h3>দাউদকান্দি</h3>
+            <p>ইউনিয়ন ও পৌরসভার পরিচিতি, গুরুত্বপূর্ণ প্রতিষ্ঠান, সেবা এবং প্রকাশিত স্থানীয় তথ্য।</p>
+            <div className={styles.areaMeta}><span>ইউনিয়ন</span><span>পৌরসভা</span><span>স্থানীয় তথ্য</span></div>
+          </div>
         </Link>
-        <Link className="area-premium-card" href="/areas?upazila=meghna">
-          <div className="area-number">02</div>
-          <div className="area-card-content"><span className="eyebrow">উপজেলা</span><h3>মেঘনা</h3><p>ইউনিয়নভিত্তিক প্রকাশিত পরিচিতি, প্রতিষ্ঠান, সেবা ও স্থানীয় তথ্য।</p></div>
-          <div className="area-arrow" aria-hidden="true">↗</div>
+
+        <Link className={styles.featureCard} href="/areas?upazila=meghna">
+          <div><span className={styles.areaLabel}>উপজেলা</span><h3>মেঘনা</h3><p>ইউনিয়নভিত্তিক পরিচিতি, স্থানীয় প্রতিষ্ঠান, সেবা ও অন্যান্য প্রকাশিত তথ্য।</p></div>
+          <span className={styles.featureIcon}>↗</span>
+        </Link>
+
+        <Link className={styles.featureCard} href="/sections/event">
+          <div><span className={styles.areaLabel}>সময়ভিত্তিক তথ্য</span><h3>কর্মসূচি</h3><p>প্রকাশিত কর্মসূচির তারিখ, সময় এবং স্থান এক জায়গায় দেখুন।</p></div>
+          <span className={styles.featureIcon}>◷</span>
         </Link>
       </div>
     </section>
 
-    <section className="home-section news-zone">
-      <div className="section-heading premium-heading">
-        <div>
-          <p className="eyebrow">সংবাদ ও কার্যক্রম</p>
-          <h2>সর্বশেষ প্রকাশিত সংবাদ</h2>
-          <p>শুধু প্রকাশিত কনটেন্ট এখানে দেখানো হয়। নতুন কিছু প্রকাশ না হলে বানানো বা নমুনা সংবাদ দেখানো হবে না।</p>
+    <section className={styles.section}>
+      <div className={styles.newsPanel}>
+        <div className={styles.sectionHead}>
+          <div className={styles.sectionHeadCopy}>
+            <p className={styles.eyebrow}>সর্বশেষ আপডেট</p>
+            <h2>প্রকাশিত সংবাদ</h2>
+            <p>শুধু বাস্তবে প্রকাশিত কনটেন্ট এখানে দেখানো হয়। নতুন কিছু না থাকলে নমুনা বা বানানো সংবাদ দেখানো হবে না।</p>
+          </div>
+          <Link className={styles.sectionLink} href="/news">সংবাদ বিভাগ <span>→</span></Link>
         </div>
-        <Link className="section-link" href="/news">সংবাদ বিভাগ <span>→</span></Link>
+        <PostCards posts={posts.slice(0,3)}/>
       </div>
-      <PostCards posts={posts.slice(0, 3)} />
     </section>
 
-    <section className="home-section trust-zone">
-      <div className="trust-intro">
-        <p className="eyebrow">তথ্যের মান</p>
-        <h2>বিশ্বাসযোগ্যতার জন্য<br/>তিনটি স্পষ্ট নিয়ম</h2>
-        <p>প্রস্তুতিমূলক অবস্থায়ও তথ্য প্রকাশের আগে উৎস, সম্পাদনা ও প্রকাশ-অবস্থা আলাদাভাবে নিয়ন্ত্রিত রাখা হয়েছে।</p>
+    <section className={`${styles.section} ${styles.trust}`}>
+      <div className={styles.trustCopy}>
+        <p className={styles.eyebrow}>তথ্য প্রকাশের ধাপ</p>
+        <h2>পরিষ্কার প্রক্রিয়া,<br/>সহজ যাচাই</h2>
+        <p>তথ্য তৈরির সময় খসড়া, যাচাই এবং প্রকাশ—এই ধাপগুলো আলাদা রাখা হয়েছে যাতে জনসমক্ষে দেখানো তথ্যের অবস্থা বোঝা সহজ হয়।</p>
       </div>
-      <div className="trust-list">
-        <div className="trust-item"><span>01</span><div><h3>উৎস</h3><p>এলাকার রেকর্ডে উৎস ও যাচাইয়ের অবস্থা সংরক্ষণ করা যায়।</p></div></div>
-        <div className="trust-item"><span>02</span><div><h3>সম্পাদনা</h3><p>ড্রাফট ও প্রকাশিত কনটেন্ট আলাদা রাখা হয়; অনুমোদন ছাড়া জনসমক্ষে আসে না।</p></div></div>
-        <div className="trust-item"><span>03</span><div><h3>স্বচ্ছতা</h3><p>এটি সরকারি সেবার ওয়েবসাইট নয়—পরিচয় ও প্রস্তুতিমূলক অবস্থা স্পষ্টভাবে দেখানো হয়।</p></div></div>
+
+      <div className={styles.trustSteps}>
+        <div className={styles.trustStep}><span className={styles.stepNo}>01</span><div><h3>তথ্য সংগ্রহ</h3><p>এলাকা বা প্রকাশনার তথ্য আলাদা রেকর্ডে সংরক্ষণ করা হয়।</p></div></div>
+        <div className={styles.trustStep}><span className={styles.stepNo}>02</span><div><h3>যাচাই ও সম্পাদনা</h3><p>প্রকাশের আগে তথ্য সম্পাদনা, উৎস এবং প্রয়োজনীয় যাচাই দেখা যায়।</p></div></div>
+        <div className={styles.trustStep}><span className={styles.stepNo}>03</span><div><h3>প্রকাশ</h3><p>অনুমোদিত অবস্থায় থাকা কনটেন্টই মূল ওয়েবসাইটে দৃশ্যমান হয়।</p></div></div>
       </div>
     </section>
-  </>;
+
+    <section className={styles.section}>
+      <div className={styles.finalCard}>
+        <div><h2>যে তথ্য দরকার, সেখান থেকেই শুরু করুন</h2><p>এলাকা, সংবাদ, কর্মসূচি ও প্রকাশনা—প্রধান বিভাগগুলো সরাসরি খুলুন।</p></div>
+        <div className={styles.finalActions}>
+          <Link className={styles.primaryAction} href="/areas">এলাকা দেখুন</Link>
+          <Link className={styles.secondaryAction} href="/news">সংবাদ দেখুন</Link>
+        </div>
+      </div>
+    </section>
+  </div>;
 }
