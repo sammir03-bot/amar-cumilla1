@@ -1,0 +1,3 @@
+import {redirect} from 'next/navigation';
+import {requireStaff} from '../../../lib/supabase';
+export default async function Audit(){const {db,role}=await requireStaff();if(role!=='admin')redirect('/admin');const {data,error}=await db.from('cumilla_audit').select('*').order('happened_at',{ascending:false}).limit(100);if(error)throw error;return <><h1>পরিবর্তনের ইতিহাস</h1><p>সর্বশেষ ১০০টি সংরক্ষণের রেকর্ড।</p><div className="stack">{data?.map(a=><article className="card" key={a.id}><strong>{a.entity} · {a.action}</strong><p>{new Date(a.happened_at).toLocaleString('bn-BD',{timeZone:'Asia/Dhaka'})}</p><small>রেকর্ড: {a.record_id}<br/>সম্পাদক: {a.actor_id}</small></article>)}</div></>;}

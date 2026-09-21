@@ -1,0 +1,4 @@
+import Link from 'next/link';
+import {requireStaff} from '../../../lib/supabase';
+import {kinds} from '../../../lib/content';
+export default async function Content({searchParams}:{searchParams:Promise<{page?:string}>}){const {db}=await requireStaff();const page=Math.max(1,Number((await searchParams).page)||1);const {data,error,count}=await db.from('cumilla_posts').select('id,title,kind,status',{count:'exact'}).order('created_at',{ascending:false}).range((page-1)*30,page*30-1);if(error)throw error;return <><h1>সব প্রকাশনা</h1><Link className="button" href="/admin/content/new">নতুন প্রকাশনা</Link><div className="stack">{data?.map(p=><Link className="card" key={p.id} href={'/admin/content/'+p.id}><strong>{p.title}</strong><p>{kinds[p.kind]} · {p.status}</p></Link>)}{!data?.length&&<p>এখনো কোনো প্রকাশনা নেই।</p>}</div><nav>{page>1&&<Link href={'?page='+(page-1)}>আগের পাতা</Link>}{page*30<(count??0)&&<Link href={'?page='+(page+1)}>পরের পাতা</Link>}</nav></>;}
