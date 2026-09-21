@@ -43,12 +43,20 @@ export default async function Editor({params,searchParams}:{params:Promise<{id:s
       </div>
 
       <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৩. এলাকা</h2><p>এই কনটেন্ট কোন কোন এলাকার সাথে সম্পর্কিত তা নির্বাচন করুন।</p></div></div>
+        <div className="admin-form-section-head"><div><h2>৩. তথ্যসূত্র</h2><p>সংবাদ, Facebook পোস্ট বা অফিসিয়াল উৎস থাকলে এখানে দিন। এতে প্রকাশিত তথ্য যাচাই করা সহজ হবে।</p></div></div>
+        <div className="admin-form-grid">
+          <label>উৎসের নাম<input name="source_name" maxLength={180} defaultValue={p?.source_name??''} placeholder="যেমন: বাসস / প্রথম আলো / অফিসিয়াল Facebook"/></label>
+          <label>উৎসের লিংক<input type="url" name="source_url" maxLength={2000} defaultValue={p?.source_url??''} placeholder="https://..."/><span className="admin-help">পূর্ণ https:// লিংক দিন।</span></label>
+        </div>
+      </div>
+
+      <div className="admin-form-section">
+        <div className="admin-form-section-head"><div><h2>৪. এলাকা</h2><p>এই কনটেন্ট কোন কোন এলাকার সাথে সম্পর্কিত তা নির্বাচন করুন।</p></div></div>
         <fieldset><legend>সংশ্লিষ্ট এলাকা</legend><div className="admin-check-grid">{areas.data?.map(a=>{const key=a.upazila+'/'+a.slug;return <label key={key}><input type="checkbox" name="area_keys" value={key} defaultChecked={p?.area_keys?.includes(key)}/>{a.name}</label>;})}</div></fieldset>
       </div>
 
       <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৪. কর্মসূচির তথ্য</h2><p>কেবল কর্মসূচির ক্ষেত্রে সময় ও স্থান দিন; অন্য কনটেন্টে ফাঁকা রাখুন।</p></div></div>
+        <div className="admin-form-section-head"><div><h2>৫. কর্মসূচির তথ্য</h2><p>কেবল কর্মসূচির ক্ষেত্রে সময় ও স্থান দিন; অন্য কনটেন্টে ফাঁকা রাখুন।</p></div></div>
         <div className="admin-form-grid">
           <label>তারিখ ও সময়<input type="datetime-local" name="event_at" defaultValue={p?.event_at?new Date(new Date(p.event_at).valueOf()+21600000).toISOString().slice(0,16):''}/><span className="admin-help">বাংলাদেশ সময়</span></label>
           <label>স্থান<input name="venue" maxLength={500} defaultValue={p?.venue} placeholder="স্থান বা ঠিকানা"/></label>
@@ -56,7 +64,7 @@ export default async function Editor({params,searchParams}:{params:Promise<{id:s
       </div>
 
       <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৫. ছবি ও PDF</h2><p>আগে Media বিভাগে আলাদা করে আপলোড করতে হবে না। এখান থেকেই ছবি নির্বাচন করুন।</p></div><Link className="admin-btn" href="/admin/media" target="_blank">মিডিয়া লাইব্রেরি ↗</Link></div>
+        <div className="admin-form-section-head"><div><h2>৬. ছবি ও PDF</h2><p>এখান থেকেই ছবি নির্বাচন করুন। প্রকাশিত পোস্টে প্রথম ছবিটি কভার হিসেবে দেখানো হবে।</p></div><Link className="admin-btn" href="/admin/media" target="_blank">মিডিয়া লাইব্রেরি ↗</Link></div>
         <MediaPicker existing={p?.media_paths??[]}/>
       </div>
     </ActionForm>
