@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import Link from 'next/link';
 import {bnDate,getAreas,getPosts,mediaUrl,type Post} from '../lib/content';
 import styles from './home-modern.module.css';
+import hero from './home-hero-premium.module.css';
 
 const siteUrl='https://amar-cumilla1.vercel.app';
 const title='আমার কুমিল্লা এক | কুমিল্লা-১, দাউদকান্দি ও মেঘনা';
@@ -57,10 +58,10 @@ export default async function Home(){
   return <div className={styles.page}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(websiteJsonLd)}}/>
 
-    <section className={styles.photoWall} aria-label="কুমিল্লা-১ এলাকার জনজীবন ও কার্যক্রম">
-      <div className={`${styles.photoTile} ${styles.photoLead}`}>
+    <section className={`${styles.photoWall} ${hero.photoWall}`} aria-label="কুমিল্লা-১ এলাকার জনজীবন ও কার্যক্রম">
+      <div className={`${styles.photoTile} ${styles.photoLead} ${hero.photoLead}`}>
         <img src="/home-hero-image" alt="দাউদকান্দি-মেঘনার জনজীবন ও জনসংযোগের নান্দনিক উপস্থাপনা" fetchPriority="high"/>
-        <div className={styles.heroCaption}>
+        <div className={hero.heroCaption}>
           <small>কুমিল্লা–১ · দাউদকান্দি — মেঘনা</small>
           <strong>মানুষের কাছে,<br/>এলাকার পাশে</strong>
           <span>সংবাদ · জনসেবা · নেতৃত্ব · স্থানীয় তথ্য</span>
