@@ -36,7 +36,6 @@ export default async function Home(){
   const items=await Promise.all(news.slice(0,6).map(async post=>({post,image:await postImage(post)})));
   const latest=items.slice(0,3);
   const imageItems=items.filter(item=>item.image);
-  const collageA=imageItems[0]?.image??'/home-hero-image';
   const collageB=imageItems[1]?.image??'/home-hero-image';
   const collageC=imageItems[2]?.image??'/home-hero-image';
   const featuredAreas=['municipality','gouripur','manikarchar','govindapur'].map(slug=>areas.find(area=>area.slug===slug)).filter(Boolean);
@@ -49,7 +48,7 @@ export default async function Home(){
 
       <div className={styles.heroCollage} aria-label="কুমিল্লা-১ এলাকার মানুষের সঙ্গে স্থানীয় কার্যক্রম">
         <figure className={`${styles.heroPhoto} ${styles.heroPhotoMain}`}><img src="/home-hero-image" alt="কুমিল্লা-১ এলাকার মানুষের সঙ্গে স্থানীয় কার্যক্রম" fetchPriority="high"/></figure>
-        <figure className={`${styles.heroPhoto} ${styles.heroPhotoSmall}`}><img src={collageA} alt=""/></figure>
+        <figure className={`${styles.heroPhoto} ${styles.heroPhotoSmall}`}><img src="/bridge-sunset.webp" alt="দাউদকান্দির নদী ও সেতুর সূর্যাস্তের দৃশ্য"/></figure>
       </div>
     </section>
 
@@ -58,7 +57,7 @@ export default async function Home(){
       <div className={styles.statementGallery}>
         <figure className={styles.floatOne}><img src={collageB} alt=""/></figure>
         <figure className={styles.floatTwo}><img src={collageC} alt=""/></figure>
-        <figure className={styles.floatThree}><img src="/home-hero-image" alt=""/></figure>
+        <figure className={styles.floatThree}><img src="/bridge-sunset.webp" alt="দাউদকান্দির নদী ও সেতুর সূর্যাস্তের দৃশ্য"/></figure>
       </div>
     </section>
 
