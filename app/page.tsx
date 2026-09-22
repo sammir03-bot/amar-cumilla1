@@ -23,11 +23,10 @@ async function postImage(post:Post){
   return raw?await mediaUrl(raw):null;
 }
 
-const actionHighlights=[
-  {icon:'01',label:'জনসেবা',title:'মেঘনা উপজেলায় সাঁকো নির্মাণ উদ্যোগ',href:'/posts/meghna-jamaat-bamboo-bridge-apr-2025'},
-  {icon:'02',label:'শিক্ষা',title:'দাউদকান্দিতে কৃতী শিক্ষার্থীদের সংবর্ধনা',href:'/posts/daudkandi-student-reception-jul-2025'},
-  {icon:'03',label:'স্থানীয় উদ্যোগ',title:'মারুকায় যুব বিভাগের সড়ক সংস্কার কার্যক্রম',href:'/posts/maruka-jamaat-road-repair-oct-2025'},
-  {icon:'04',label:'সামাজিক সম্প্রীতি',title:'দাউদকান্দির বিভিন্ন পূজামণ্ডপ পরিদর্শন',href:'/posts/daudkandi-jamaat-puja-visit-oct-2025'},
+const actionLinks=[
+  {label:'কর্মসূচি',title:'চলমান ও আসন্ন কর্মসূচির তথ্য দেখুন',href:'/sections/event'},
+  {label:'সংবাদ',title:'দাউদকান্দি ও মেঘনার সর্বশেষ প্রকাশিত খবর',href:'/news'},
+  {label:'এলাকা',title:'ইউনিয়ন ও পৌরসভাভিত্তিক তথ্যভান্ডার',href:'/areas'},
 ] as const;
 
 export default async function Home(){
@@ -37,10 +36,10 @@ export default async function Home(){
     getAreas(),
   ]);
 
-  const newsForHome=news.slice(0,5);
-  const newsWithImages=await Promise.all(newsForHome.map(async post=>({post,image:await postImage(post)})));
-  const featured=newsWithImages[0]??null;
-  const compact=newsWithImages.slice(1,5);
+  const newsWithImages=await Promise.all(news.slice(0,6).map(async post=>({post,image:await postImage(post)})));
+  const heroNews=newsWithImages.slice(0,4);
+  const latest=newsWithImages.slice(0,3);
+  const actionFeature=newsWithImages.find(item=>item.image)??newsWithImages[0]??null;
   const featuredAreas=['municipality','gouripur','manikarchar','govindapur']
     .map(slug=>areas.find(area=>area.slug===slug))
     .filter(Boolean);
@@ -58,105 +57,107 @@ export default async function Home(){
   return <div className={styles.page}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(websiteJsonLd)}}/>
 
-    <section className={styles.hero}>
-      <div className={styles.heroCopy}>
-        <div className={styles.kicker}><i/>বাংলাদেশ জামায়াতে ইসলামী · কুমিল্লা-১</div>
-        <h1>দাউদকান্দি ও মেঘনার <span>খবর, মানুষ ও কার্যক্রম</span></h1>
-        <p className={styles.heroLead}>প্রকাশিত সংবাদ, স্থানীয় নেতৃত্ব, জনসেবামূলক উদ্যোগ, ইউনিয়নভিত্তিক তথ্য ও গুরুত্বপূর্ণ নথি—একটি পরিচ্ছন্ন ও আধুনিক স্থানীয় তথ্যকেন্দ্রে।</p>
-        <div className={styles.heroActions}>
-          <Link className={styles.primary} href="/news">সর্বশেষ সংবাদ <span>→</span></Link>
-          <Link className={styles.secondary} href="/areas">এলাকা দেখুন</Link>
-        </div>
-      </div>
-      <div className={styles.heroMedia}>
-        <img src="/home-hero.svg" alt="দাউদকান্দিতে স্থানীয় কার্যক্রমের দৃশ্য"/>
-        <div className={styles.photoNote}>
-          <div><small>কুমিল্লা-১ · মাঠের কার্যক্রম</small><strong>স্থানীয় মানুষের সঙ্গে সরাসরি যোগাযোগ</strong></div>
-          <Link href="/news" aria-label="সংবাদ দেখুন">↗</Link>
+    <section className={styles.photoWall} aria-label="কুমিল্লা-১ মাঠের কার্যক্রম">
+      <div className={`${styles.photoTile} ${styles.photoLead}`}><img src="/home-hero.svg" alt="দাউদকান্দিতে স্থানীয় কার্যক্রম"/></div>
+      {heroNews.slice(0,3).map(({post,image},index)=><Link className={`${styles.photoTile} ${styles['photo'+(index+2)]}`} href={`/posts/${post.slug}`} key={post.id}>
+        {image?<img src={image} alt=""/>:<span className={styles.photoFallback}>কুমিল্লা–১</span>}
+        <i/>
+      </Link>)}
+    </section>
+
+    <section className={styles.identity}>
+      <div className={styles.identityMark}>আমরা</div>
+      <div className={styles.identityBody}>
+        <h1>কুমিল্লা–১</h1>
+        <p>দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, স্থানীয় নেতৃত্ব, জনসেবামূলক উদ্যোগ, ইউনিয়নভিত্তিক তথ্য এবং গুরুত্বপূর্ণ নথি—এক জায়গায়।</p>
+        <div className={styles.identityActions}>
+          <Link href="/news">সর্বশেষ সংবাদ</Link>
+          <Link href="/areas">এলাকা পরিচিতি</Link>
         </div>
       </div>
     </section>
 
-    <div className={styles.pulse}>
-      <div className={styles.pulseStat}><strong>{newsCount.toLocaleString('bn-BD')}</strong><span>প্রকাশিত<br/>সংবাদ</span></div>
-      <div className={styles.pulseStat}><strong>{leaderCount.toLocaleString('bn-BD')}</strong><span>নেতৃত্ব<br/>পরিচিতি</span></div>
-      <div className={styles.pulseStat}><strong>{areas.length.toLocaleString('bn-BD')}</strong><span>ইউনিয়ন ও<br/>পৌরসভা রেকর্ড</span></div>
-      <Link className={styles.pulseLink} href="/sections/gallery">গ্যালারি দেখুন <span>→</span></Link>
-    </div>
-
-    <section className={styles.section}>
-      <div className={styles.sectionHead}>
-        <div><small>সর্বশেষ আপডেট</small><h2>এখন যা ঘটছে</h2><p>দাউদকান্দি, মেঘনা ও কুমিল্লা-১ সম্পর্কিত সাম্প্রতিক প্রকাশিত সংবাদ ও কার্যক্রম।</p></div>
-        <Link href="/news">সব সংবাদ →</Link>
+    <section className={styles.actionSection}>
+      <div className={styles.actionHeader}>
+        <div><span>স্থানীয়ভাবে যুক্ত থাকুন</span><h2>কার্যক্রম দেখুন</h2></div>
+        <p>প্রকাশিত কর্মসূচি, জনসেবা, শিক্ষা, সামাজিক উদ্যোগ ও সাংগঠনিক আপডেট থেকে প্রয়োজনীয় অংশ দ্রুত খুলুন।</p>
       </div>
 
-      {featured&&<div className={styles.newsLayout}>
-        <Link className={styles.featureNews} href={`/posts/${featured.post.slug}`}>
-          {featured.image&&<img src={featured.image} alt=""/>}
-          <div className={styles.featureContent}>
-            <small>{featured.post.published_at?bnDate(featured.post.published_at):'সর্বশেষ সংবাদ'}</small>
-            <h3>{featured.post.title}</h3>
-            <p>{featured.post.body.slice(0,170)}{featured.post.body.length>170?'…':''}</p>
-            <b>বিস্তারিত পড়ুন →</b>
+      <div className={styles.actionLayout}>
+        {actionFeature&&<Link className={styles.actionFeature} href={`/posts/${actionFeature.post.slug}`}>
+          {actionFeature.image&&<img src={actionFeature.image} alt=""/>}
+          <div className={styles.actionFeatureShade}/>
+          <div className={styles.actionFeatureCopy}>
+            <span>সাম্প্রতিক কার্যক্রম</span>
+            <h3>{actionFeature.post.title}</h3>
+            <b>বিস্তারিত দেখুন ↗</b>
           </div>
-        </Link>
-        <div className={styles.newsList}>
-          {compact.map(({post,image})=><Link className={styles.newsCard} href={`/posts/${post.slug}`} key={post.id}>
-            <div className={styles.newsThumb}>{image&&<img src={image} alt="" loading="lazy"/>}</div>
-            <div className={styles.newsBody}>
-              <small>{post.published_at?bnDate(post.published_at):'সংবাদ'}</small>
-              <h3>{post.title}</h3>
-              <span>পড়ুন →</span>
-            </div>
+        </Link>}
+        <div className={styles.actionCards}>
+          {actionLinks.map(item=><Link href={item.href} className={styles.actionCard} key={item.href}>
+            <span>{item.label}</span><h3>{item.title}</h3><b>→</b>
           </Link>)}
         </div>
-      </div>}
+      </div>
     </section>
 
-    <section className={styles.actionBand}>
-      <div className={styles.actionTop}>
-        <div><small>স্থানীয় কার্যক্রম</small><h2>মানুষের পাশে,<br/>এলাকার ভেতরে</h2></div>
-        <p>জনসেবা, শিক্ষা, অবকাঠামো ও সামাজিক সম্প্রীতি—প্রকাশিত সূত্রে পাওয়া স্থানীয় উদ্যোগগুলো আলাদাভাবে সাজানো হয়েছে।</p>
+    <section className={styles.latestSection}>
+      <div className={styles.sectionTitle}>
+        <div><span>সর্বশেষ</span><h2>সংবাদ ও আপডেট</h2></div>
+        <Link href="/news">সব সংবাদ দেখুন →</Link>
       </div>
-      <div className={styles.actionGrid}>
-        {actionHighlights.map(item=><Link className={styles.actionCard} href={item.href} key={item.href}>
-          <span>{item.icon}</span><small>{item.label}</small><h3>{item.title}</h3><b>বিস্তারিত →</b>
+      <div className={styles.latestGrid}>
+        {latest.map(({post,image})=><Link className={styles.latestCard} href={`/posts/${post.slug}`} key={post.id}>
+          <div className={styles.latestImage}>{image?<img src={image} alt=""/>:<span>কুমিল্লা–১</span>}</div>
+          <div className={styles.latestCopy}>
+            <small>{post.published_at?bnDate(post.published_at):'সংবাদ'}</small>
+            <h3>{post.title}</h3>
+            <p>{post.body.slice(0,130)}{post.body.length>130?'…':''}</p>
+            <b>পড়ুন →</b>
+          </div>
         </Link>)}
       </div>
     </section>
 
-    <section className={`${styles.section} ${styles.leaders}`}>
-      <div className={styles.leadersIntro}>
-        <small>নেতৃত্ব পরিচিতি</small>
-        <h2>যাদের দায়িত্বে স্থানীয় সংগঠন</h2>
-        <p>প্রকাশিত সংবাদ ও উন্মুক্ত সূত্রে উল্লেখিত দায়িত্বের ভিত্তিতে তৈরি পরিচিতি। যেসব ব্যক্তির নির্ভরযোগ্য আলাদা ছবি নেই, সেখানে ভুল ছবি ব্যবহার করা হচ্ছে না।</p>
+    <section className={styles.statsBand}>
+      <div><strong>{newsCount.toLocaleString('bn-BD')}</strong><span>প্রকাশিত সংবাদ</span></div>
+      <div><strong>{leaderCount.toLocaleString('bn-BD')}</strong><span>নেতৃত্ব পরিচিতি</span></div>
+      <div><strong>{areas.length.toLocaleString('bn-BD')}</strong><span>এলাকার রেকর্ড</span></div>
+      <Link href="/sections/gallery">গ্যালারি <b>↗</b></Link>
+    </section>
+
+    <section className={styles.peopleSection}>
+      <div className={styles.peopleIntro}>
+        <span>নেতৃত্ব</span>
+        <h2>স্থানীয় দায়িত্বশীলদের পরিচিতি</h2>
+        <p>প্রকাশিত সংবাদ ও উন্মুক্ত সূত্রে উল্লেখিত দায়িত্বের ভিত্তিতে পরিচিতি সাজানো হয়েছে। ভুল বা অমিল ছবি দেখানো হয় না।</p>
         <Link href="/sections/leader">সব নেতৃত্ব দেখুন →</Link>
       </div>
-      <div className={styles.leaderList}>
-        {leaders.slice(0,5).map((leader,index)=><Link className={styles.leaderRow} href={`/posts/${leader.slug}`} key={leader.id}>
-          <span className={styles.leaderIndex}>{String(index+1).padStart(2,'0')}</span>
-          <div><h3>{leader.title}</h3><p>{leader.body.slice(0,115)}{leader.body.length>115?'…':''}</p></div>
+      <div className={styles.peopleList}>
+        {leaders.slice(0,6).map((leader,index)=><Link href={`/posts/${leader.slug}`} className={styles.personRow} key={leader.id}>
+          <span>{String(index+1).padStart(2,'0')}</span>
+          <div><h3>{leader.title}</h3><p>{leader.body.slice(0,100)}{leader.body.length>100?'…':''}</p></div>
           <b>↗</b>
         </Link>)}
       </div>
     </section>
 
-    <section className={styles.section}>
-      <div className={styles.sectionHead}>
-        <div><small>কুমিল্লা-১</small><h2>এলাকাকে কাছ থেকে জানুন</h2><p>ইউনিয়ন ও পৌরসভাভিত্তিক পরিচিতি, শিক্ষা প্রতিষ্ঠান, গুরুত্বপূর্ণ স্থান, জনসেবা ও স্থানীয় আপডেট।</p></div>
+    <section className={styles.areaSection}>
+      <div className={styles.sectionTitle}>
+        <div><span>দাউদকান্দি — মেঘনা</span><h2>এলাকাকে জানুন</h2></div>
         <Link href="/areas">সব এলাকা →</Link>
       </div>
-      <div className={styles.areaStrip}>
+      <div className={styles.areaGrid}>
         {featuredAreas.map(area=>area&&<Link className={styles.areaCard} href={`/areas/${area.upazila}/${area.slug}`} key={area.id}>
-          {area.image_url&&<img src={area.image_url} alt={`${area.name} এলাকার দৃশ্য`} loading="lazy"/>}
-          <div className={styles.areaText}><small>{area.kind==='municipality'?'পৌরসভা':'ইউনিয়ন'}</small><h3>{area.name}</h3><p>{area.description.slice(0,88)}{area.description.length>88?'…':''}</p><b>এলাকার তথ্য →</b></div>
+          {area.image_url&&<img src={area.image_url} alt={`${area.name} এলাকার দৃশ্য`}/>}<i/>
+          <div><small>{area.upazila}</small><h3>{area.name}</h3><b>তথ্য দেখুন →</b></div>
         </Link>)}
       </div>
     </section>
 
-    <section className={styles.finalCta}>
-      <div><small>তথ্য নিয়মিত হালনাগাদ হচ্ছে</small><h2>এক জায়গায় সংবাদ, নেতৃত্ব ও এলাকার তথ্য</h2><p>নতুন প্রকাশিত তথ্য দেখতে সংবাদ বিভাগ বা ইউনিয়নভিত্তিক পেজ খুলুন।</p></div>
-      <div className={styles.finalActions}><Link href="/news">সংবাদ দেখুন</Link><Link href="/areas">এলাকা দেখুন</Link></div>
+    <section className={styles.joinSection}>
+      <div><span>আপডেট থাকুন</span><h2>খবর, কার্যক্রম ও এলাকার তথ্য একসাথে</h2><p>নতুন তথ্য Admin panel থেকে নিয়মিত যোগ ও সংশোধন করা যাবে।</p></div>
+      <div><Link href="/news">সংবাদ দেখুন</Link><Link href="/contact">যোগাযোগ</Link></div>
     </section>
   </div>;
 }
