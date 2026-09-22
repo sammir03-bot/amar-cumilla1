@@ -43,7 +43,7 @@ export default async function Home(){
 
   return <div className={styles.page}>
     <section className={styles.hero}>
-      <div className={styles.heroEyebrow}>আমরা</div>
+      <div className={styles.heroEyebrow}>আমার</div>
       <h1>কুমিল্লা–১</h1>
       <p className={styles.heroSub}>দাউদকান্দি ও মেঘনা</p>
 
