@@ -37,7 +37,7 @@ export default async function Home(){
   const latest=items.slice(0,3);
   const imageItems=items.filter(item=>item.image);
   const collageB=imageItems[1]?.image??'/home-hero-image';
-  const collageC='/user-march-image';
+  const collageC=imageItems[2]?.image??'/home-hero-image';
   const featuredAreas=['municipality','gouripur','manikarchar','govindapur'].map(slug=>areas.find(area=>area.slug===slug)).filter(Boolean);
 
   return <div className={styles.page}>
@@ -48,7 +48,7 @@ export default async function Home(){
 
       <div className={styles.heroCollage} aria-label="কুমিল্লা-১ এলাকার মানুষের সঙ্গে স্থানীয় কার্যক্রম">
         <figure className={`${styles.heroPhoto} ${styles.heroPhotoMain}`}><img src="/home-hero-image" alt="কুমিল্লা-১ এলাকার মানুষের সঙ্গে স্থানীয় কার্যক্রম" fetchPriority="high"/></figure>
-        <figure className={`${styles.heroPhoto} ${styles.heroPhotoSmall}`}><img src="/user-march-image" alt="দাউদকান্দিতে স্থানীয় জনসমাগম ও কার্যক্রমের দৃশ্য"/></figure>
+        <figure className={`${styles.heroPhoto} ${styles.heroPhotoSmall}`}><img src="/bridge-sunset.webp" alt="দাউদকান্দির নদী ও সেতুর সূর্যাস্তের দৃশ্য"/></figure>
       </div>
     </section>
 
@@ -56,8 +56,8 @@ export default async function Home(){
       <p>দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, স্থানীয় নেতৃত্ব, জনসেবামূলক উদ্যোগ, ইউনিয়নভিত্তিক তথ্য এবং গুরুত্বপূর্ণ নথি—সবকিছু এক জায়গায় সহজভাবে তুলে ধরা হচ্ছে।</p>
       <div className={styles.statementGallery}>
         <figure className={styles.floatOne}><img src={collageB} alt=""/></figure>
-        <figure className={styles.floatTwo}><img src={collageC} alt="দাউদকান্দিতে স্থানীয় জনসমাগম ও কার্যক্রমের দৃশ্য"/></figure>
-        <figure className={styles.floatThree}><img src="/user-march-image" alt="দাউদকান্দিতে স্থানীয় জনসমাগম ও কার্যক্রমের দৃশ্য"/></figure>
+        <figure className={styles.floatTwo}><img src={collageC} alt=""/></figure>
+        <figure className={styles.floatThree}><img src="/bridge-sunset.webp" alt="দাউদকান্দির নদী ও সেতুর সূর্যাস্তের দৃশ্য"/></figure>
       </div>
     </section>
 
