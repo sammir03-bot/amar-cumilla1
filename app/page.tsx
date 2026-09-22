@@ -11,8 +11,8 @@ export const metadata:Metadata={
   title,description,
   keywords:['কুমিল্লা-১','কুমিল্লা ১','দাউদকান্দি','মেঘনা','কুমিল্লা-১ সংবাদ','দাউদকান্দি সংবাদ','মেঘনা সংবাদ','বাংলাদেশ জামায়াতে ইসলামী কুমিল্লা-১','জামায়াত কুমিল্লা ১','Cumilla-1','Daudkandi','Meghna Upazila'],
   alternates:{canonical:siteUrl},
-  openGraph:{type:'website',locale:'bn_BD',url:siteUrl,siteName:'আমার কুমিল্লা এক',title,description,images:[{url:`${siteUrl}/logo.svg`,width:256,height:256,alt:'আমার কুমিল্লা এক'}]},
-  twitter:{card:'summary',title,description,images:[`${siteUrl}/logo.svg`]},
+  openGraph:{type:'website',locale:'bn_BD',url:siteUrl,siteName:'আমার কুমিল্লা এক',title,description,images:[{url:`${siteUrl}/home-hero-image`,width:800,height:450,alt:'দাউদকান্দি-মেঘনার জনজীবন ও জনসংযোগের নান্দনিক উপস্থাপনা'}]},
+  twitter:{card:'summary_large_image',title,description,images:[`${siteUrl}/home-hero-image`]},
 };
 
 export const dynamic='force-dynamic';
@@ -57,10 +57,17 @@ export default async function Home(){
   return <div className={styles.page}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(websiteJsonLd)}}/>
 
-    <section className={styles.photoWall} aria-label="কুমিল্লা-১ মাঠের কার্যক্রম">
-      <div className={`${styles.photoTile} ${styles.photoLead}`}><img src="/home-hero.svg" alt="দাউদকান্দিতে স্থানীয় কার্যক্রম"/></div>
-      {heroNews.slice(0,3).map(({post,image},index)=><Link className={`${styles.photoTile} ${styles['photo'+(index+2)]}`} href={`/posts/${post.slug}`} key={post.id}>
-        {image?<img src={image} alt=""/>:<span className={styles.photoFallback}>কুমিল্লা–১</span>}
+    <section className={styles.photoWall} aria-label="কুমিল্লা-১ এলাকার জনজীবন ও কার্যক্রম">
+      <div className={`${styles.photoTile} ${styles.photoLead}`}>
+        <img src="/home-hero-image" alt="দাউদকান্দি-মেঘনার জনজীবন ও জনসংযোগের নান্দনিক উপস্থাপনা" fetchPriority="high"/>
+        <div className={styles.heroCaption}>
+          <small>কুমিল্লা–১ · দাউদকান্দি — মেঘনা</small>
+          <strong>মানুষের কাছে,<br/>এলাকার পাশে</strong>
+          <span>সংবাদ · জনসেবা · নেতৃত্ব · স্থানীয় তথ্য</span>
+        </div>
+      </div>
+      {heroNews.slice(0,3).map(({post,image},index)=><Link className={`${styles.photoTile} ${styles['photo'+(index+2)]}`} href={`/posts/${post.slug}`} key={post.id} aria-label={post.title}>
+        {image?<img src={image} alt="" loading="lazy"/>:<span className={styles.photoFallback}><small>সর্বশেষ</small><b>কুমিল্লা–১</b></span>}
         <i/>
       </Link>)}
     </section>
