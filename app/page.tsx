@@ -1,9 +1,7 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
-import {getAreas,getPosts,mediaUrl} from '../lib/content';
-import {PostCards} from '../components/posts';
-import styles from './home.module.css';
-import extra from './home-sections.module.css';
+import {bnDate,getAreas,getPosts,mediaUrl,type Post} from '../lib/content';
+import styles from './home-modern.module.css';
 
 const siteUrl='https://amar-cumilla1.vercel.app';
 const title='আমার কুমিল্লা এক | কুমিল্লা-১, দাউদকান্দি ও মেঘনা';
@@ -18,69 +16,147 @@ export const metadata:Metadata={
 };
 
 export const dynamic='force-dynamic';
-function firstImage(paths:string[]){return paths.find(x=>!x.endsWith('.pdf'))??null;}
 
-const activityHighlights=[
-  {label:'জনসেবা',title:'মেঘনা উপজেলায় সাঁকো নির্মাণ উদ্যোগ',description:'প্রকাশিত প্রতিবেদনে স্থানীয় চলাচলের সুবিধায় সাঁকো নির্মাণের উদ্যোগের কথা উল্লেখ করা হয়েছে।',href:'/posts/meghna-jamaat-bamboo-bridge-apr-2025',icon:'⌁'},
-  {label:'শিক্ষা',title:'জিপিএ-৫ পাওয়া শিক্ষার্থীদের সংবর্ধনা',description:'দাউদকান্দিতে কৃতী শিক্ষার্থীদের নিয়ে আয়োজিত সংবর্ধনার প্রকাশিত তথ্য।',href:'/posts/daudkandi-student-reception-jul-2025',icon:'✦'},
-  {label:'স্থানীয় উদ্যোগ',title:'মারুকায় সড়ক সংস্কার কার্যক্রম',description:'মারুকা এলাকায় যুব বিভাগের উদ্যোগে সড়ক সংস্কারের প্রকাশিত কার্যক্রম।',href:'/posts/maruka-jamaat-road-repair-oct-2025',icon:'↗'},
-  {label:'সামাজিক সম্প্রীতি',title:'বিভিন্ন পূজামণ্ডপ পরিদর্শন',description:'দাউদকান্দির বিভিন্ন পূজামণ্ডপ পরিদর্শন নিয়ে প্রকাশিত সংবাদ ও স্থানীয় কার্যক্রম।',href:'/posts/daudkandi-jamaat-puja-visit-oct-2025',icon:'◎'},
-] as const;
+async function postImage(post:Post){
+  const attached=(post.media_paths??[]).find(path=>!path.endsWith('.pdf'));
+  const raw=attached??post.cover_url;
+  return raw?await mediaUrl(raw):null;
+}
 
-const officialChannels=[
-  {label:'অফিসিয়াল ওয়েবসাইট',meta:'বাংলাদেশ জামায়াতে ইসলামী',href:'https://www.jamaat-e-islami.org/',icon:'↗'},
-  {label:'Facebook',meta:'bji.official',href:'https://www.facebook.com/bji.official/',icon:'f'},
-  {label:'YouTube',meta:'@bjiofficial',href:'https://www.youtube.com/@bjiofficial',icon:'▶'},
-  {label:'X / Twitter',meta:'@bji_official',href:'https://x.com/bji_official',icon:'𝕏'},
+const actionHighlights=[
+  {icon:'01',label:'জনসেবা',title:'মেঘনা উপজেলায় সাঁকো নির্মাণ উদ্যোগ',href:'/posts/meghna-jamaat-bamboo-bridge-apr-2025'},
+  {icon:'02',label:'শিক্ষা',title:'দাউদকান্দিতে কৃতী শিক্ষার্থীদের সংবর্ধনা',href:'/posts/daudkandi-student-reception-jul-2025'},
+  {icon:'03',label:'স্থানীয় উদ্যোগ',title:'মারুকায় যুব বিভাগের সড়ক সংস্কার কার্যক্রম',href:'/posts/maruka-jamaat-road-repair-oct-2025'},
+  {icon:'04',label:'সামাজিক সম্প্রীতি',title:'দাউদকান্দির বিভিন্ন পূজামণ্ডপ পরিদর্শন',href:'/posts/daudkandi-jamaat-puja-visit-oct-2025'},
 ] as const;
 
 export default async function Home(){
-  const [{posts:news,count:newsCount},{posts:leaders,count:leaderCount},areas]=await Promise.all([getPosts('news'),getPosts('leader'),getAreas()]);
-  const heroArea=areas.find(a=>a.slug==='municipality')??areas.find(a=>a.image_url)??areas[0];
-  const featuredAreas=['municipality','gouripur','manikarchar','govindapur'].map(slug=>areas.find(a=>a.slug===slug)).filter(Boolean);
-  const leaderCards=await Promise.all(leaders.slice(0,5).map(async p=>{const path=firstImage(p.media_paths??[]);return {p,image:path?await mediaUrl(path):null};}));
-  const websiteJsonLd={'@context':'https://schema.org','@type':'WebSite',name:'আমার কুমিল্লা এক',alternateName:['কুমিল্লা-১','Cumilla-1'],url:siteUrl,inLanguage:'bn-BD',description};
+  const [{posts:news,count:newsCount},{posts:leaders,count:leaderCount},areas]=await Promise.all([
+    getPosts('news'),
+    getPosts('leader'),
+    getAreas(),
+  ]);
+
+  const newsForHome=news.slice(0,5);
+  const newsWithImages=await Promise.all(newsForHome.map(async post=>({post,image:await postImage(post)})));
+  const featured=newsWithImages[0]??null;
+  const compact=newsWithImages.slice(1,5);
+  const featuredAreas=['municipality','gouripur','manikarchar','govindapur']
+    .map(slug=>areas.find(area=>area.slug===slug))
+    .filter(Boolean);
+
+  const websiteJsonLd={
+    '@context':'https://schema.org',
+    '@type':'WebSite',
+    name:'আমার কুমিল্লা এক',
+    alternateName:['কুমিল্লা-১','Cumilla-1'],
+    url:siteUrl,
+    inLanguage:'bn-BD',
+    description,
+  };
 
   return <div className={styles.page}>
     <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(websiteJsonLd)}}/>
+
     <section className={styles.hero}>
-      {heroArea?.image_url&&<img className={styles.heroImage} src={heroArea.image_url} alt="দাউদকান্দি এলাকার দৃশ্য"/>}<div className={styles.heroShade}/><div className={styles.heroGrid}/>
       <div className={styles.heroCopy}>
-        <div className={styles.partyLine}><img src="/logo.svg" alt=""/><span>বাংলাদেশ জামায়াতে ইসলামী · কুমিল্লা-১</span></div>
-        <h1>দাউদকান্দি ও মেঘনার<br/><strong>তথ্য, নেতৃত্ব ও কার্যক্রম</strong></h1>
-        <p>এলাকার যাচাইকৃত তথ্য, প্রকাশিত সংবাদ, সাংগঠনিক নেতৃত্ব, জনসেবামূলক উদ্যোগ ও গুরুত্বপূর্ণ প্রকাশনা—একটি আধুনিক স্থানীয় তথ্যকেন্দ্রে।</p>
-        <div className={styles.heroActions}><Link className={styles.primary} href="/news">সর্বশেষ সংবাদ <span>→</span></Link><Link className={styles.secondary} href="/areas">আমাদের এলাকা</Link></div>
+        <div className={styles.kicker}><i/>বাংলাদেশ জামায়াতে ইসলামী · কুমিল্লা-১</div>
+        <h1>দাউদকান্দি ও মেঘনার <span>খবর, মানুষ ও কার্যক্রম</span></h1>
+        <p className={styles.heroLead}>প্রকাশিত সংবাদ, স্থানীয় নেতৃত্ব, জনসেবামূলক উদ্যোগ, ইউনিয়নভিত্তিক তথ্য ও গুরুত্বপূর্ণ নথি—একটি পরিচ্ছন্ন ও আধুনিক স্থানীয় তথ্যকেন্দ্রে।</p>
+        <div className={styles.heroActions}>
+          <Link className={styles.primary} href="/news">সর্বশেষ সংবাদ <span>→</span></Link>
+          <Link className={styles.secondary} href="/areas">এলাকা দেখুন</Link>
+        </div>
       </div>
-      <div className={styles.heroStats}><div><strong>{areas.length.toLocaleString('bn-BD')}</strong><span>এলাকার রেকর্ড</span></div><div><strong>{newsCount.toLocaleString('bn-BD')}</strong><span>প্রকাশিত সংবাদ</span></div><div><strong>{leaderCount.toLocaleString('bn-BD')}</strong><span>নেতৃত্ব পরিচিতি</span></div></div>
-      {heroArea?.image_source_url&&<a className={styles.heroCredit} href={heroArea.image_source_url} target="_blank" rel="noopener noreferrer">ছবি: {heroArea.image_credit||'Wikimedia Commons'}{heroArea.image_license?` · ${heroArea.image_license}`:''}</a>}
+      <div className={styles.heroMedia}>
+        <img src="/home-hero.svg" alt="দাউদকান্দিতে স্থানীয় কার্যক্রমের দৃশ্য"/>
+        <div className={styles.photoNote}>
+          <div><small>কুমিল্লা-১ · মাঠের কার্যক্রম</small><strong>স্থানীয় মানুষের সঙ্গে সরাসরি যোগাযোগ</strong></div>
+          <Link href="/news" aria-label="সংবাদ দেখুন">↗</Link>
+        </div>
+      </div>
     </section>
 
-    <nav className={styles.jump} aria-label="প্রধান বিভাগ"><Link href="/about"><span>01</span>আমাদের সম্পর্কে</Link><Link href="/sections/leader"><span>02</span>নেতৃত্ব</Link><Link href="/news"><span>03</span>সর্বশেষ সংবাদ</Link><Link href="/areas"><span>04</span>এলাকা</Link><Link href="/sections/gallery"><span>05</span>গ্যালারি</Link></nav>
+    <div className={styles.pulse}>
+      <div className={styles.pulseStat}><strong>{newsCount.toLocaleString('bn-BD')}</strong><span>প্রকাশিত<br/>সংবাদ</span></div>
+      <div className={styles.pulseStat}><strong>{leaderCount.toLocaleString('bn-BD')}</strong><span>নেতৃত্ব<br/>পরিচিতি</span></div>
+      <div className={styles.pulseStat}><strong>{areas.length.toLocaleString('bn-BD')}</strong><span>ইউনিয়ন ও<br/>পৌরসভা রেকর্ড</span></div>
+      <Link className={styles.pulseLink} href="/sections/gallery">গ্যালারি দেখুন <span>→</span></Link>
+    </div>
 
     <section className={styles.section}>
-      <div className={styles.heading}><div><p className={styles.eyebrow}>নেতৃত্বকে জানুন</p><h2>স্থানীয় সাংগঠনিক নেতৃত্ব</h2><p>প্রকাশিত সংবাদ ও উন্মুক্ত সূত্রে উল্লেখিত দায়িত্বের ভিত্তিতে তৈরি পরিচিতি। দায়িত্ব পরিবর্তিত হলে Admin থেকে হালনাগাদ করা যাবে।</p></div><Link href="/sections/leader">সব নেতৃত্ব →</Link></div>
-      <div className={styles.leaderRail}>{leaderCards.map(({p,image},i)=><Link className={styles.leaderCard} href={'/posts/'+p.slug} key={p.id}><div className={styles.leaderPortrait}>{image?<img src={image} alt={p.title}/>:<img className={styles.leaderLogo} src="/logo.svg" alt=""/>}<span>{String(i+1).padStart(2,'0')}</span></div><div className={styles.leaderBody}><small>নেতৃত্ব পরিচিতি</small><h3>{p.title}</h3><p>{p.body.slice(0,105)}{p.body.length>105?'…':''}</p><b>পরিচিতি দেখুন →</b></div></Link>)}</div>
+      <div className={styles.sectionHead}>
+        <div><small>সর্বশেষ আপডেট</small><h2>এখন যা ঘটছে</h2><p>দাউদকান্দি, মেঘনা ও কুমিল্লা-১ সম্পর্কিত সাম্প্রতিক প্রকাশিত সংবাদ ও কার্যক্রম।</p></div>
+        <Link href="/news">সব সংবাদ →</Link>
+      </div>
+
+      {featured&&<div className={styles.newsLayout}>
+        <Link className={styles.featureNews} href={`/posts/${featured.post.slug}`}>
+          {featured.image&&<img src={featured.image} alt=""/>}
+          <div className={styles.featureContent}>
+            <small>{featured.post.published_at?bnDate(featured.post.published_at):'সর্বশেষ সংবাদ'}</small>
+            <h3>{featured.post.title}</h3>
+            <p>{featured.post.body.slice(0,170)}{featured.post.body.length>170?'…':''}</p>
+            <b>বিস্তারিত পড়ুন →</b>
+          </div>
+        </Link>
+        <div className={styles.newsList}>
+          {compact.map(({post,image})=><Link className={styles.newsCard} href={`/posts/${post.slug}`} key={post.id}>
+            <div className={styles.newsThumb}>{image&&<img src={image} alt="" loading="lazy"/>}</div>
+            <div className={styles.newsBody}>
+              <small>{post.published_at?bnDate(post.published_at):'সংবাদ'}</small>
+              <h3>{post.title}</h3>
+              <span>পড়ুন →</span>
+            </div>
+          </Link>)}
+        </div>
+      </div>}
     </section>
 
-    <section className={`${styles.section} ${styles.newsSection}`}><div className={styles.heading}><div><p className={styles.eyebrow}>সর্বশেষ আপডেট</p><h2>খবর ও কার্যক্রম</h2><p>দাউদকান্দি, মেঘনা ও কুমিল্লা-১ সম্পর্কিত যাচাইযোগ্য প্রকাশিত তথ্য।</p></div><Link href="/news">সব সংবাদ →</Link></div><PostCards posts={news.slice(0,6)}/></section>
+    <section className={styles.actionBand}>
+      <div className={styles.actionTop}>
+        <div><small>স্থানীয় কার্যক্রম</small><h2>মানুষের পাশে,<br/>এলাকার ভেতরে</h2></div>
+        <p>জনসেবা, শিক্ষা, অবকাঠামো ও সামাজিক সম্প্রীতি—প্রকাশিত সূত্রে পাওয়া স্থানীয় উদ্যোগগুলো আলাদাভাবে সাজানো হয়েছে।</p>
+      </div>
+      <div className={styles.actionGrid}>
+        {actionHighlights.map(item=><Link className={styles.actionCard} href={item.href} key={item.href}>
+          <span>{item.icon}</span><small>{item.label}</small><h3>{item.title}</h3><b>বিস্তারিত →</b>
+        </Link>)}
+      </div>
+    </section>
+
+    <section className={`${styles.section} ${styles.leaders}`}>
+      <div className={styles.leadersIntro}>
+        <small>নেতৃত্ব পরিচিতি</small>
+        <h2>যাদের দায়িত্বে স্থানীয় সংগঠন</h2>
+        <p>প্রকাশিত সংবাদ ও উন্মুক্ত সূত্রে উল্লেখিত দায়িত্বের ভিত্তিতে তৈরি পরিচিতি। যেসব ব্যক্তির নির্ভরযোগ্য আলাদা ছবি নেই, সেখানে ভুল ছবি ব্যবহার করা হচ্ছে না।</p>
+        <Link href="/sections/leader">সব নেতৃত্ব দেখুন →</Link>
+      </div>
+      <div className={styles.leaderList}>
+        {leaders.slice(0,5).map((leader,index)=><Link className={styles.leaderRow} href={`/posts/${leader.slug}`} key={leader.id}>
+          <span className={styles.leaderIndex}>{String(index+1).padStart(2,'0')}</span>
+          <div><h3>{leader.title}</h3><p>{leader.body.slice(0,115)}{leader.body.length>115?'…':''}</p></div>
+          <b>↗</b>
+        </Link>)}
+      </div>
+    </section>
 
     <section className={styles.section}>
-      <div className={styles.heading}><div><p className={styles.eyebrow}>কার্যক্রমের ক্ষেত্র</p><h2>প্রকাশিত স্থানীয় উদ্যোগ</h2><p>জনসেবা, শিক্ষা, স্থানীয় অবকাঠামো ও সামাজিক সম্প্রীতি—প্রকাশিত সংবাদসূত্রে পাওয়া কিছু কার্যক্রম এক নজরে।</p></div><Link href="/news">আরও কার্যক্রম →</Link></div>
-      <div className={extra.activityGrid}>{activityHighlights.map((item,index)=><Link className={extra.activityCard} href={item.href} key={item.href}><div className={extra.activityTop}><span className={extra.activityIcon}>{item.icon}</span><small>{String(index+1).padStart(2,'0')}</small></div><div><p>{item.label}</p><h3>{item.title}</h3><span>{item.description}</span></div><b>বিস্তারিত →</b></Link>)}</div>
+      <div className={styles.sectionHead}>
+        <div><small>কুমিল্লা-১</small><h2>এলাকাকে কাছ থেকে জানুন</h2><p>ইউনিয়ন ও পৌরসভাভিত্তিক পরিচিতি, শিক্ষা প্রতিষ্ঠান, গুরুত্বপূর্ণ স্থান, জনসেবা ও স্থানীয় আপডেট।</p></div>
+        <Link href="/areas">সব এলাকা →</Link>
+      </div>
+      <div className={styles.areaStrip}>
+        {featuredAreas.map(area=>area&&<Link className={styles.areaCard} href={`/areas/${area.upazila}/${area.slug}`} key={area.id}>
+          {area.image_url&&<img src={area.image_url} alt={`${area.name} এলাকার দৃশ্য`} loading="lazy"/>}
+          <div className={styles.areaText}><small>{area.kind==='municipality'?'পৌরসভা':'ইউনিয়ন'}</small><h3>{area.name}</h3><p>{area.description.slice(0,88)}{area.description.length>88?'…':''}</p><b>এলাকার তথ্য →</b></div>
+        </Link>)}
+      </div>
     </section>
 
-    <section className={styles.section}>
-      <div className={styles.heading}><div><p className={styles.eyebrow}>কুমিল্লা-১</p><h2>এলাকাকে জানুন</h2><p>ইউনিয়ন ও পৌরসভার পরিচিতি, শিক্ষা প্রতিষ্ঠান, স্থানীয় সেবা এবং সরকারি/প্রাথমিক তথ্যসূত্র এক জায়গায়।</p></div><Link href="/areas">সব এলাকা দেখুন →</Link></div>
-      <div className={styles.areaGrid}>{featuredAreas.map((area,index)=>area&&<Link className={styles.areaCard} href={`/areas/${area.upazila}/${area.slug}`} key={area.id}>{area.image_url&&<img src={area.image_url} alt={`${area.name} এলাকার দৃশ্য`} loading="lazy"/>}<span className={styles.areaShade}/><div className={styles.areaCopy}><small>{index===0?'দাউদকান্দি':'কুমিল্লা-১ এলাকা'}</small><h3>{area.name}</h3><p>{area.description.slice(0,90)}{area.description.length>90?'…':''}</p><b>এলাকার তথ্য →</b></div></Link>)}</div>
+    <section className={styles.finalCta}>
+      <div><small>তথ্য নিয়মিত হালনাগাদ হচ্ছে</small><h2>এক জায়গায় সংবাদ, নেতৃত্ব ও এলাকার তথ্য</h2><p>নতুন প্রকাশিত তথ্য দেখতে সংবাদ বিভাগ বা ইউনিয়নভিত্তিক পেজ খুলুন।</p></div>
+      <div className={styles.finalActions}><Link href="/news">সংবাদ দেখুন</Link><Link href="/areas">এলাকা দেখুন</Link></div>
     </section>
-
-    <section className={`${styles.section} ${styles.serviceSection}`}><div className={styles.serviceIntro}><p className={styles.eyebrow}>তথ্য ও জনসেবা</p><h2>যা দরকার,<br/>দ্রুত খুঁজুন</h2><p>শিক্ষা প্রতিষ্ঠান, নাগরিক সেবা, সরকারি উৎস, কর্মসূচি ও প্রকাশনা—সাইটের মূল তথ্যগুলো সরাসরি খুলুন।</p></div><div className={styles.serviceGrid}><Link href="/areas"><span>⌖</span><strong>ইউনিয়ন ও পৌরসভা</strong><small>পরিচিতি, প্রতিষ্ঠান ও স্থানীয় সেবা</small></Link><Link href="/sections/event"><span>◷</span><strong>কর্মসূচি</strong><small>তারিখ, সময় ও স্থানভিত্তিক তথ্য</small></Link><Link href="/sections/document"><span>▤</span><strong>প্রকাশনা</strong><small>নথি ও গুরুত্বপূর্ণ রেফারেন্স</small></Link><Link href="/contact"><span>↗</span><strong>যোগাযোগ</strong><small>অনুমোদিত যোগাযোগের তথ্য</small></Link></div></section>
-
-    <section className={`${styles.section} ${extra.channels}`}>
-      <div className={extra.channelIntro}><p className={styles.eyebrow}>সংযুক্ত থাকুন</p><h2>অফিসিয়াল চ্যানেল</h2><p>কেন্দ্রীয় সংগঠনের যাচাইকৃত ওয়েবসাইট ও অফিসিয়াল সামাজিক মাধ্যমের লিংক। স্থানীয় কুমিল্লা-১ তথ্য এই ওয়েবসাইটেই আলাদাভাবে প্রকাশ করা হয়।</p></div>
-      <div className={extra.channelGrid}>{officialChannels.map(item=><a href={item.href} target="_blank" rel="noopener noreferrer" key={item.href}><span>{item.icon}</span><div><strong>{item.label}</strong><small>{item.meta}</small></div><b>↗</b></a>)}</div>
-    </section>
-
-    <section className={`${styles.section} ${styles.connect}`}><div><p className={styles.eyebrow}>হালনাগাদ তথ্য</p><h2>নতুন কনটেন্ট যোগ হবে নিয়মিত</h2><p>Admin panel থেকে নতুন সংবাদ, নিজস্ব ছবি, নেতৃত্ব, কর্মসূচি ও এলাকার তথ্য সহজে যোগ ও হালনাগাদ করা যাবে।</p></div><div className={styles.connectActions}><Link className={styles.primaryDark} href="/news">খবর দেখুন</Link><Link className={styles.outlineDark} href="/sections/gallery">গ্যালারি</Link></div></section>
   </div>;
 }
