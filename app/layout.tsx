@@ -1,6 +1,7 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import './globals.css';
+import './site-modern.css';
 
 const siteUrl='https://amar-cumilla1.vercel.app';
 
