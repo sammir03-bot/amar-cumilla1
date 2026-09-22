@@ -10,7 +10,7 @@ export async function PostCards({posts}:{posts:Post[]}){
   const cards=await Promise.all(posts.map(async p=>{
     const imagePath=firstImagePath(p.media_paths??[]);
     const uploadedUrl=imagePath?await mediaUrl(imagePath):null;
-    const imageUrl=uploadedUrl??p.cover_url??null;
+    const imageUrl=uploadedUrl??(p.cover_url?await mediaUrl(p.cover_url):null);
     return {p,imageUrl};
   }));
   return <div className="grid">{cards.map(({p,imageUrl})=><Link className={`card ${styles.card}`} key={p.id} href={'/posts/'+p.slug}>
@@ -33,7 +33,7 @@ export async function PostCards({posts}:{posts:Post[]}){
 export async function PostView({post:p,sign=mediaUrl}:{post:Post;sign?:(path:string)=>Promise<string|null>}){
   const files=await Promise.all((p.media_paths??[]).map(async path=>({path,url:await sign(path)})));
   const uploadedImage=files.find(f=>f.url&&!f.path.endsWith('.pdf')&&!isExternal(f.path))?.url??null;
-  const cover=!uploadedImage?p.cover_url:null;
+  const cover=!uploadedImage&&p.cover_url?await mediaUrl(p.cover_url):null;
   return <article className="prose">
     <p className="eyebrow">{kinds[p.kind]}{p.published_at?' · '+bnDate(p.published_at):''}</p>
     <h1>{p.title}</h1>
