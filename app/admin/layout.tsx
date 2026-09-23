@@ -23,6 +23,7 @@ export default async function AdminLayout({children}:{children:React.ReactNode})
         <span className="admin-menu-label">প্রধান</span>
         <Link href="/admin"><span className="admin-menu-icon">⌂</span><span>ড্যাশবোর্ড</span></Link>
         <Link href="/admin/content"><span className="admin-menu-icon">▤</span><span>সব প্রকাশনা</span></Link>
+        <Link href="/admin/submissions"><span className="admin-menu-icon">✉</span><span>ফর্ম ইনবক্স</span></Link>
         <Link href="/admin/media"><span className="admin-menu-icon">▧</span><span>ছবি ও PDF</span></Link>
 
         {role==='admin'&&<>
