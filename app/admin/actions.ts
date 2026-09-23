@@ -119,7 +119,7 @@ export async function savePost(_:FormState,f:FormData):Promise<FormState>{
     if(uploaded.length)await db.storage.from('cumilla-media').remove(uploaded);
     return {error:'মূল ছবি সঠিকভাবে নির্বাচন করুন। ছবির লিংক ব্যবহার করলে লিংকও দিন।'};
   }
-  const payload={...data,cover_selection:selected,source_url:data.source_url||null,source_name:data.source_name||null,cover_url:data.cover_url||null,cover_source_url:data.cover_source_url||null,cover_credit:data.cover_credit||null,cover_license:data.cover_license||null,media_paths:[...data.media_paths,...uploaded],event_at:eventAt?.toISOString()??null,published_at:publishedAt};
+  const payload={...data,updated_at:new Date().toISOString(),cover_selection:selected,source_url:data.source_url||null,source_name:data.source_name||null,cover_url:data.cover_url||null,cover_source_url:data.cover_source_url||null,cover_credit:data.cover_credit||null,cover_license:data.cover_license||null,media_paths:[...data.media_paths,...uploaded],event_at:eventAt?.toISOString()??null,published_at:publishedAt};
 
   const result=id
     ?await db.from('cumilla_posts').update(payload).eq('id',id).eq('updated_at',text(f,'version')).select('id').maybeSingle()
@@ -149,7 +149,7 @@ export async function saveArea(_:FormState,f:FormData):Promise<FormState>{
  }
  if(published&&(!verified||!source||!parsed.data.description))return {error:'প্রকাশের আগে পরিচিতি, তথ্যসূত্র এবং যাচাইয়ের নিশ্চয়তা দিন।'};
  const {id,...details}=parsed.data;
- const {data,error}=await db.from('cumilla_areas').update({...details,source_url:source||null,image_url:imageUrl||null,image_source_url:imageSourceUrl||null,verified_at:verified?new Date().toISOString():null,published}).eq('id',id).eq('updated_at',text(f,'version')).select('id').maybeSingle();
+ const {data,error}=await db.from('cumilla_areas').update({...details,updated_at:new Date().toISOString(),source_url:source||null,image_url:imageUrl||null,image_source_url:imageSourceUrl||null,verified_at:verified?new Date().toISOString():null,published}).eq('id',id).eq('updated_at',text(f,'version')).select('id').maybeSingle();
  if(error||!data)return {error:'সংরক্ষণ হয়নি অথবা তথ্য অন্য কেউ পরিবর্তন করেছেন। রিফ্রেশ করে চেষ্টা করুন।'};
  revalidatePath('/','layout');redirect('/admin/areas/'+id+'?saved=1');
 }
