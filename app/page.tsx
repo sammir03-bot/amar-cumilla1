@@ -7,6 +7,7 @@ import {getElectionOverview,getElectionSettings} from '../lib/election';
 import {getProfiles,profileArea,profilePhoto} from '../lib/profiles';
 import ElectionLiveRefresh from '../components/election-live-refresh';
 import styles from './home-modern.module.css';
+import people from './home-profiles.module.css';
 import engage from './home-engagement.module.css';
 
 const siteUrl='https://amar-cumilla1.vercel.app';
@@ -72,16 +73,16 @@ export default async function Home(){
       </div>
     </section>
 
-    <section className={`${styles.peopleSection} ${styles.peopleLeadership}`} aria-labelledby="leadership-title">
-      <div className={styles.peopleHead}><div><span className={styles.peopleKicker}>LOCAL LEADERSHIP</span><h2 id="leadership-title">স্থানীয় দায়িত্বশীলদের পরিচিতি</h2><p>দাউদকান্দি ও মেঘনার প্রকাশিত দায়িত্বশীলদের ছবি, দায়িত্ব, এলাকা ও সংক্ষিপ্ত পরিচয় পাশাপাশি দেখুন।</p></div><Link href="/profiles?type=responsible">সব পরিচিতি →</Link></div>
-      {responsibleItems.length?<div className={styles.peopleRail}>{responsibleItems.map(({profile,image})=><Link href={'/profiles/'+profile.slug} className={styles.peopleCard} key={profile.id}><div className={styles.peoplePhoto}>{image?<img src={image} alt={profile.name}/>:<span>{profile.name.slice(0,1)}</span>}</div><div className={styles.peopleCopy}><small>স্থানীয় দায়িত্বশীল</small><h3>{profile.name}</h3>{profile.designation&&<strong>{profile.designation}</strong>}<p>{profileArea(profile)||'কুমিল্লা–১'}</p></div><div className={styles.peopleBar}>PROFILE <b>→</b></div></Link>)}</div>:<div className={styles.peopleEmpty}><strong>পরিচিতি প্রস্তুত হচ্ছে</strong><span>Admin Panel থেকে স্থানীয় দায়িত্বশীল যোগ ও প্রকাশ করলে এখানে দেখা যাবে।</span></div>}
+    <section className={`${people.peopleSection} ${people.peopleLeadership}`} aria-labelledby="leadership-title">
+      <div className={people.peopleHead}><div><span className={people.peopleKicker}>LOCAL LEADERSHIP</span><h2 id="leadership-title">স্থানীয় দায়িত্বশীলদের পরিচিতি</h2><p>দাউদকান্দি ও মেঘনার প্রকাশিত দায়িত্বশীলদের ছবি, দায়িত্ব, এলাকা ও সংক্ষিপ্ত পরিচয় পাশাপাশি দেখুন।</p></div><Link href="/profiles?type=responsible">সব পরিচিতি →</Link></div>
+      {responsibleItems.length?<div className={people.peopleRail}>{responsibleItems.map(({profile,image})=><Link href={'/profiles/'+profile.slug} className={people.peopleCard} key={profile.id}><div className={people.peoplePhoto}>{image?<img src={image} alt={profile.name}/>:<span>{profile.name.slice(0,1)}</span>}</div><div className={people.peopleCopy}><small>স্থানীয় দায়িত্বশীল</small><h3>{profile.name}</h3>{profile.designation&&<strong>{profile.designation}</strong>}<p>{profileArea(profile)||'কুমিল্লা–১'}</p></div><div className={people.peopleBar}>PROFILE <b>→</b></div></Link>)}</div>:<div className={people.peopleEmpty}><strong>পরিচিতি প্রস্তুত হচ্ছে</strong><span>Admin Panel থেকে স্থানীয় দায়িত্বশীল যোগ ও প্রকাশ করলে এখানে দেখা যাবে।</span></div>}
     </section>
 
     <section className={styles.motto}><span/> <p>“দাউদকান্দি ও মেঘনার তথ্য এক জায়গায়”</p> <span/></section>
 
-    <section className={`${styles.peopleSection} ${styles.peopleCandidates}`} aria-labelledby="candidate-title">
-      <div className={styles.peopleHead}><div><span className={styles.peopleKicker}>CANDIDATE PROFILE</span><h2 id="candidate-title">প্রার্থী পরিচিতি</h2><p>Admin Panel থেকে যতজন প্রার্থী প্রয়োজন যোগ করা যাবে। প্রকাশিত প্রার্থীদের ছবি, এলাকা, পদবি ও বিস্তারিত পরিচয় এখানে স্বয়ংক্রিয়ভাবে দেখাবে।</p></div><Link href="/profiles?type=candidate">সব প্রার্থী →</Link></div>
-      {candidateItems.length?<div className={styles.peopleRail}>{candidateItems.map(({profile,image})=><Link href={'/profiles/'+profile.slug} className={styles.peopleCard} key={profile.id}><div className={styles.peoplePhoto}>{image?<img src={image} alt={profile.name}/>:<span>{profile.name.slice(0,1)}</span>}</div><div className={styles.peopleCopy}><small>প্রার্থী পরিচিতি</small><h3>{profile.name}</h3>{profile.designation&&<strong>{profile.designation}</strong>}<p>{profileArea(profile)||'কুমিল্লা–১'}</p></div><div className={styles.peopleBar}>OFFICIAL PROFILE <b>→</b></div></Link>)}</div>:<div className={styles.peopleEmpty}><strong>এখনও কোনো প্রার্থী প্রকাশিত হয়নি</strong><span>Admin Panel → প্রার্থী ও দায়িত্বশীল থেকে প্রার্থী যোগ করুন। নির্দিষ্ট ৩টি স্লট নয়—যত ইচ্ছা যোগ করা যাবে।</span></div>}
+    <section className={`${people.peopleSection} ${people.peopleCandidates}`} aria-labelledby="candidate-title">
+      <div className={people.peopleHead}><div><span className={people.peopleKicker}>CANDIDATE PROFILE</span><h2 id="candidate-title">প্রার্থী পরিচিতি</h2><p>Admin Panel থেকে যতজন প্রার্থী প্রয়োজন যোগ করা যাবে। প্রকাশিত প্রার্থীদের ছবি, এলাকা, পদবি ও বিস্তারিত পরিচয় এখানে স্বয়ংক্রিয়ভাবে দেখাবে।</p></div><Link href="/profiles?type=candidate">সব প্রার্থী →</Link></div>
+      {candidateItems.length?<div className={people.peopleRail}>{candidateItems.map(({profile,image})=><Link href={'/profiles/'+profile.slug} className={people.peopleCard} key={profile.id}><div className={people.peoplePhoto}>{image?<img src={image} alt={profile.name}/>:<span>{profile.name.slice(0,1)}</span>}</div><div className={people.peopleCopy}><small>প্রার্থী পরিচিতি</small><h3>{profile.name}</h3>{profile.designation&&<strong>{profile.designation}</strong>}<p>{profileArea(profile)||'কুমিল্লা–১'}</p></div><div className={people.peopleBar}>OFFICIAL PROFILE <b>→</b></div></Link>)}</div>:<div className={people.peopleEmpty}><strong>এখনও কোনো প্রার্থী প্রকাশিত হয়নি</strong><span>Admin Panel → প্রার্থী ও দায়িত্বশীল থেকে প্রার্থী যোগ করুন। নির্দিষ্ট ৩টি স্লট নয়—যত ইচ্ছা যোগ করা যাবে।</span></div>}
     </section>
 
     <section className={engage.section} aria-labelledby="engagement-title">
