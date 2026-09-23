@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type {Metadata} from 'next';
+import {notFound} from 'next/navigation';
 import {getElectionOverview,getElectionSettings} from '../../lib/election';
 import ElectionLiveRefresh from '../../components/election-live-refresh';
 import styles from './election.module.css';
@@ -11,7 +12,9 @@ const upazilaName=(v:string)=>v==='daudkandi'?'দাউদকান্দি':'
 const statusName:Record<string,string>={setup:'প্রস্তুতি',live:'LIVE',completed:'সম্পন্ন',official:'অফিসিয়াল'};
 
 export default async function ElectionPage(){
-  const [settings,overview]=await Promise.all([getElectionSettings(),getElectionOverview()]);
+  const settings=await getElectionSettings();
+  if(settings&&!settings.public_enabled)notFound();
+  const overview=await getElectionOverview();
   const live=!!settings?.live_mode;
   return <div className={styles.page}>
     {live&&<ElectionLiveRefresh seconds={15}/>} 
