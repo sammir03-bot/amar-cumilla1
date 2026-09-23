@@ -3,7 +3,7 @@ import {createContext,useActionState,useEffect,useRef,useState} from 'react';
 import Submit from './submit';
 export type FormState={error?:string;success?:string};
 export const FormChangeContext=createContext<()=>void>(()=>{});
-export default function ActionForm({action,children,label,trackChanges=false,uploadMode}:{action:(state:FormState,data:FormData)=>Promise<FormState>;children:React.ReactNode;label?:string;trackChanges?:boolean;uploadMode?:'post'|'library'}){
+export default function ActionForm({action,children,label,trackChanges=false,uploadMode}:{action:(state:FormState,data:FormData)=>Promise<FormState>;children:React.ReactNode;label?:string;trackChanges?:boolean;uploadMode?:'post'|'library'|'profile'}){
  const [progress,setProgress]=useState('');
  const [dirty,setDirty]=useState(false),[copied,setCopied]=useState(false),notice=useRef<HTMLParagraphElement>(null);
  const [state,formAction]=useActionState(async (previous:FormState,data:FormData)=>{
