@@ -1,3 +1,5 @@
+import ContentImage from '../components/content-image';
+import {postCoverPath} from '../lib/post-cover';
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import {bnDate,getAreas,getPosts,mediaUrl,type Post} from '../lib/content';
@@ -20,8 +22,7 @@ export const metadata:Metadata={
 export const dynamic='force-dynamic';
 
 async function postImage(post:Post){
-  const attached=(post.media_paths??[]).find(path=>!path.endsWith('.pdf'));
-  const raw=attached??post.cover_url;
+  const raw=postCoverPath(post);
   return raw?await mediaUrl(raw):null;
 }
 
@@ -134,7 +135,7 @@ export default async function Home(){
     <section className={styles.latestSection}>
       <div className={styles.sectionTop}><div><span className={styles.sectionKicker}>সর্বশেষ আপডেট</span><h2>সংবাদ ও কার্যক্রম</h2></div><Link href="/news">সব সংবাদ →</Link></div>
       <div className={styles.latestGrid}>{latest.map(({post,image})=><Link href={`/posts/${post.slug}`} className={styles.latestCard} key={post.id}>
-        <div className={styles.latestImage}>{image?<img src={image} alt=""/>:<span>কুমিল্লা–১</span>}</div>
+        <div className={styles.latestImage}>{image?<ContentImage key={image} src={image} alt=""/>:<span>ঘটনার ছবি যুক্ত হয়নি</span>}</div>
         <div className={styles.latestCopy}><small>{post.published_at?bnDate(post.published_at):'সংবাদ'}</small><h3>{post.title}</h3><p>{post.body.slice(0,120)}{post.body.length>120?'…':''}</p><b>পড়ুন →</b></div>
       </Link>)}</div>
     </section>

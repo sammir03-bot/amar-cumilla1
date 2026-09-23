@@ -3,81 +3,18 @@ import {notFound} from 'next/navigation';
 import {requireStaff} from '../../../../lib/supabase';
 import {kinds,Post} from '../../../../lib/content';
 import ActionForm from '../../../../components/action-form';
-import MediaPicker from '../../../../components/media-picker';
+import PostMediaEditor from '../../../../components/post-media-editor';
+import PostEditorFields from '../../../../components/post-editor-fields';
+import Icon from '../../../../components/admin-icon';
 import {savePost} from '../../actions';
-
-export default async function Editor({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{saved?:string}>}){
-  const {id}=await params;
-  const {db,role}=await requireStaff();
-  const [record,areas]=await Promise.all([
-    id==='new'?Promise.resolve({data:null,error:null}):db.from('cumilla_posts').select('*').eq('id',id).maybeSingle(),
-    db.from('cumilla_areas').select('upazila,slug,name').order('name')
-  ]);
-  if(record.error||areas.error)throw new Error('তথ্য আনা যায়নি');
-  const p=record.data as Post|null;
-  if(id!=='new'&&!p)notFound();
-  const saved=(await searchParams).saved;
-
-  return <section>
-    <div className="admin-page-header">
-      <div><p className="eyebrow">{p?'সম্পাদনা':'নতুন কনটেন্ট'}</p><h1>{p?p.title:'নতুন প্রকাশনা'}</h1><p>{p?'তথ্য পরিবর্তন করে সংরক্ষণ করুন। প্রকাশের আগে প্রিভিউ দেখে নিন।':'ধাপে ধাপে তথ্য দিন। প্রথমে খসড়া হিসেবে সংরক্ষণ করাই নিরাপদ।'}</p></div>
-      <div className="admin-page-actions">{saved&&<span className="admin-saved">সংরক্ষণ হয়েছে</span>}<Link className="admin-btn" href="/admin/content">← তালিকা</Link>{p&&<Link className="admin-btn" href={'/admin/preview/'+p.id} target="_blank">প্রিভিউ ↗</Link>}</div>
-    </div>
-
-    <ActionForm action={savePost}>
-      <input type="hidden" name="id" value={p?.id??''}/><input type="hidden" name="version" value={p?.updated_at??''}/>
-
-      <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>১. মূল তথ্য</h2><p>কনটেন্টের ধরন, শিরোনাম এবং ওয়েব ঠিকানা দিন।</p></div></div>
-        <div className="admin-form-grid">
-          <label>বিভাগ<select name="kind" defaultValue={p?.kind??'news'}>{Object.entries(kinds).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></label>
-          <label>অবস্থা<select name="status" defaultValue={p?.status??'draft'}><option value="draft">খসড়া</option><option value="review">পর্যালোচনার জন্য</option>{role!=='editor'&&<><option value="published">প্রকাশিত</option><option value="archived">আর্কাইভ</option></>}</select><span className="admin-help">নিশ্চিত না হলে “খসড়া” রাখুন।</span></label>
-        </div>
-        <label>শিরোনাম<input name="title" required maxLength={180} defaultValue={p?.title} placeholder="যেমন: দাউদকান্দিতে জনসভা অনুষ্ঠিত"/></label>
-        <label>লিংকের নাম<input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxLength={140} defaultValue={p?.slug} placeholder="daudkandi-jonosobha"/><span className="admin-help">শুধু ইংরেজি ছোট অক্ষর, সংখ্যা ও হাইফেন ব্যবহার করুন।</span></label>
-      </div>
-
-      <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>২. মূল লেখা</h2><p>পাঠক যা দেখবেন সেটি সহজ ভাষায় লিখুন।</p></div></div>
-        <label>বিস্তারিত<textarea name="body" required rows={16} maxLength={100000} defaultValue={p?.body} placeholder="এখানে বিস্তারিত লিখুন…"/></label>
-      </div>
-
-      <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৩. তথ্যসূত্র</h2><p>সংবাদ, Facebook পোস্ট বা অফিসিয়াল উৎস থাকলে এখানে দিন। এতে প্রকাশিত তথ্য যাচাই করা সহজ হবে।</p></div></div>
-        <div className="admin-form-grid">
-          <label>উৎসের নাম<input name="source_name" maxLength={180} defaultValue={p?.source_name??''} placeholder="যেমন: বাসস / প্রথম আলো / অফিসিয়াল Facebook"/></label>
-          <label>উৎসের লিংক<input type="url" name="source_url" maxLength={2000} defaultValue={p?.source_url??''} placeholder="https://..."/><span className="admin-help">পূর্ণ https:// লিংক দিন।</span></label>
-        </div>
-      </div>
-
-      <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৪. কভার ছবি</h2><p>নিজস্ব ছবি না থাকলে Wikimedia Commons-এর মতো পুনঃব্যবহারের অনুমতি থাকা ছবি দিতে পারবেন। কপিরাইটেড সংবাদমাধ্যমের ছবি কপি করবেন না।</p></div></div>
-        {p?.cover_url&&<img src={p.cover_url} alt="বর্তমান কভার" style={{width:'100%',maxHeight:340,objectFit:'cover',borderRadius:16,marginBottom:18}}/>}
-        <label>কভার ছবির সরাসরি URL<input type="url" name="cover_url" maxLength={2000} defaultValue={p?.cover_url??''} placeholder="https://commons.wikimedia.org/wiki/Special:Redirect/file/..."/></label>
-        <label>ছবির উৎস পেজ<input type="url" name="cover_source_url" maxLength={2000} defaultValue={p?.cover_source_url??''} placeholder="https://commons.wikimedia.org/wiki/File:..."/><span className="admin-help">বাইরের ছবি ব্যবহার করলে উৎস পেজ অবশ্যই দিন।</span></label>
-        <div className="admin-form-grid">
-          <label>ফটো ক্রেডিট<input name="cover_credit" maxLength={300} defaultValue={p?.cover_credit??''} placeholder="যেমন: Rehana Sarker / Wikimedia Commons"/></label>
-          <label>লাইসেন্স<input name="cover_license" maxLength={120} defaultValue={p?.cover_license??''} placeholder="যেমন: CC BY-SA 4.0"/></label>
-        </div>
-      </div>
-
-      <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৫. এলাকা</h2><p>এই কনটেন্ট কোন কোন এলাকার সাথে সম্পর্কিত তা নির্বাচন করুন।</p></div></div>
-        <fieldset><legend>সংশ্লিষ্ট এলাকা</legend><div className="admin-check-grid">{areas.data?.map(a=>{const key=a.upazila+'/'+a.slug;return <label key={key}><input type="checkbox" name="area_keys" value={key} defaultChecked={p?.area_keys?.includes(key)}/>{a.name}</label>;})}</div></fieldset>
-      </div>
-
-      <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৬. কর্মসূচির তথ্য</h2><p>কেবল কর্মসূচির ক্ষেত্রে সময় ও স্থান দিন; অন্য কনটেন্টে ফাঁকা রাখুন।</p></div></div>
-        <div className="admin-form-grid">
-          <label>তারিখ ও সময়<input type="datetime-local" name="event_at" defaultValue={p?.event_at?new Date(new Date(p.event_at).valueOf()+21600000).toISOString().slice(0,16):''}/><span className="admin-help">বাংলাদেশ সময়</span></label>
-          <label>স্থান<input name="venue" maxLength={500} defaultValue={p?.venue} placeholder="স্থান বা ঠিকানা"/></label>
-        </div>
-      </div>
-
-      <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>৭. নিজের ছবি ও PDF</h2><p>নিজের/অনুমোদিত ছবি এখানে আপলোড করুন। থাকলে প্রথম আপলোড করা ছবিটিই কভার হিসেবে অগ্রাধিকার পাবে।</p></div><Link className="admin-btn" href="/admin/media" target="_blank">মিডিয়া লাইব্রেরি ↗</Link></div>
-        <MediaPicker existing={p?.media_paths??[]}/>
-      </div>
-    </ActionForm>
-  </section>;
+export default async function Editor({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{saved?:string;kind?:string}>}){
+ const {id}=await params,{db,role,user}=await requireStaff(),search=await searchParams;
+ const [record,areas,uploads]=await Promise.all([id==='new'?Promise.resolve({data:null,error:null}):db.from('cumilla_posts').select('*').eq('id',id).maybeSingle(),db.from('cumilla_areas').select('upazila,slug,name').order('name'),db.storage.from('cumilla-media').list(user.id,{limit:80,sortBy:{column:'created_at',order:'desc'}})]);
+ if(record.error||areas.error)throw new Error('তথ্য আনা যায়নি');
+ const p=record.data as Post|null;if(id!=='new'&&!p)notFound();
+ const paths=[...new Set([...(p?.media_paths??[]),...(uploads.data??[]).filter(f=>f.id).map(f=>user.id+'/'+f.name)])];
+ const signed=paths.length?await db.storage.from('cumilla-media').createSignedUrls(paths,3600):null;
+ const media=paths.map((path,i)=>({path,url:signed?.data?.[i]?.signedUrl??null,name:'ফাইল '+(i+1).toLocaleString('bn-BD')+(path.endsWith('.pdf')?' · PDF':'')}));
+ const initialKind=p?.kind??(search.kind&&kinds[search.kind]?search.kind:'news');
+ return <section><div className="admin-page-header"><div><p className="eyebrow">{p?'প্রকাশনা সম্পাদনা':'নতুন প্রকাশনা'}</p><h1>{p?'লেখা ও ছবি সম্পাদনা':'নতুন কিছু প্রকাশ করুন'}</h1><p>লেখা, সঠিক ছবি ও তথ্যসূত্র যুক্ত করুন।</p></div><div className="admin-page-actions">{search.saved&&<span className="admin-saved" role="status">সংরক্ষণ হয়েছে</span>}<Link className="admin-btn" href="/admin/content">← সব কনটেন্ট</Link>{p&&<Link className="admin-btn" href={'/admin/preview/'+p.id} target="_blank"><Icon name="eye" size={17}/>প্রিভিউ</Link>}</div></div><nav className="studio-editor-jumps" aria-label="সম্পাদনার অংশ"><a href="#editor-writing">লেখা</a><a href="#editor-media">ছবি ও PDF</a><a href="#editor-source">তথ্যসূত্র ও এলাকা</a></nav><ActionForm key={p?.updated_at??'new'} action={savePost} label="পরিবর্তন সংরক্ষণ করুন" trackChanges uploadMode="post"><input type="hidden" name="id" value={p?.id??''}/><input type="hidden" name="version" value={p?.updated_at??''}/><div className="studio-editor"><div className="studio-editor-main"><section id="editor-writing" className="admin-form-section"><div className="admin-form-section-head"><h2>মূল লেখা</h2><Icon name="file"/></div><PostEditorFields title={p?.title} body={p?.body} slug={p?.slug}/></section><section id="editor-media" className="admin-form-section"><div className="admin-form-section-head"><div><h2>ছবি ও সংযুক্তি</h2><p>একটি ছবিকে মূল ছবি হিসেবে নির্বাচন করুন।</p></div><Icon name="image"/></div><PostMediaEditor post={p} existing={media.filter(m=>p?.media_paths?.includes(m.path))} library={media}/></section><section id="editor-source" className="admin-form-section"><div className="admin-form-section-head"><h2>তথ্যসূত্র</h2><Icon name="link"/></div><div className="admin-form-grid"><label>উৎসের নাম<input name="source_name" maxLength={180} defaultValue={p?.source_name??''} placeholder="সংবাদমাধ্যম বা মূল প্রকাশক"/></label><label>মূল প্রতিবেদনের লিংক<input type="url" name="source_url" maxLength={2000} defaultValue={p?.source_url??''} placeholder="https://..."/></label></div></section><details className="studio-editor-details"><summary>সংশ্লিষ্ট এলাকা</summary><fieldset><legend className="admin-help">প্রযোজ্য এলাকাগুলো বেছে নিন</legend><div className="admin-check-grid studio-area-scroll">{areas.data?.map(a=>{const key=a.upazila+'/'+a.slug;return <label key={key}><input type="checkbox" name="area_keys" value={key} defaultChecked={p?.area_keys?.includes(key)}/>{a.name}<small> · {a.upazila==='daudkandi'?'দাউদকান্দি':'মেঘনা'}</small></label>;})}</div></fieldset></details><details className="studio-editor-details" open={initialKind==='event'}><summary>কর্মসূচির সময় ও স্থান</summary><div className="admin-form-grid"><label>তারিখ ও সময়<input type="datetime-local" name="event_at" defaultValue={p?.event_at?new Date(new Date(p.event_at).valueOf()+21600000).toISOString().slice(0,16):''}/><span className="admin-help">বাংলাদেশ সময়</span></label><label>স্থান<input name="venue" maxLength={500} defaultValue={p?.venue} placeholder="কর্মসূচির ঠিকানা"/></label></div></details></div><aside className="studio-editor-side"><div className="admin-form-section studio-publish-box"><h2 style={{marginTop:0}}>প্রকাশের সেটিংস</h2><label>বিভাগ<select name="kind" defaultValue={initialKind}>{Object.entries(kinds).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></label><label>প্রকাশের অবস্থা<select name="status" defaultValue={p?.status??'draft'}><option value="draft">খসড়া</option><option value="review">পর্যালোচনার জন্য</option>{role!=='editor'&&<><option value="published">প্রকাশিত</option><option value="archived">আর্কাইভ</option></>}</select></label><div className="studio-publish-check"><Icon name="check" size={17}/><span>লেখা ও ছবির পরিবর্তন একসঙ্গে সংরক্ষণ হবে</span></div><p className="admin-help">“প্রকাশিত” নির্বাচন করে সংরক্ষণ করলে সাইটে দেখা যাবে।</p></div><div className="studio-note"><strong>প্রকাশের আগে মিলিয়ে নিন</strong><p>শিরোনাম, ঘটনার ছবি, উৎস এবং এলাকার তথ্য ঠিক আছে কি না দেখুন।</p>{p&&<Link href={'/admin/preview/'+p.id} target="_blank">সংরক্ষিত প্রিভিউ দেখুন →</Link>}</div></aside></div></ActionForm></section>;
 }

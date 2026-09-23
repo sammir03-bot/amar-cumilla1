@@ -1,0 +1,7 @@
+'use client';
+import {useState} from 'react';
+export default function PostEditorFields({title='',body='',slug=''}:{title?:string;body?:string;slug?:string}){
+ const [heading,setHeading]=useState(title),[text,setText]=useState(body),[link,setLink]=useState(slug);
+ function updateTitle(value:string){setHeading(value);if(!slug&&!link){const english=value.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');setLink(english||'post-'+new Date().toISOString().slice(0,10).replaceAll('-','')+'-'+crypto.randomUUID().slice(0,8));}}
+ return <><label>শিরোনাম<input className="studio-title-input" name="title" required maxLength={180} value={heading} onChange={e=>updateTitle(e.target.value)} placeholder="সংবাদের শিরোনাম লিখুন…"/></label><label>বিস্তারিত<textarea className="studio-editor-body" name="body" required rows={14} maxLength={100000} value={text} onChange={e=>setText(e.target.value)} placeholder="মূল ঘটনাটি দিয়ে লেখা শুরু করুন…"/></label><div className="studio-editor-meta"><span>{text.trim()?text.trim().split(/\s+/).length.toLocaleString('bn-BD'):'০'} শব্দ</span><span>শিরোনাম {heading.length.toLocaleString('bn-BD')} / ১৮০</span></div><details className="studio-editor-details" style={{marginTop:20}}><summary>প্রকাশনার ওয়েব ঠিকানা</summary><label>লিংকের নাম<input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxLength={140} value={link} onChange={e=>setLink(e.target.value)} placeholder="news-title"/><span className="admin-help">/posts/{link||'…'}</span></label></details></>;
+}

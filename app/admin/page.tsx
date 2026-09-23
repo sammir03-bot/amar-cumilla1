@@ -1,50 +1,22 @@
 import Link from 'next/link';
 import {requireStaff} from '../../lib/supabase';
 import {kinds} from '../../lib/content';
-
-const statusNames:Record<string,string>={draft:'খসড়া',review:'পর্যালোচনা',published:'প্রকাশিত',archived:'আর্কাইভ'};
-
+import {postCoverPath} from '../../lib/post-cover';
+import Icon from '../../components/admin-icon';
+const statuses:Record<string,string>={draft:'খসড়া',review:'পর্যালোচনা',published:'প্রকাশিত',archived:'আর্কাইভ'};
 export default async function Admin(){
-  const {db,role}=await requireStaff();
-  const [total,published,draftReview,areas,recent]=await Promise.all([
-    db.from('cumilla_posts').select('id',{count:'exact',head:true}),
-    db.from('cumilla_posts').select('id',{count:'exact',head:true}).eq('status','published'),
-    db.from('cumilla_posts').select('id',{count:'exact',head:true}).in('status',['draft','review']),
-    db.from('cumilla_areas').select('id',{count:'exact',head:true}),
-    db.from('cumilla_posts').select('id,title,kind,status,updated_at').order('updated_at',{ascending:false}).limit(6),
-  ]);
-  if(total.error||published.error||draftReview.error||areas.error||recent.error)throw new Error('Dashboard unavailable');
-
-  return <section>
-    <div className="admin-page-header">
-      <div><p className="eyebrow">ড্যাশবোর্ড</p><h1>সবকিছু এক জায়গায়</h1><p>প্রকাশনা, এলাকা, মিডিয়া, ফর্ম ও নির্বাচন ফলাফলের কাজ এক জায়গা থেকে পরিচালনা করুন।</p></div>
-      <div className="admin-page-actions"><Link className="admin-btn" href="/" target="_blank">সাইট দেখুন ↗</Link><Link className="admin-btn primary" href="/admin/content/new">＋ নতুন প্রকাশনা</Link></div>
-    </div>
-
-    <div className="admin-stats">
-      <div className="admin-stat accent"><span>মোট প্রকাশনা</span><strong>{(total.count??0).toLocaleString('bn-BD')}</strong><small>সব ধরনের কনটেন্ট</small></div>
-      <div className="admin-stat"><span>প্রকাশিত</span><strong>{(published.count??0).toLocaleString('bn-BD')}</strong><small>ওয়েবসাইটে দৃশ্যমান</small></div>
-      <div className="admin-stat"><span>কাজ বাকি</span><strong>{(draftReview.count??0).toLocaleString('bn-BD')}</strong><small>খসড়া ও পর্যালোচনা</small></div>
-      <div className="admin-stat"><span>এলাকার রেকর্ড</span><strong>{(areas.count??0).toLocaleString('bn-BD')}</strong><small>দাউদকান্দি ও মেঘনা</small></div>
-    </div>
-
-    <div className="admin-dashboard-grid">
-      <div className="admin-panel">
-        <div className="admin-panel-head"><h2>সাম্প্রতিক প্রকাশনা</h2><Link href="/admin/content">সব দেখুন →</Link></div>
-        {recent.data?.length?<div className="admin-recent-list">{recent.data.map(p=><Link className="admin-recent-item" href={'/admin/content/'+p.id} key={p.id}><div className="admin-recent-copy"><strong>{p.title}</strong><small>{kinds[p.kind]??p.kind} · {statusNames[p.status]??p.status} · {new Date(p.updated_at).toLocaleDateString('bn-BD',{timeZone:'Asia/Dhaka'})}</small></div><span className="admin-recent-arrow">→</span></Link>)}</div>:<div className="admin-empty">এখনো কোনো প্রকাশনা নেই। নতুন প্রকাশনা তৈরি করুন।</div>}
-      </div>
-
-      <div className="admin-panel">
-        <div className="admin-panel-head"><h2>দ্রুত কাজ</h2></div>
-        <div className="admin-quick-grid">
-          <Link className="admin-quick" href="/admin/election"><span className="admin-quick-icon">◉</span><span><strong>Election Control</strong><small>ইউনিয়ন, কেন্দ্র ও লাইভ ফলাফল</small></span></Link>
-          <Link className="admin-quick" href="/admin/submissions"><span className="admin-quick-icon">✉</span><span><strong>ফর্ম ইনবক্স</strong><small>যোগদান, সমস্যা ও মতামত</small></span></Link>
-          <Link className="admin-quick" href="/admin/content/new"><span className="admin-quick-icon">＋</span><span><strong>লেখা তৈরি</strong><small>সংবাদ, কর্মসূচি বা পাতা</small></span></Link>
-          <Link className="admin-quick" href="/admin/media"><span className="admin-quick-icon">▧</span><span><strong>ফাইল আপলোড</strong><small>ছবি অথবা PDF</small></span></Link>
-          <Link className="admin-quick" href="/admin/content"><span className="admin-quick-icon">▤</span><span><strong>খসড়া দেখুন</strong><small>সম্পাদনা ও প্রকাশ</small></span></Link>
-          {role==='admin'?<Link className="admin-quick" href="/admin/areas"><span className="admin-quick-icon">⌖</span><span><strong>এলাকা সম্পাদনা</strong><small>উৎস যাচাই ও প্রকাশ</small></span></Link>:<Link className="admin-quick" href="/"><span className="admin-quick-icon">↗</span><span><strong>সাইট দেখুন</strong><small>লাইভ ওয়েবসাইট খুলুন</small></span></Link>}
-        </div>
-      </div>
-    </div>
-  </section>;
+ const {db,role}=await requireStaff();
+ const [total,published,draft,review,recent,inbox,missingPhotos]=await Promise.all([
+  db.from('cumilla_posts').select('id',{count:'exact',head:true}),
+  db.from('cumilla_posts').select('id',{count:'exact',head:true}).eq('status','published'),
+  db.from('cumilla_posts').select('id',{count:'exact',head:true}).eq('status','draft'),
+  db.from('cumilla_posts').select('id',{count:'exact',head:true}).eq('status','review'),
+  db.from('cumilla_posts').select('id,title,kind,status,updated_at,cover_url,media_paths,cover_selection').order('updated_at',{ascending:false}).limit(7),
+  db.from('cumilla_submissions').select('id',{count:'exact',head:true}).eq('status','new'),
+  db.from('cumilla_posts').select('id',{count:'exact',head:true}).or('cover_selection.eq.none,and(cover_selection.is.null,cover_url.is.null,media_paths.eq.{})')
+ ]);
+ if(total.error||published.error||draft.error||review.error||recent.error||missingPhotos.error)throw new Error('ড্যাশবোর্ডের তথ্য আনা যায়নি।');
+ const rows=await Promise.all((recent.data??[]).map(async p=>{const path=postCoverPath(p);const image=path?(path.startsWith('https://')?'/media-proxy?url='+encodeURIComponent(path):(await db.storage.from('cumilla-media').createSignedUrl(path,3600)).data?.signedUrl):null;return {...p,image};}));
+ const stats=[{label:'মোট প্রকাশনা',count:total.count,icon:'file',detail:'সব বিভাগের কনটেন্ট',href:'/admin/content',color:'featured'},{label:'প্রকাশিত',count:published.count,icon:'check',detail:'ওয়েবসাইটে দৃশ্যমান',href:'/admin/content?status=published',color:''},{label:'খসড়া',count:draft.count,icon:'file',detail:'লেখা চালিয়ে যান',href:'/admin/content?status=draft',color:'amber'},{label:'পর্যালোচনায়',count:review.count,icon:'clock',detail:'প্রকাশের অপেক্ষায়',href:'/admin/content?status=review',color:'violet'}];
+ return <section><div className="admin-page-header"><div><div className="studio-date"><Icon name="clock" size={15}/>{new Date().toLocaleDateString('bn-BD',{dateStyle:'full',timeZone:'Asia/Dhaka'})}</div><h1>আপনার সম্পাদনা কেন্দ্র</h1><p>আজ কী প্রকাশ করবেন?</p></div><div className="admin-page-actions"><Link className="admin-btn" href="/" target="_blank"><Icon name="external" size={17}/>সাইট দেখুন</Link><Link className="admin-btn primary" href="/admin/content/new"><Icon name="plus" size={18}/>নতুন প্রকাশনা</Link></div></div><div className="studio-stats">{stats.map(s=><Link key={s.label} className={'studio-stat '+s.color} href={s.href}><div className="studio-stat-top"><span>{s.label}</span><span className="studio-stat-icon"><Icon name={s.icon}/></span></div><strong>{(s.count??0).toLocaleString('bn-BD')}</strong><small>{s.detail}</small></Link>)}</div><div className="studio-dashboard"><div className="admin-panel"><div className="admin-panel-head"><h2>সাম্প্রতিক প্রকাশনা</h2><Link href="/admin/content">সব দেখুন →</Link></div><div className="studio-list">{rows.map(p=><Link href={'/admin/content/'+p.id} className="studio-list-item" key={p.id}>{p.image?<img className="studio-thumb" src={p.image} alt=""/>:<span className="studio-thumb"><Icon name="image"/></span>}<span className="studio-list-copy"><strong>{p.title}</strong><small>{kinds[p.kind]} · {new Date(p.updated_at).toLocaleDateString('bn-BD',{day:'numeric',month:'short',timeZone:'Asia/Dhaka'})}</small></span><span className={'admin-status '+p.status}>{statuses[p.status]}</span></Link>)}{!rows.length&&<p className="admin-empty">প্রথম প্রকাশনা তৈরি করে শুরু করুন।</p>}</div></div><aside className="studio-rail"><div className="admin-panel"><div className="admin-panel-head"><h2>যে কাজগুলো বাকি</h2><Icon name="settings" size={18}/></div><Link className="studio-task" href="/admin/content?status=draft"><Icon name="file"/><span>অসম্পূর্ণ খসড়া</span><b>{(draft.count??0).toLocaleString('bn-BD')}</b></Link><Link className="studio-task" href="/admin/content?status=review"><Icon name="clock"/><span>পর্যালোচনা করুন</span><b>{(review.count??0).toLocaleString('bn-BD')}</b></Link><Link className="studio-task" href="/admin/content?photo=missing"><Icon name="image"/><span>ছবি বাকি</span><b>{(missingPhotos.count??0).toLocaleString('bn-BD')}</b></Link><Link className="studio-task" href="/admin/submissions"><Icon name="inbox"/><span>নতুন ফর্ম</span><b>{inbox.error?'—':(inbox.count??0).toLocaleString('bn-BD')}</b></Link></div><div className="studio-note"><strong>নিউজের সঙ্গে সঠিক ছবি</strong><p>মূল ছবি বেছে নিন। উৎস এবং প্রিভিউ মিলিয়ে তারপর প্রকাশ করুন।</p><Link href="/admin/media">মিডিয়া লাইব্রেরি খুলুন →</Link></div></aside></div><div className="studio-shortcuts">{[{icon:'file',title:'সংবাদ লিখুন',sub:'নতুন খবর যুক্ত করুন',href:'/admin/content/new?kind=news'},{icon:'image',title:'ছবি ও PDF',sub:'আপলোড ও প্রিভিউ',href:'/admin/media'},{icon:'grid',title:'সাইটের সব বিভাগ',sub:'নেতৃত্ব, কর্মসূচি ও পাতা',href:'/admin/content'},{icon:role==='admin'?'pin':'eye',title:role==='admin'?'এলাকার তথ্য':'প্রকাশিত কনটেন্ট',sub:'তথ্য সম্পাদনা করুন',href:role==='admin'?'/admin/areas':'/admin/content?status=published'}].map(s=><Link key={s.title} className="studio-shortcut" href={s.href}><span><Icon name={s.icon}/></span><span><strong>{s.title}</strong><small>{s.sub}</small></span></Link>)}</div></section>;
 }

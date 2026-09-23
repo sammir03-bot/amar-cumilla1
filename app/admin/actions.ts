@@ -2,12 +2,14 @@
 import {z} from 'zod';
 import {revalidatePath} from 'next/cache';
 import {redirect} from 'next/navigation';
+import {allowedMediaUrl} from '../../lib/remote-media';
+import {inspectMedia} from '../../lib/upload-types';
+import {resolveCoverSelection} from '../../lib/post-cover';
 import {requireStaff} from '../../lib/supabase';
 import type {FormState} from '../../components/action-form';
 
 const text=(f:FormData,k:string)=>String(f.get(k)??'').trim();
 const mediaPath=/^[a-f0-9-]{36}\/[a-f0-9-]{36}\.(jpg|png|webp|pdf)$/;
-const MAX_FILE=8*1024*1024;
 const MAX_FILES=4;
 const MAX_TOTAL=20*1024*1024;
 
@@ -33,21 +35,22 @@ function validHttps(value:string){
   try{return new URL(value).protocol==='https:';}catch{return false;}
 }
 
-async function inspectUpload(file:File){
-  if(file.size===0||file.size>MAX_FILE)return null;
-  const bytes=new Uint8Array(await file.arrayBuffer());
-  const prefix=String.fromCharCode(...bytes.slice(0,12));
-  const isPng=bytes.length>=8&&bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71&&bytes[4]===13&&bytes[5]===10&&bytes[6]===26&&bytes[7]===10;
-  const extension=bytes[0]===255&&bytes[1]===216&&bytes[2]===255?'jpg':isPng?'png':prefix.startsWith('RIFF')&&prefix.slice(8,12)==='WEBP'?'webp':prefix.startsWith('%PDF-')?'pdf':null;
-  if(!extension)return null;
-  const mime=extension==='jpg'?'image/jpeg':extension==='pdf'?'application/pdf':'image/'+extension;
-  return {bytes,extension,mime};
+async function verifyDirectUploads(db:any,userId:string,paths:string[]){
+ if(paths.length>4)return false;
+ let total=0;
+ for(const path of paths){
+  if(!mediaPath.test(path)||!path.startsWith(userId+'/'))return false;
+  const {data,error}=await db.storage.from('cumilla-media').download(path);
+  if(error||!data||!await inspectMedia(data))return false;
+  total+=data.size;if(total>MAX_TOTAL)return false;
+ }
+ return true;
 }
 
 async function uploadFiles(db:any,userId:string,files:File[]){
   const uploaded:string[]=[];
   for(const file of files){
-    const checked=await inspectUpload(file);
+    const checked=await inspectMedia(file);
     if(!checked){
       if(uploaded.length)await db.storage.from('cumilla-media').remove(uploaded);
       return {error:'শুধু JPG, PNG, WebP বা PDF দিন। প্রতিটি ফাইল সর্বোচ্চ ৮ MB হতে পারবে।',paths:[] as string[]};
@@ -66,6 +69,9 @@ async function uploadFiles(db:any,userId:string,files:File[]){
 export async function savePost(_:FormState,f:FormData):Promise<FormState>{
   const {db,user,role}=await requireStaff();
   const id=text(f,'id');
+  const coverChoice=text(f,'cover_selection');
+  const direct=f.getAll('newly_uploaded_paths').map(String);
+  if(!await verifyDirectUploads(db,user.id,direct))return {error:'নতুন আপলোডের ফাইল সঠিক নয়। ছবি আবার নির্বাচন করুন।'};
   const existing=f.getAll('keep_media_paths').map(String).filter(Boolean);
   const parsed=postSchema.safeParse({
     title:text(f,'title'),slug:text(f,'slug'),body:text(f,'body'),kind:text(f,'kind'),status:text(f,'status'),venue:text(f,'venue'),source_url:text(f,'source_url'),source_name:text(f,'source_name'),cover_url:text(f,'cover_url'),cover_source_url:text(f,'cover_source_url'),cover_credit:text(f,'cover_credit'),cover_license:text(f,'cover_license'),area_keys:f.getAll('area_keys').map(String),media_paths:existing
@@ -74,7 +80,8 @@ export async function savePost(_:FormState,f:FormData):Promise<FormState>{
   const data=parsed.data;
   if(!validHttps(data.source_url))return {error:'তথ্যসূত্রের লিংক অবশ্যই পূর্ণ https:// লিংক হতে হবে।'};
   if(!validHttps(data.cover_url)||!validHttps(data.cover_source_url))return {error:'কভার ছবির URL ও উৎস অবশ্যই পূর্ণ https:// লিংক হতে হবে।'};
-  if(data.cover_url&&!data.cover_source_url)return {error:'বাইরের কভার ছবি ব্যবহার করলে ছবির উৎস পেজ দিন।'};
+  if(coverChoice==='external'&&!allowedMediaUrl(data.cover_url))return {error:'এই ছবির লিংক ব্যবহার করা যাচ্ছে না। ছবিটি সরাসরি আপলোড করুন।'};
+  if(coverChoice==='external'&&data.cover_url&&!data.cover_source_url)return {error:'বাইরের কভার ছবি ব্যবহার করলে ছবির উৎস পেজ দিন।'};
   if(role==='editor'&&!['draft','review'].includes(data.status))return {error:'প্রকাশের জন্য Publisher বা Admin প্রয়োজন।'};
 
   if(data.area_keys.length){
@@ -107,7 +114,12 @@ export async function savePost(_:FormState,f:FormData):Promise<FormState>{
   const upload=await uploadFiles(db,user.id,newFiles);
   if(upload.error)return {error:upload.error};
   const uploaded=upload.paths;
-  const payload={...data,source_url:data.source_url||null,source_name:data.source_name||null,cover_url:data.cover_url||null,cover_source_url:data.cover_source_url||null,cover_credit:data.cover_credit||null,cover_license:data.cover_license||null,media_paths:[...data.media_paths,...uploaded],event_at:eventAt?.toISOString()??null,published_at:publishedAt};
+  const selected=resolveCoverSelection(coverChoice,data.media_paths,uploaded,data.cover_url);
+  if(!selected){
+    if(uploaded.length)await db.storage.from('cumilla-media').remove(uploaded);
+    return {error:'মূল ছবি সঠিকভাবে নির্বাচন করুন। ছবির লিংক ব্যবহার করলে লিংকও দিন।'};
+  }
+  const payload={...data,cover_selection:selected,source_url:data.source_url||null,source_name:data.source_name||null,cover_url:data.cover_url||null,cover_source_url:data.cover_source_url||null,cover_credit:data.cover_credit||null,cover_license:data.cover_license||null,media_paths:[...data.media_paths,...uploaded],event_at:eventAt?.toISOString()??null,published_at:publishedAt};
 
   const result=id
     ?await db.from('cumilla_posts').update(payload).eq('id',id).eq('updated_at',text(f,'version')).select('id').maybeSingle()
@@ -144,9 +156,16 @@ export async function saveArea(_:FormState,f:FormData):Promise<FormState>{
 
 export async function uploadMedia(_:FormState,f:FormData):Promise<FormState>{
   const {db,user}=await requireStaff();
+  const direct=text(f,'uploaded_path');
+  if(direct){
+    if(!await verifyDirectUploads(db,user.id,[direct]))return {error:'আপলোড করা ফাইল যাচাই করা যায়নি।'};
+    revalidatePath('/admin/media');
+    return {success:'ফাইল আপলোড হয়েছে। লাইব্রেরি থেকে প্রকাশনায় যুক্ত করতে পারবেন।'};
+  }
   const file=f.get('file');
   if(!(file instanceof File)||file.size===0)return {error:'একটি ফাইল নির্বাচন করুন।'};
   const result=await uploadFiles(db,user.id,[file]);
   if(result.error)return {error:result.error};
-  return {success:`আপলোড হয়েছে। ফাইল path: ${result.paths[0]}`};
+  revalidatePath('/admin/media');
+  return {success:'ফাইল আপলোড হয়েছে। নিচের লাইব্রেরি ও প্রকাশনার ছবি বাছাইয়ে পাওয়া যাবে।'};
 }

@@ -1,32 +1,19 @@
 import Link from 'next/link';
+import {requireStaff} from '../../../lib/supabase';
+import {postCoverPath} from '../../../lib/post-cover';
 import ActionForm from '../../../components/action-form';
+import Icon from '../../../components/admin-icon';
 import {uploadMedia} from '../actions';
-
-export default function Media(){
-  return <section>
-    <div className="admin-page-header">
-      <div><p className="eyebrow">মিডিয়া</p><h1>ছবি ও PDF</h1><p>সাধারণ প্রকাশনা তৈরির সময় এখানে আগে আপলোড করার দরকার নেই। প্রকাশনা ফর্ম থেকেই সরাসরি ছবি নির্বাচন করা যায়। এই পেজটি আলাদা ফাইল সংরক্ষণের জন্য রাখা হয়েছে।</p></div>
-      <div className="admin-page-actions"><Link className="admin-btn primary" href="/admin/content/new">＋ নতুন প্রকাশনা</Link></div>
-    </div>
-
-    <ActionForm action={uploadMedia} label="ফাইল আপলোড করুন">
-      <div className="admin-form-section">
-        <div className="admin-form-section-head"><div><h2>আলাদা ফাইল আপলোড</h2><p>JPG, PNG, WebP অথবা PDF · সর্বোচ্চ ৮ MB</p></div></div>
-        <div className="admin-upload-box">
-          <label>ছবি বা PDF<input type="file" name="file" accept="image/jpeg,image/png,image/webp,application/pdf" required/></label>
-          <p>এটি ঐচ্ছিক। নতুন প্রকাশনা লিখলে সেখান থেকেই ছবি সরাসরি যুক্ত করা সবচেয়ে সহজ।</p>
-        </div>
-      </div>
-    </ActionForm>
-
-    <div className="admin-panel" style={{marginTop:18}}>
-      <div className="admin-panel-head"><h2>সবচেয়ে সহজ উপায়</h2></div>
-      <div className="admin-quick-grid">
-        <Link className="admin-quick" href="/admin/content/new"><span className="admin-quick-icon">১</span><span><strong>নতুন প্রকাশনা খুলুন</strong><small>লেখা, বিভাগ ও এলাকা দিন</small></span></Link>
-        <div className="admin-quick"><span className="admin-quick-icon">২</span><span><strong>ছবি নির্বাচন করুন</strong><small>Gallery থেকে সরাসরি ৪টি পর্যন্ত</small></span></div>
-        <div className="admin-quick"><span className="admin-quick-icon">৩</span><span><strong>সংরক্ষণ করুন</strong><small>লেখা ও ছবি একসাথে আপলোড হবে</small></span></div>
-        <div className="admin-quick"><span className="admin-quick-icon">✓</span><span><strong>কাজ শেষ</strong><small>আলাদা path কপি করতে হবে না</small></span></div>
-      </div>
-    </div>
-  </section>;
+export default async function Media({searchParams}:{searchParams:Promise<{q?:string;type?:string}>}){
+ const {db,user}=await requireStaff(),params=await searchParams,term=(params.q??'').trim().slice(0,80),type=params.type==='pdf'?'pdf':params.type==='image'?'image':'';
+ const [posts,uploads]=await Promise.all([db.from('cumilla_posts').select('id,title,media_paths,cover_url,cover_selection').order('updated_at',{ascending:false}).limit(250),db.storage.from('cumilla-media').list(user.id,{limit:100,sortBy:{column:'created_at',order:'desc'}})]);
+ if(posts.error)throw new Error('মিডিয়ার তথ্য আনা যায়নি');
+ const records=new Map<string,{path:string;title:string;postId:string|null}>();
+ for(const p of posts.data??[]){const cover=postCoverPath(p);for(const path of [...(p.media_paths??[]),...(cover?[cover]:[])])if(!records.has(path))records.set(path,{path,title:p.title,postId:p.id});}
+ for(const f of uploads.data??[])if(f.id){const path=user.id+'/'+f.name;if(!records.has(path))records.set(path,{path,title:'আলাদা আপলোড · '+f.name,postId:null});}
+ const list=[...records.values()].filter(f=>(!term||f.title.toLocaleLowerCase().includes(term.toLocaleLowerCase()))&&(!type||(type==='pdf'?f.path.endsWith('.pdf'):!f.path.endsWith('.pdf'))));
+ const privatePaths=list.filter(f=>!f.path.startsWith('https://')).map(f=>f.path);
+ const signed=privatePaths.length?(await db.storage.from('cumilla-media').createSignedUrls(privatePaths,3600)).data:[];
+ const urls=new Map((signed??[]).map(f=>[f.path,f.signedUrl]));
+ return <section><div className="admin-page-header"><div><p className="eyebrow">মিডিয়া লাইব্রেরি</p><h1>আপনার সব ছবি ও PDF</h1><p>ফাইলের প্রিভিউ দেখুন এবং সংশ্লিষ্ট প্রকাশনা খুলুন।</p></div><div className="admin-page-actions"><a className="admin-btn primary" href="#media-upload"><Icon name="upload" size={18}/>ফাইল আপলোড</a></div></div><details id="media-upload" className="studio-editor-details studio-library-upload"><summary>নতুন ফাইল আপলোড করুন</summary><ActionForm uploadMode="library" action={uploadMedia} label="ফাইল আপলোড করুন"><label>ছবি বা PDF<input type="file" name="file" accept="image/jpeg,image/png,image/webp,application/pdf" required/><span className="admin-help">প্রতি ফাইল সর্বোচ্চ ৮ MB। নতুন প্রকাশনার “ছবি ও সংযুক্তি” থেকেও সরাসরি আপলোড করতে পারবেন।</span></label></ActionForm></details><form className="admin-filters" method="get"><input name="q" defaultValue={term} placeholder="প্রকাশনার নাম দিয়ে ছবি খুঁজুন…" aria-label="মিডিয়া খুঁজুন"/><select name="type" defaultValue={type} aria-label="ফাইলের ধরন"><option value="">সব ফাইল</option><option value="image">ছবি</option><option value="pdf">PDF</option></select><button>খুঁজুন</button></form><p className="studio-result-count">{list.length.toLocaleString('bn-BD')}টি ফাইল · সর্বশেষ ২৫০টি প্রকাশনা ও আপনার সাম্প্রতিক আপলোড</p>{uploads.error&&<p className="notice">আলাদা আপলোডের তালিকা আনা যায়নি। প্রকাশনার সংযুক্তিগুলো নিচে আছে।</p>}<div className="studio-library-grid">{list.map(f=>{const url=f.path.startsWith('https://')?'/media-proxy?url='+encodeURIComponent(f.path):urls.get(f.path);const pdf=f.path.endsWith('.pdf');return <article className="studio-library-card" key={f.path}><div className="studio-library-image">{url&&!pdf?<img src={url} alt={f.title} loading="lazy"/>:<Icon name={pdf?'file':'image'} size={38}/>}</div><div><small>{pdf?'PDF ডকুমেন্ট':'ছবি'} · {f.postId?'প্রকাশনায় যুক্ত':'আপলোড করা ফাইল'}</small><h2>{f.title}</h2>{f.postId?<Link href={'/admin/content/'+f.postId}>প্রকাশনায় সম্পাদনা করুন →</Link>:url?<a href={url} target="_blank" rel="noopener noreferrer">ফাইল খুলুন ↗</a>:<span>প্রিভিউ পাওয়া যায়নি</span>}</div></article>;})}</div>{!list.length&&<div className="admin-empty">কোনো ফাইল পাওয়া যায়নি। নতুন ছবি আপলোড করুন।</div>}</section>;
 }
