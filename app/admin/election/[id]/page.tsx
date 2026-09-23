@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {requireStaff} from '../../../../lib/supabase';
-import {addCandidate,addCentre,saveCentreResult,updateElectionMeta} from '../actions';
+import {addCandidate,addCentre,bulkAddCentres,saveCentreResult,updateElectionMeta} from '../actions';
 
 const statusNames:Record<string,string>={setup:'প্রস্তুতি',live:'লাইভ',completed:'সম্পন্ন',official:'অফিসিয়াল'};
 const centreStatus:Record<string,string>={pending:'অপেক্ষমাণ',reported:'ফল পাওয়া গেছে',verified:'যাচাইকৃত',official:'অফিসিয়াল'};
@@ -42,6 +42,16 @@ export default async function ElectionEditor({params,searchParams}:{params:Promi
     {canEdit&&<div className="election-admin-grid" style={{marginTop:18}}>
       <div className="admin-panel"><div className="admin-panel-head"><h2>প্রার্থী যোগ করুন</h2></div><form action={addCandidate} className="election-create-form"><input type="hidden" name="election_id" value={id}/><label>প্রার্থীর নাম<input name="name" required/></label><div className="admin-form-grid"><label>প্রতীক<input name="symbol" placeholder="প্রতীকের নাম"/></label><label>ক্রম<input type="number" min="0" name="sort_order" defaultValue="0"/></label></div><label>ছবির URL<input name="photo_url" placeholder="/candidate.jpg অথবা https://..."/></label><label>সংক্ষিপ্ত পরিচিতি<textarea name="description" rows={3}/></label><button className="admin-btn primary" type="submit">＋ প্রার্থী যোগ করুন</button></form></div>
       <div className="admin-panel"><div className="admin-panel-head"><h2>ভোটকেন্দ্র যোগ করুন</h2></div><form action={addCentre} className="election-create-form"><input type="hidden" name="election_id" value={id}/><div className="admin-form-grid"><label>কেন্দ্র কোড<input name="centre_code" required placeholder="001"/></label><label>ক্রম<input type="number" min="0" name="sort_order" defaultValue="0"/></label></div><label>কেন্দ্রের নাম<input name="name" required placeholder="বিদ্যালয়/মাদ্রাসা/কেন্দ্রের নাম"/></label><label>মোট ভোটার<input type="number" min="0" name="total_voters" defaultValue="0"/></label><button className="admin-btn primary" type="submit">＋ কেন্দ্র যোগ করুন</button></form></div>
+    </div>}
+
+    {canEdit&&<div className="admin-panel" style={{marginTop:18}}>
+      <div className="admin-panel-head"><div><h2>একসাথে ভোটকেন্দ্র ইমপোর্ট</h2><small>একবারে পুরো ইউনিয়নের কেন্দ্রের তালিকা যোগ বা আপডেট করুন</small></div></div>
+      <form action={bulkAddCentres} className="election-create-form">
+        <input type="hidden" name="election_id" value={id}/>
+        <label>কেন্দ্রের তালিকা<textarea name="centres" rows={9} required placeholder={'001 | হাসানপুর সরকারি প্রাথমিক বিদ্যালয় | 2500\n002 | নুরপুর সরকারি প্রাথমিক বিদ্যালয় | 2100\n003 | অন্য কেন্দ্রের নাম | 0'}/></label>
+        <small>প্রতি লাইনে: কেন্দ্র কোড | কেন্দ্রের নাম | মোট ভোটার। Tab দিয়েও আলাদা করা যাবে। শুধু নাম দিলে 001, 002… কোড নিজে তৈরি হবে। একই কোড আবার দিলে আগের কেন্দ্র আপডেট হবে।</small>
+        <button className="admin-btn primary" type="submit">⇪ কেন্দ্রের তালিকা ইমপোর্ট করুন</button>
+      </form>
     </div>}
 
     <div className="admin-panel" style={{marginTop:18}}><div className="admin-panel-head"><h2>প্রার্থী</h2><small>{candidates.length.toLocaleString('bn-BD')} জন</small></div><div className="election-candidate-list">{candidates.map((c:any)=><div className="election-candidate-chip" key={c.id}>{c.photo_url&&<img src={c.photo_url} alt=""/>}<div><strong>{c.name}</strong><small>{c.symbol||'প্রতীক নেই'}</small></div></div>)}{!candidates.length&&<div className="admin-empty">এখনো কোনো প্রার্থী যোগ করা হয়নি।</div>}</div></div>
