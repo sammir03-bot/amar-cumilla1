@@ -10,7 +10,9 @@ const centreStatus:Record<string,string>={pending:'অপেক্ষমাণ',
 
 export default async function UnionElection({params}:{params:Promise<{upazila:string;union:string}>}){
   const {upazila,union}=await params;
-  const [settings,data]=await Promise.all([getElectionSettings(),getElectionDetail(upazila,union)]);
+  const settings=await getElectionSettings();
+  if(settings&&!settings.public_enabled)notFound();
+  const data=await getElectionDetail(upazila,union);
   if(!data)notFound();
   const live=!!settings?.live_mode;
   const pct=data.centres.length?Math.round(data.centresReported/data.centres.length*100):0;
