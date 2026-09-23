@@ -17,7 +17,7 @@ export default async function Admin(){
 
   return <section>
     <div className="admin-page-header">
-      <div><p className="eyebrow">ড্যাশবোর্ড</p><h1>সবকিছু এক জায়গায়</h1><p>প্রকাশনা, এলাকা, মিডিয়া ও পরিবর্তনের অবস্থা দ্রুত দেখুন এবং প্রয়োজনীয় কাজ এক ক্লিকেই শুরু করুন।</p></div>
+      <div><p className="eyebrow">ড্যাশবোর্ড</p><h1>সবকিছু এক জায়গায়</h1><p>প্রকাশনা, এলাকা, মিডিয়া, ফর্ম ও নির্বাচন ফলাফলের কাজ এক জায়গা থেকে পরিচালনা করুন।</p></div>
       <div className="admin-page-actions"><Link className="admin-btn" href="/" target="_blank">সাইট দেখুন ↗</Link><Link className="admin-btn primary" href="/admin/content/new">＋ নতুন প্রকাশনা</Link></div>
     </div>
 
@@ -37,6 +37,8 @@ export default async function Admin(){
       <div className="admin-panel">
         <div className="admin-panel-head"><h2>দ্রুত কাজ</h2></div>
         <div className="admin-quick-grid">
+          <Link className="admin-quick" href="/admin/election"><span className="admin-quick-icon">◉</span><span><strong>Election Control</strong><small>ইউনিয়ন, কেন্দ্র ও লাইভ ফলাফল</small></span></Link>
+          <Link className="admin-quick" href="/admin/submissions"><span className="admin-quick-icon">✉</span><span><strong>ফর্ম ইনবক্স</strong><small>যোগদান, সমস্যা ও মতামত</small></span></Link>
           <Link className="admin-quick" href="/admin/content/new"><span className="admin-quick-icon">＋</span><span><strong>লেখা তৈরি</strong><small>সংবাদ, কর্মসূচি বা পাতা</small></span></Link>
           <Link className="admin-quick" href="/admin/media"><span className="admin-quick-icon">▧</span><span><strong>ফাইল আপলোড</strong><small>ছবি অথবা PDF</small></span></Link>
           <Link className="admin-quick" href="/admin/content"><span className="admin-quick-icon">▤</span><span><strong>খসড়া দেখুন</strong><small>সম্পাদনা ও প্রকাশ</small></span></Link>
