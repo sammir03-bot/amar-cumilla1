@@ -1,6 +1,8 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import {bnDate,getAreas,getPosts,mediaUrl,type Post} from '../lib/content';
+import {getElectionOverview,getElectionSettings} from '../lib/election';
+import ElectionLiveRefresh from '../components/election-live-refresh';
 import styles from './home-modern.module.css';
 import engage from './home-engagement.module.css';
 
@@ -31,14 +33,30 @@ const featureLinks=[
 ] as const;
 
 export default async function Home(){
-  const [{posts:news},{posts:leaders},areas]=await Promise.all([
-    getPosts('news'),getPosts('leader'),getAreas(),
+  const [{posts:news},{posts:leaders},areas,electionSettings]=await Promise.all([
+    getPosts('news'),getPosts('leader'),getAreas(),getElectionSettings(),
   ]);
+  const liveElection=!!electionSettings?.live_mode&&!!electionSettings?.public_enabled;
+  const electionOverview=liveElection?await getElectionOverview():[];
   const items=await Promise.all(news.slice(0,6).map(async post=>({post,image:await postImage(post)})));
   const latest=items.slice(0,3);
   const featuredAreas=['municipality','gouripur','manikarchar','govindapur'].map(slug=>areas.find(area=>area.slug===slug)).filter(Boolean);
 
   return <div className={styles.page}>
+    {liveElection&&<>
+      <ElectionLiveRefresh seconds={15}/>
+      <section className={styles.liveTakeover} aria-labelledby="live-result-title">
+        <div className={styles.liveTakeoverHead}><div><span className={styles.liveBadge}><i/> LIVE RESULT</span><h2 id="live-result-title">{electionSettings?.headline}</h2><p>দাউদকান্দি ও মেঘনার ইউনিয়নভিত্তিক ফলাফল। নতুন কেন্দ্রের ফল সংরক্ষণ হলে এই অংশ স্বয়ংক্রিয়ভাবে আপডেট হবে।</p></div><Link href="/election">সব ইউনিয়নের ফল →</Link></div>
+        {electionOverview.length?<div className={styles.liveUnionRail}>{electionOverview.slice(0,6).map(item=>{
+          const pct=item.centresTotal?Math.round(item.centresReported/item.centresTotal*100):0;
+          const leader=item.candidates[0];
+          return <Link href={`/election/${item.election.upazila}/${item.election.union_slug}`} className={styles.liveUnionCard} key={item.election.id}>
+            <small>{item.election.upazila==='daudkandi'?'দাউদকান্দি':'মেঘনা'}</small><h3>{item.election.union_name}</h3><div className={styles.liveUnionProgress}><span style={{width:`${pct}%`}}/></div><b>{item.centresReported}/{item.centresTotal} কেন্দ্র</b>{leader?<p><strong>{leader.name}</strong><span>{leader.votes.toLocaleString('bn-BD')} ভোট</span></p>:<p><strong>প্রার্থী যোগ করা হয়নি</strong><span>Admin থেকে যোগ করুন</span></p>}<em>বিস্তারিত ফল →</em>
+          </Link>})}</div>:<div className={styles.liveEmpty}><strong>Live Mode চালু আছে</strong><span>Admin Panel থেকে ইউনিয়ন নির্বাচন প্রকাশ করলে ফলাফল এখানে দেখা যাবে।</span></div>}
+        <p className={styles.liveDisclaimer}>{electionSettings?.note}</p>
+      </section>
+    </>}
+
     <section className={styles.hero}>
       <div className={styles.heroGlow}/>
       <div className={styles.heroInner}>
