@@ -85,6 +85,40 @@ export async function addCentre(f:FormData){
   refreshElection();redirect('/admin/election/'+electionId+'?saved=1');
 }
 
+export async function bulkAddCentres(f:FormData){
+  const {db,role}=await requireStaff();
+  if(!canManageResults(role))throw new Error('Permission denied');
+  const electionId=text(f,'election_id');if(!uuid.safeParse(electionId).success)throw new Error('Invalid election');
+  const raw=text(f,'centres');
+  if(!raw)throw new Error('কেন্দ্রের তালিকা দিন');
+  if(raw.length>60000)throw new Error('কেন্দ্রের তালিকা অনেক বড়');
+
+  const lines=raw.split(/\r?\n/).map(line=>line.trim()).filter(Boolean);
+  if(!lines.length||lines.length>300)throw new Error('১ থেকে ৩০০টি কেন্দ্র দিন');
+  const byCode=new Map<string,{election_id:string;centre_code:string;name:string;total_voters:number;sort_order:number;status:string}>();
+
+  lines.forEach((line,index)=>{
+    const parts=(line.includes('\t')?line.split('\t'):line.split('|')).map(v=>v.trim());
+    let code='';let name='';let voters='';
+    if(parts.length>=2){
+      code=parts[0];name=parts[1];voters=parts[2]??'';
+    }else{
+      code=String(index+1).padStart(3,'0');name=parts[0];
+    }
+    code=code.slice(0,60);name=name.slice(0,220);
+    if(!code||!name)throw new Error(`লাইন ${index+1}: কেন্দ্র কোড ও নাম সঠিক নয়`);
+    const totalVoters=voters?Math.max(0,Math.floor(Number(voters)||0)):0;
+    byCode.set(code,{election_id:electionId,centre_code:code,name,total_voters:totalVoters,sort_order:(index+1)*10,status:'pending'});
+  });
+
+  const rows=[...byCode.values()];
+  const {error}=await db.from('cumilla_election_centres').upsert(rows,{onConflict:'election_id,centre_code'});
+  if(error)throw error;
+  refreshElection();
+  revalidatePath('/admin/election/'+electionId);
+  redirect('/admin/election/'+electionId+'?saved=1');
+}
+
 export async function saveCentreResult(f:FormData){
   const {db,role}=await requireStaff();
   if(!canManageResults(role))throw new Error('Permission denied');
