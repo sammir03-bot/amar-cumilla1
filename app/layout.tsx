@@ -5,6 +5,7 @@ import './globals.css';
 import './site-modern.css';
 
 const siteUrl='https://amar-cumilla1.vercel.app';
+export const dynamic='force-dynamic';
 
 export const metadata:Metadata={
   metadataBase:new URL(siteUrl),
