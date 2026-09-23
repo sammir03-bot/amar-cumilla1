@@ -99,6 +99,19 @@ export default async function Home(){
       </div>
     </section>
 
+    <section className={styles.engagementSection} aria-labelledby="engagement-title">
+      <div className={styles.engagementHead}>
+        <span>আপনার অংশগ্রহণ</span>
+        <h2 id="engagement-title">আপনার কথা সরাসরি আমাদের কাছে</h2>
+        <p>যোগদানের আগ্রহ, এলাকার সমস্যা অথবা গঠনমূলক মতামত—সঠিক ফর্মটি বেছে পাঠান। জমা হওয়া তথ্য সরাসরি Admin Panel-এর ফর্ম ইনবক্সে যাবে।</p>
+      </div>
+      <div className={styles.engagementGrid}>
+        <Link href="/join" className={`${styles.engagementCard} ${styles.engagementJoin}`}><i>01</i><small>JOIN</small><h3>জামায়াতে ইসলামী সম্পর্কে জানতে ও যুক্ত হওয়ার আগ্রহ</h3><p>যোগাযোগের তথ্য ও আগ্রহ জানান। এটি সরাসরি সদস্যপদ অনুমোদন নয়।</p><b>ফর্ম খুলুন →</b></Link>
+        <Link href="/report-problem" className={`${styles.engagementCard} ${styles.engagementProblem}`}><i>02</i><small>LOCAL ISSUE</small><h3>এলাকার সমস্যা জানান</h3><p>রাস্তা, পানি, ড্রেনেজ, শিক্ষা, স্বাস্থ্য বা অন্য স্থানীয় সমস্যা বিস্তারিত লিখুন।</p><b>সমস্যা জানান →</b></Link>
+        <Link href="/feedback" className={`${styles.engagementCard} ${styles.engagementFeedback}`}><i>03</i><small>YOUR VOICE</small><h3>মতামত ও পরামর্শ দিন</h3><p>এলাকার উন্নয়ন, জনসেবা বা ওয়েবসাইট সম্পর্কে গঠনমূলক মতামত পাঠান।</p><b>মতামত দিন →</b></Link>
+      </div>
+    </section>
+
     <section className={styles.latestSection}>
       <div className={styles.sectionTop}><div><span className={styles.sectionKicker}>সর্বশেষ আপডেট</span><h2>সংবাদ ও কার্যক্রম</h2></div><Link href="/news">সব সংবাদ →</Link></div>
       <div className={styles.latestGrid}>{latest.map(({post,image})=><Link href={`/posts/${post.slug}`} className={styles.latestCard} key={post.id}>
