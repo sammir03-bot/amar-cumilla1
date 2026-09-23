@@ -6,13 +6,17 @@ const statusNames:Record<string,string>={setup:'প্রস্তুতি',liv
 
 export default async function ElectionAdmin({searchParams}:{searchParams:Promise<{saved?:string}>}){
   const {db,role}=await requireStaff();
-  const [settingsRes,electionsRes]=await Promise.all([
+  const [settingsRes,electionsRes,centresRes]=await Promise.all([
     db.from('cumilla_election_settings').select('*').eq('id',1).maybeSingle(),
     db.from('cumilla_elections').select('*').order('sort_order').order('union_name'),
+    db.from('cumilla_election_centres').select('election_id'),
   ]);
-  if(settingsRes.error||electionsRes.error)throw new Error('নির্বাচন কন্ট্রোল রুম খোলা যায়নি');
+  if(settingsRes.error||electionsRes.error||centresRes.error)throw new Error('নির্বাচন কন্ট্রোল রুম খোলা যায়নি');
   const settings=settingsRes.data;
   const saved=(await searchParams).saved;
+  const centreCounts=new Map<string,number>();
+  for(const centre of centresRes.data??[])centreCounts.set(centre.election_id,(centreCounts.get(centre.election_id)??0)+1);
+  const totalCentres=centresRes.data?.length??0;
 
   return <section>
     <div className="admin-page-header">
@@ -43,11 +47,14 @@ export default async function ElectionAdmin({searchParams}:{searchParams:Promise
     </div>
 
     <div className="admin-panel" style={{marginTop:18}}>
-      <div className="admin-panel-head"><h2>ইউনিয়নভিত্তিক নির্বাচন</h2><small>{(electionsRes.data?.length??0).toLocaleString('bn-BD')}টি সেটআপ</small></div>
-      <div className="election-admin-list">{electionsRes.data?.map((e:any)=><Link href={'/admin/election/'+e.id} className="election-admin-row" key={e.id}>
-        <div><small>{e.upazila==='daudkandi'?'দাউদকান্দি':'মেঘনা'}</small><strong>{e.union_name}</strong><span>{e.title}</span></div>
-        <div><span className={'election-status '+e.status}>{statusNames[e.status]??e.status}</span><b>{e.published?'Public':'Hidden'} →</b></div>
-      </Link>)}{!electionsRes.data?.length&&<div className="admin-empty">এখনো কোনো ইউনিয়ন নির্বাচন যোগ করা হয়নি। আগে ইউনিয়ন তৈরি করুন।</div>}</div>
+      <div className="admin-panel-head"><h2>ইউনিয়নভিত্তিক নির্বাচন</h2><small>{(electionsRes.data?.length??0).toLocaleString('bn-BD')}টি সেটআপ · {totalCentres.toLocaleString('bn-BD')} কেন্দ্র</small></div>
+      <div className="election-admin-list">{electionsRes.data?.map((e:any)=>{
+        const centreCount=centreCounts.get(e.id)??0;
+        return <Link href={'/admin/election/'+e.id} className="election-admin-row" key={e.id}>
+          <div><small>{e.upazila==='daudkandi'?'দাউদকান্দি':'মেঘনা'}</small><strong>{e.union_name}</strong><span>{e.title} · {centreCount.toLocaleString('bn-BD')} কেন্দ্র</span></div>
+          <div><span className={'election-status '+e.status}>{statusNames[e.status]??e.status}</span><b>{centreCount?`${centreCount.toLocaleString('bn-BD')} কেন্দ্র প্রস্তুত`:'কেন্দ্র যোগ বাকি'} →</b></div>
+        </Link>;
+      })}{!electionsRes.data?.length&&<div className="admin-empty">এখনো কোনো ইউনিয়ন নির্বাচন যোগ করা হয়নি। আগে ইউনিয়ন তৈরি করুন।</div>}</div>
     </div>
   </section>;
 }
