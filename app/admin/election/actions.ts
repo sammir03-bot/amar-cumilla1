@@ -89,7 +89,7 @@ export async function saveCentreResult(f:FormData){
   const {db,role}=await requireStaff();
   if(!canManageResults(role))throw new Error('Permission denied');
   const centreId=text(f,'centre_id');if(!uuid.safeParse(centreId).success)throw new Error('Invalid centre');
-  const {data:centre,error:centreError}=await db.from('cumilla_election_centres').select('id,election_id,status').eq('id',centreId).maybeSingle();
+  const {data:centre,error:centreError}=await db.from('cumilla_election_centres').select('id,election_id,status,reported_at').eq('id',centreId).maybeSingle();
   if(centreError||!centre)throw new Error('কেন্দ্র পাওয়া যায়নি');
   const status=text(f,'status');if(!['pending','reported','verified','official'].includes(status))throw new Error('Invalid status');
   const invalidVotes=Math.max(0,Math.floor(Number(text(f,'invalid_votes'))||0));
