@@ -76,6 +76,29 @@ export default async function Home(){
 
     <section className={styles.motto}><span/> <p>“দাউদকান্দি ও মেঘনার তথ্য এক জায়গায়”</p> <span/></section>
 
+    <section className={styles.candidateSection} aria-labelledby="candidate-title">
+      <div className={styles.candidateHead}>
+        <div>
+          <span className={styles.candidateKicker}>ইউনিয়ন নির্বাচন</span>
+          <h2 id="candidate-title">প্রার্থী পরিচিতি</h2>
+          <p>আনুষ্ঠানিকভাবে অনুমোদিত প্রার্থী নির্ধারিত হলে ছবি, ইউনিয়ন ও সংক্ষিপ্ত পরিচিতি এখানে পাশাপাশি দেখানো হবে।</p>
+        </div>
+        <span className={styles.candidateStatus}>ঘোষণার অপেক্ষায়</span>
+      </div>
+      <div className={styles.candidateRail} aria-label="প্রার্থী পরিচিতির জন্য প্রস্তুত স্লট">
+        {['০১','০২','০৩'].map((number,index)=><article className={styles.candidatePlaceholder} key={number}>
+          <span className={styles.candidateNumber}>{number}</span>
+          <div className={styles.candidatePortrait} aria-hidden="true"><i/><b/></div>
+          <div className={styles.candidatePlaceholderCopy}>
+            <small>{index===0?'দাউদকান্দি':'ইউনিয়ন নির্বাচন'}</small>
+            <strong>প্রার্থী ঘোষণা হলে পরিচিতি প্রকাশিত হবে</strong>
+            <span>ছবি · ইউনিয়ন · সংক্ষিপ্ত পরিচয়</span>
+          </div>
+          <div className={styles.candidateBar}>OFFICIAL PROFILE <b>→</b></div>
+        </article>)}
+      </div>
+    </section>
+
     <section className={styles.latestSection}>
       <div className={styles.sectionTop}><div><span className={styles.sectionKicker}>সর্বশেষ আপডেট</span><h2>সংবাদ ও কার্যক্রম</h2></div><Link href="/news">সব সংবাদ →</Link></div>
       <div className={styles.latestGrid}>{latest.map(({post,image})=><Link href={`/posts/${post.slug}`} className={styles.latestCard} key={post.id}>
