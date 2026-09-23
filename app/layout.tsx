@@ -15,8 +15,8 @@ export const metadata:Metadata={
   openGraph:{type:'website',locale:'bn_BD',url:siteUrl,siteName:'Amar Cumilla–1',title:'Amar Cumilla–1',description:'দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, নেতৃত্ব, কর্মসূচি ও স্থানীয় তথ্য।',images:[{url:'/home-hero-image',width:1600,height:900,alt:'Amar Cumilla–1'}]},
 };
 
-const menuItems=[['/','Home'],['/about','About'],['/news','News'],['/sections/event','Activities']] as const;
-const allItems=[['/about','পরিচিতি'],['/sections/leader','নেতৃত্ব'],['/news','সংবাদ'],['/sections/event','কর্মসূচি'],['/areas','এলাকা'],['/sections/gallery','গ্যালারি'],['/contact','যোগাযোগ']] as const;
+const menuItems=[['/','Home'],['/about','About'],['/news','News'],['/sections/event','Activities'],['/join','Join']] as const;
+const allItems=[['/about','পরিচিতি'],['/sections/leader','নেতৃত্ব'],['/news','সংবাদ'],['/sections/event','কর্মসূচি'],['/areas','এলাকা'],['/join','যোগদানের আগ্রহ'],['/report-problem','সমস্যা জানান'],['/feedback','মতামত/পরামর্শ'],['/sections/gallery','গ্যালারি'],['/contact','যোগাযোগ']] as const;
 
 export default function Layout({children}:{children:React.ReactNode}){
   return <html lang="bn"><body>
@@ -36,7 +36,7 @@ export default function Layout({children}:{children:React.ReactNode}){
     <footer className="site-footer">
       <div className="footer-top">
         <div className="footer-brand"><img src="/logo.svg" alt="" width="58" height="58"/><div><strong>Amar Cumilla–1</strong><p>দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, নেতৃত্ব, কার্যক্রম ও স্থানীয় তথ্য।</p></div></div>
-        <div className="footer-links"><div><span>তথ্য</span><Link href="/news">সংবাদ</Link><Link href="/areas">এলাকা</Link><Link href="/sections/document">প্রকাশনা</Link></div><div><span>সংগঠন</span><Link href="/about">পরিচিতি</Link><Link href="/sections/leader">নেতৃত্ব</Link><Link href="/sections/event">কর্মসূচি</Link></div><div><span>আরও</span><Link href="/sections/gallery">গ্যালারি</Link><Link href="/contact">যোগাযোগ</Link><Link href="/admin">Admin</Link></div></div>
+        <div className="footer-links"><div><span>তথ্য</span><Link href="/news">সংবাদ</Link><Link href="/areas">এলাকা</Link><Link href="/sections/document">প্রকাশনা</Link></div><div><span>অংশগ্রহণ</span><Link href="/join">যোগদানের আগ্রহ</Link><Link href="/report-problem">সমস্যা জানান</Link><Link href="/feedback">মতামত দিন</Link></div><div><span>আরও</span><Link href="/sections/gallery">গ্যালারি</Link><Link href="/contact">যোগাযোগ</Link><Link href="/admin">Admin</Link></div></div>
       </div>
       <div className="footer-bottom"><span>Daudkandi &amp; Meghna · Cumilla–1</span><p>এটি সরকারি ওয়েবসাইট নয় · উৎসভিত্তিক তথ্য প্রকাশ করা হয়</p></div>
     </footer>
