@@ -1,7 +1,16 @@
+import type {Metadata} from 'next';
 import Link from 'next/link';
 import ContentImage from '../../components/content-image';
 import {getProfiles,profileArea,profilePhotos,type ProfileType} from '../../lib/profiles';
 import styles from './profiles.module.css';
+
+const url='https://amar-cumilla1.vercel.app/profiles';
+export const metadata:Metadata={
+ title:'প্রার্থী ও স্থানীয় দায়িত্বশীল | কুমিল্লা-১',
+ description:'দাউদকান্দি ও মেঘনার প্রকাশিত প্রার্থী ও স্থানীয় দায়িত্বশীলদের যাচাইকৃত পরিচিতি, দায়িত্ব, এলাকা ও প্রয়োজনীয় তথ্য।',
+ alternates:{canonical:url},
+ openGraph:{type:'website',url,title:'প্রার্থী ও স্থানীয় দায়িত্বশীল | কুমিল্লা-১',description:'দাউদকান্দি ও মেঘনার প্রকাশিত প্রার্থী ও স্থানীয় দায়িত্বশীলদের পরিচিতি।'},
+};
 
 export const dynamic='force-dynamic';
 
