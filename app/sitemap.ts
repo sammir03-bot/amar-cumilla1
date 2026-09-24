@@ -1,5 +1,6 @@
 import type {MetadataRoute} from 'next';
 import {publicDb} from '../lib/supabase';
+import {seoTopics} from '../lib/seo-topics';
 
 export const dynamic='force-dynamic';
 
@@ -8,6 +9,8 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
   const staticPages:MetadataRoute.Sitemap=[
     {url:`${base}/`,changeFrequency:'daily',priority:1},
     {url:`${base}/about`,changeFrequency:'monthly',priority:.7},
+    {url:`${base}/topics`,changeFrequency:'weekly',priority:.85},
+    ...seoTopics.map(topic=>({url:base+topic.path,changeFrequency:'weekly' as const,priority:.85})),
     {url:`${base}/areas`,changeFrequency:'weekly',priority:.9},
     {url:`${base}/news`,changeFrequency:'daily',priority:.9},
     {url:`${base}/profiles`,changeFrequency:'weekly',priority:.8},
