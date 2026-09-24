@@ -8,7 +8,15 @@ export type Area={id:string;upazila:string;slug:string;name:string;kind:string;d
 export const getAreas=cache(async()=>{const {data,error}=await publicDb().from('cumilla_areas').select('*').eq('published',true).not('verified_at','is',null).order('name');if(error)throw new Error('এলাকার তথ্য আনা যায়নি');return data as Area[];});
 export async function getPosts(kind?:string,area?:string,page=1){let q=publicDb().from('cumilla_posts').select('*',{count:'exact'}).eq('status','published').lte('published_at',new Date().toISOString());if(kind)q=q.eq('kind',kind);if(area)q=q.contains('area_keys',[area]);const {data,error,count}=await q.order('published_at',{ascending:false}).range((page-1)*12,page*12-1);if(error)throw new Error('প্রকাশনা আনা যায়নি');const posts=data as Post[];return {posts,count:count??0};}
 export const getPost=cache(async(slug:string)=>{const {data,error}=await publicDb().from('cumilla_posts').select('*').eq('slug',slug).eq('status','published').lte('published_at',new Date().toISOString()).maybeSingle();if(error)throw new Error('প্রকাশনা আনা যায়নি');return data as Post|null;});
-export async function mediaUrl(path:string){if(/^https:\/\//i.test(path))return `/media-proxy?url=${encodeURIComponent(path)}`;const {data}=await publicDb().storage.from('cumilla-media').createSignedUrl(path,300);return data?.signedUrl??null;}
+export async function mediaUrl(path:string,referrer?:string|null){
+ if(/^https:\/\//i.test(path)){
+  const query=new URLSearchParams({url:path});
+  if(referrer)query.set('ref',referrer);
+  return `/media-proxy?${query.toString()}`;
+ }
+ const {data}=await publicDb().storage.from('cumilla-media').createSignedUrl(path,300);
+ return data?.signedUrl??null;
+}
 export function bnDate(date:string){return new Intl.DateTimeFormat('bn-BD',{dateStyle:'long',timeZone:'Asia/Dhaka'}).format(new Date(date));}
 
 /** Scan past news without photos so older photographed stories are not lost. */
