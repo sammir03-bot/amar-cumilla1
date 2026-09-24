@@ -11,6 +11,7 @@ export default async function sitemap():Promise<MetadataRoute.Sitemap>{
     {url:`${base}/areas`,changeFrequency:'weekly',priority:.9},
     {url:`${base}/news`,changeFrequency:'daily',priority:.9},
     {url:`${base}/profiles`,changeFrequency:'weekly',priority:.8},
+    {url:`${base}/editorial-policy`,changeFrequency:'monthly',priority:.6},
     {url:`${base}/privacy`,changeFrequency:'monthly',priority:.5},
     {url:`${base}/sections/event`,changeFrequency:'daily',priority:.8},
     {url:`${base}/sections/leader`,changeFrequency:'weekly',priority:.7},
