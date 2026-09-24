@@ -36,7 +36,6 @@ export default async function ProfilePage({params}:{params:Promise<{slug:string}
    ...(profile.designation?{jobTitle:profile.designation}:{}),
    ...(area?{homeLocation:{'@type':'Place',name:area}}:{}),
    ...(profile.bio?{description:profile.bio.slice(0,300)}:{}),
-   ...(image?{image}:{}),
   },
  };
  const json=JSON.stringify(schema).replace(/</g,'\\u003c');
