@@ -1,5 +1,6 @@
 import 'server-only';
 import {cache} from 'react';
+import type {SupabaseClient} from '@supabase/supabase-js';
 import {publicDb} from './supabase';
 import {postCoverPath} from './post-cover';
 export const kinds:Record<string,string>={news:'সংবাদ ও বিবৃতি',event:'কর্মসূচি',leader:'নেতৃত্ব',gallery:'গ্যালারি',document:'প্রকাশনা',page:'সাধারণ পাতা',archive:'নির্বাচনী আর্কাইভ'};
@@ -17,6 +18,32 @@ export async function mediaUrl(path:string,referrer?:string|null){
  const {data}=await publicDb().storage.from('cumilla-media').createSignedUrl(path,300);
  return data?.signedUrl??null;
 }
+
+/**
+ * Resolve many post covers with a single Storage signing request.
+ * This keeps admin lists and the homepage fast even when many cards have private media.
+ */
+export async function postCoverImages(
+ posts:Array<Pick<Post,'id'|'cover_selection'|'cover_url'|'media_paths'>>,
+ db:SupabaseClient=publicDb(),
+ expiresIn=900,
+){
+ const resolved=posts.map(post=>({id:post.id,raw:postCoverPath(post)}));
+ const paths=[...new Set(resolved.flatMap(item=>item.raw&&!/^https:\/\//i.test(item.raw)?[item.raw]:[]))];
+ const signed=new Map<string,string>();
+ if(paths.length){
+  const {data,error}=await db.storage.from('cumilla-media').createSignedUrls(paths,expiresIn);
+  if(error)console.error('Post cover signing failed',error.name);
+  for(const item of data??[])if(item.path&&item.signedUrl)signed.set(item.path,item.signedUrl);
+ }
+ const images=new Map<string,string|null>();
+ for(const item of resolved){
+  if(!item.raw){images.set(item.id,null);continue;}
+  images.set(item.id,/^https:\/\//i.test(item.raw)?'/media-proxy?url='+encodeURIComponent(item.raw):signed.get(item.raw)??null);
+ }
+ return images;
+}
+
 export function bnDate(date:string){return new Intl.DateTimeFormat('bn-BD',{dateStyle:'long',timeZone:'Asia/Dhaka'}).format(new Date(date));}
 
 /** Scan past news without photos so older photographed stories are not lost. */
