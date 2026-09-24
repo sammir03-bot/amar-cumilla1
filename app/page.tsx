@@ -42,7 +42,7 @@ export default async function Home(){
   const liveElection=!!electionSettings?.live_mode&&!!electionSettings?.public_enabled;
   const electionOverview=liveElection?await getElectionOverview():[];
   const items=await Promise.all(news.slice(0,12).map(async post=>({post,image:await postImage(post)})));
-  const latest=[...items.filter(item=>item.image),...items.filter(item=>!item.image)].slice(0,3);
+  const latest=items.filter(item=>item.image).slice(0,5);
   const responsibleItems=await Promise.all(responsibleProfiles.filter(p=>p.featured).map(async profile=>({profile,image:await profilePhoto(profile)})));
   const candidateItems=await Promise.all(candidateProfiles.filter(p=>p.featured).map(async profile=>({profile,image:await profilePhoto(profile)})));
   const featuredAreas=['municipality','gouripur','manikarchar','govindapur'].map(slug=>areas.find(area=>area.slug===slug)).filter(Boolean);
