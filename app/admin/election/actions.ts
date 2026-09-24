@@ -8,6 +8,11 @@ const text=(f:FormData,k:string)=>String(f.get(k)??'').trim();
 const uuid=z.string().uuid();
 const slug=z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(120);
 const canManageResults=(role:string)=>role==='admin'||role==='publisher';
+const voteNumber=(value:string)=>{
+  const number=Number(value);
+  if(!Number.isFinite(number)||number<0)return 0;
+  return Math.min(100000000,Math.floor(number));
+};
 
 function refreshElection(){
   revalidatePath('/','layout');
@@ -79,7 +84,7 @@ export async function addCentre(f:FormData){
   if(!canManageResults(role))throw new Error('Permission denied');
   const electionId=text(f,'election_id');if(!uuid.safeParse(electionId).success)throw new Error('Invalid election');
   const code=text(f,'centre_code').slice(0,60),name=text(f,'name').slice(0,220);if(!code||!name)throw new Error('কেন্দ্রের কোড ও নাম দিন');
-  const totalVoters=Math.max(0,Math.floor(Number(text(f,'total_voters'))||0));
+  const totalVoters=voteNumber(text(f,'total_voters'));
   const sortOrder=Math.max(0,Math.floor(Number(text(f,'sort_order'))||0));
   const {error}=await db.from('cumilla_election_centres').insert({election_id:electionId,centre_code:code,name,total_voters:totalVoters,sort_order:sortOrder,status:'pending'});if(error)throw error;
   refreshElection();redirect('/admin/election/'+electionId+'?saved=1');
@@ -107,7 +112,7 @@ export async function bulkAddCentres(f:FormData){
     }
     code=code.slice(0,60);name=name.slice(0,220);
     if(!code||!name)throw new Error(`লাইন ${index+1}: কেন্দ্র কোড ও নাম সঠিক নয়`);
-    const totalVoters=voters?Math.max(0,Math.floor(Number(voters)||0)):0;
+    const totalVoters=voters?voteNumber(voters):0;
     byCode.set(code,{election_id:electionId,centre_code:code,name,total_voters:totalVoters,sort_order:(index+1)*10,status:'pending'});
   });
 
@@ -123,17 +128,24 @@ export async function saveCentreResult(f:FormData){
   const {db,role}=await requireStaff();
   if(!canManageResults(role))throw new Error('Permission denied');
   const centreId=text(f,'centre_id');if(!uuid.safeParse(centreId).success)throw new Error('Invalid centre');
-  const {data:centre,error:centreError}=await db.from('cumilla_election_centres').select('id,election_id,status,reported_at').eq('id',centreId).maybeSingle();
+  const {data:centre,error:centreError}=await db.from('cumilla_election_centres').select('id,election_id,status,reported_at,total_voters').eq('id',centreId).maybeSingle();
   if(centreError||!centre)throw new Error('কেন্দ্র পাওয়া যায়নি');
   const status=text(f,'status');if(!['pending','reported','verified','official'].includes(status))throw new Error('Invalid status');
-  const invalidVotes=Math.max(0,Math.floor(Number(text(f,'invalid_votes'))||0));
+  const invalidVotes=voteNumber(text(f,'invalid_votes'));
   const {data:candidates,error:candidateError}=await db.from('cumilla_election_candidates').select('id').eq('election_id',centre.election_id);
   if(candidateError)throw candidateError;
-  const rows=(candidates??[]).map(candidate=>({centre_id:centreId,candidate_id:candidate.id,votes:Math.max(0,Math.floor(Number(text(f,'votes_'+candidate.id))||0)),updated_at:new Date().toISOString()}));
+  const rows=(candidates??[]).map(candidate=>({centre_id:centreId,candidate_id:candidate.id,votes:voteNumber(text(f,'votes_'+candidate.id)),updated_at:new Date().toISOString()}));
+  const countedVotes=rows.reduce((sum,row)=>sum+row.votes,0)+invalidVotes;
+  if(centre.total_voters>0&&countedVotes>centre.total_voters){
+    throw new Error(`মোট গণনা করা ভোট (${countedVotes.toLocaleString('bn-BD')}) কেন্দ্রের মোট ভোটার (${centre.total_voters.toLocaleString('bn-BD')})-এর বেশি হতে পারে না।`);
+  }
+  if(status!=='pending'&&!rows.length)throw new Error('প্রার্থী ছাড়া কেন্দ্রের ফল প্রকাশ করা যাবে না');
   if(rows.length){const {error}=await db.from('cumilla_election_results').upsert(rows,{onConflict:'centre_id,candidate_id'});if(error)throw error;}
   const now=new Date().toISOString();
   const centreUpdate:any={status,invalid_votes:invalidVotes,updated_at:now};
   if(status!=='pending'&&!centre.reported_at)centreUpdate.reported_at=now;
+  if(status==='pending')centreUpdate.verified_at=null;
+  if(status==='reported')centreUpdate.verified_at=null;
   if(['verified','official'].includes(status))centreUpdate.verified_at=now;
   const {error:updateError}=await db.from('cumilla_election_centres').update(centreUpdate).eq('id',centreId);if(updateError)throw updateError;
   refreshElection();
