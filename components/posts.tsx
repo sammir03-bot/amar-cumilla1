@@ -1,19 +1,15 @@
 import {postCoverPath} from '../lib/post-cover';
 import ContentImage from './content-image';
 import Link from 'next/link';
-import {Post,bnDate,kinds,mediaUrl} from '../lib/content';
+import {Post,bnDate,kinds,mediaUrl,postCoverImages} from '../lib/content';
 import styles from './posts.module.css';
 
 function isExternal(path:string){return /^https:\/\//i.test(path);}
 
 export async function PostCards({posts}:{posts:Post[]}){
   if(!posts.length)return <p className="notice">এই বিভাগে এখনো কোনো তথ্য প্রকাশিত হয়নি।</p>;
-  const cards=await Promise.all(posts.map(async p=>{
-    const imagePath=postCoverPath(p);
-    const imageUrl=imagePath?await mediaUrl(imagePath):null;
-    return {p,imageUrl};
-  }));
-  return <div className="grid">{cards.map(({p,imageUrl})=><Link className={`card ${styles.card}`} key={p.id} href={'/posts/'+p.slug}>
+  const images=await postCoverImages(posts);
+  return <div className="grid">{posts.map(p=>{const imageUrl=images.get(p.id)??null;return <Link className={`card ${styles.card}`} key={p.id} href={'/posts/'+p.slug}>
     <div className={styles.cover}>
       {imageUrl&&<><ContentImage key={imageUrl} className={styles.coverImage} src={imageUrl} alt={p.title}/><span className={styles.coverShade}/></>}
       <div className={styles.coverInner}>
@@ -27,16 +23,18 @@ export async function PostCards({posts}:{posts:Post[]}){
       <p>{p.body.slice(0,150)}{p.body.length>150?'…':''}</p>
       <span className={styles.readMore}>বিস্তারিত পড়ুন →</span>
     </div>
-  </Link>)}</div>;
+  </Link>})}</div>;
 }
 
 export async function PostView({post:p,sign=mediaUrl}:{post:Post;sign?:(path:string)=>Promise<string|null>}){
   const files=await Promise.all((p.media_paths??[]).map(async path=>({path,url:await sign(path)})));
   const coverPath=postCoverPath(p);
   const cover=coverPath?(isExternal(coverPath)?await mediaUrl(coverPath):await sign(coverPath)):null;
+  const updated=p.updated_at&&p.published_at&&new Date(p.updated_at).getTime()-new Date(p.published_at).getTime()>5*60*1000;
   return <article className="prose">
     <p className="eyebrow">{kinds[p.kind]}{p.published_at?' · '+bnDate(p.published_at):''}</p>
     <h1>{p.title}</h1>
+    {updated&&<p><small>সর্বশেষ হালনাগাদ: {bnDate(p.updated_at)}</small></p>}
     {cover&&<figure className={styles.articleCover}><ContentImage key={cover} src={cover} alt={p.title} loading="eager"/>{(p.cover_credit||p.cover_source_url)&&<figcaption>{p.cover_credit||'ছবির উৎস'}{p.cover_license?` · ${p.cover_license}`:''}{p.cover_source_url&&<> · <a href={p.cover_source_url} target="_blank" rel="noopener noreferrer">ছবির উৎস ↗</a></>}</figcaption>}</figure>}
     {p.event_at&&<p>সময়: {new Date(p.event_at).toLocaleString('bn-BD',{timeZone:'Asia/Dhaka'})} (বাংলাদেশ)</p>}
     {p.venue&&<p>স্থান: {p.venue}</p>}
