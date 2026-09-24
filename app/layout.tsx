@@ -24,12 +24,10 @@ const allItems=[['/','হোম'],['/about','পরিচিতি'],['/profiles
 
 function NavIcon({name}:{name:string}){
   if(!name)return null;
-  const paths:Record<string,string>={
-    home:'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z',
-    news:'M4 5h12v14H4z M8 9h4 M8 13h4 M8 17h4 M16 8h4v9a2 2 0 0 1-2 2h-2',
-    join:'M15 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M8.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M18 8v6 M15 11h6'
-  };
-  return <svg className="nav-mini-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]}/></svg>;
+  const common={className:`nav-mini-icon nav-mini-icon-${name}`,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round' as const,strokeLinejoin:'round' as const,'aria-hidden':true};
+  if(name==='home')return <svg {...common}><path d="M3.5 10.5 12 3.5l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M9 20v-5.5h6V20"/></svg>;
+  if(name==='news')return <svg {...common}><rect x="4.5" y="4.5" width="13" height="15" rx="1.5"/><path d="M8.5 8h5.5M8.5 11.5H14M8.5 15h4"/><path d="M17.5 7.5H20v9.25A2.25 2.25 0 0 1 17.75 19H17.5"/></svg>;
+  return <svg {...common}><circle cx="9" cy="8" r="3.5"/><path d="M3.5 20c0-3.4 2.4-5.8 5.5-5.8s5.5 2.4 5.5 5.8"/><path d="M18.5 7v6M15.5 10h6"/></svg>;
 }
 
 async function ElectionBanner(){
