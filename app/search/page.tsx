@@ -34,8 +34,8 @@ export default async function SearchPage({searchParams}:{searchParams:Promise<{q
   areas=(areaResult.data??[]) as AreaResult[];
  }
  const total=posts.length+profiles.length+areas.length;
- return <main className={styles.page}>
-  <header className={styles.hero}><span className={styles.kicker}>SITE SEARCH</span><h1>এক জায়গা থেকে সব তথ্য খুঁজুন</h1><p>প্রকাশিত সংবাদ, প্রার্থী ও দায়িত্বশীলের পরিচিতি এবং দাউদকান্দি–মেঘনার এলাকার তথ্য নাম বা শিরোনাম দিয়ে খুঁজুন।</p></header>
+ return <section className={styles.page} aria-labelledby="search-title">
+  <header className={styles.hero}><span className={styles.kicker}>SITE SEARCH</span><h1 id="search-title">এক জায়গা থেকে সব তথ্য খুঁজুন</h1><p>প্রকাশিত সংবাদ, প্রার্থী ও দায়িত্বশীলের পরিচিতি এবং দাউদকান্দি–মেঘনার এলাকার তথ্য নাম বা শিরোনাম দিয়ে খুঁজুন।</p></header>
   <form className={styles.form} action="/search" method="get" role="search"><input name="q" defaultValue={q} minLength={2} maxLength={80} autoComplete="off" placeholder="যেমন: গৌরীপুর, মেঘনা, কোনো ব্যক্তির নাম…" aria-label="সাইটে খুঁজুন"/><button type="submit">খুঁজুন</button></form>
   {!q&&<div className={styles.hint}><div><strong>সংবাদ</strong><span>শিরোনাম দিয়ে প্রকাশিত সংবাদ খুঁজুন</span></div><div><strong>পরিচিতি</strong><span>প্রার্থী বা স্থানীয় দায়িত্বশীলের নাম লিখুন</span></div><div><strong>এলাকা</strong><span>ইউনিয়ন, পৌরসভা বা এলাকার নাম লিখুন</span></div></div>}
   {q.length===1&&<div className={styles.empty}>কমপক্ষে ২টি অক্ষর লিখে খুঁজুন।</div>}
@@ -46,5 +46,5 @@ export default async function SearchPage({searchParams}:{searchParams:Promise<{q
    {!!profiles.length&&<section className={styles.group}><div className={styles.groupHead}><h2>ব্যক্তি পরিচিতি</h2><span>{profiles.length.toLocaleString('bn-BD')}টি</span></div><div className={styles.results}>{profiles.map(profile=><Link className={styles.result} href={'/profiles/'+profile.slug} key={profile.id}><small>{profile.profile_type==='candidate'?'প্রার্থী পরিচিতি':'স্থানীয় দায়িত্বশীল'}</small><h3>{profile.name}</h3><p>{[profile.designation,profile.area_name||profile.union_name].filter(Boolean).join(' · ')||'বিস্তারিত পরিচিতি'}</p></Link>)}</div></section>}
    {!!areas.length&&<section className={styles.group}><div className={styles.groupHead}><h2>এলাকার তথ্য</h2><span>{areas.length.toLocaleString('bn-BD')}টি</span></div><div className={styles.results}>{areas.map(area=><Link className={styles.result} href={`/areas/${area.upazila}/${area.slug}`} key={area.id}><small>{area.upazila==='daudkandi'?'দাউদকান্দি':'মেঘনা'} · {area.kind==='municipality'?'পৌরসভা':'ইউনিয়ন'}</small><h3>{area.name}</h3><p>{area.description?.slice(0,105)||'এলাকার বিস্তারিত তথ্য দেখুন'}{area.description?.length>105?'…':''}</p></Link>)}</div></section>}
   </>}
- </main>;
+ </section>;
 }
