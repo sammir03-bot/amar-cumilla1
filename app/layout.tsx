@@ -46,7 +46,10 @@ export default function Layout({children}:{children:React.ReactNode}){
     <Suspense fallback={null}><ElectionBanner/></Suspense>
     <header className="site-header">
       <div className="header-inner">
-        <Link className="brand brand-logo-only" href="/" aria-label="Amar Cumilla–1 — Home"><img src="/logo.svg" alt="Amar Cumilla–1" width="88" height="88"/></Link>
+        <Link className="brand brand-logo-only" href="/" aria-label="Amar Cumilla–1 — Home">
+          <img src="/logo.svg" alt="Amar Cumilla–1" width="88" height="88"/>
+          <span className="brand-title"><strong>Amar Cumilla–1</strong><small>Daudkandi · Meghna</small></span>
+        </Link>
         <nav className="desktop-nav demo-nav" aria-label="Primary navigation">{menuItems.map(([href,label,icon,mobileLabel],i)=><Link aria-label={icon?label:undefined} className={`${i===0?'active ':''}${icon?'nav-link-with-icon':''}`.trim()} href={href} key={href}><NavIcon name={icon}/><span className="nav-label-desktop">{label}</span>{mobileLabel&&<span className="nav-label-mobile">{mobileLabel}</span>}</Link>)}</nav>
         <details className="mobile-nav demo-menu">
           <summary><span className="menu-bars" aria-hidden="true"><i/><i/><i/></span><b>MENU</b></summary>
