@@ -18,7 +18,7 @@ export const metadata:Metadata={
 };
 
 const menuItems=[['/','Home'],['/about','About'],['/news','News'],['/sections/event','Activities'],['/join','Join']] as const;
-const allItems=[['/about','পরিচিতি'],['/sections/leader','নেতৃত্ব'],['/news','সংবাদ'],['/sections/event','কর্মসূচি'],['/areas','এলাকা'],['/election','নির্বাচন ফলাফল'],['/join','যোগদানের আগ্রহ'],['/report-problem','সমস্যা জানান'],['/feedback','মতামত/পরামর্শ'],['/sections/gallery','গ্যালারি'],['/contact','যোগাযোগ']] as const;
+const allItems=[['/about','পরিচিতি'],['/profiles','প্রার্থী ও দায়িত্বশীল'],['/news','সংবাদ'],['/sections/event','কর্মসূচি'],['/areas','এলাকা'],['/election','নির্বাচন ফলাফল'],['/join','যোগদানের আগ্রহ'],['/report-problem','সমস্যা জানান'],['/feedback','মতামত/পরামর্শ'],['/sections/gallery','গ্যালারি'],['/contact','যোগাযোগ'],['/privacy','গোপনীয়তা নীতি']] as const;
 
 export default async function Layout({children}:{children:React.ReactNode}){
   let electionLive=false;
@@ -41,9 +41,9 @@ export default async function Layout({children}:{children:React.ReactNode}){
     <footer className="site-footer">
       <div className="footer-top">
         <div className="footer-brand"><img src="/logo.svg" alt="" width="58" height="58"/><div><strong>Amar Cumilla–1</strong><p>দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, নেতৃত্ব, কার্যক্রম ও স্থানীয় তথ্য।</p></div></div>
-        <div className="footer-links"><div><span>তথ্য</span><Link href="/news">সংবাদ</Link><Link href="/areas">এলাকা</Link><Link href="/election">নির্বাচন ফলাফল</Link></div><div><span>অংশগ্রহণ</span><Link href="/join">যোগদানের আগ্রহ</Link><Link href="/report-problem">সমস্যা জানান</Link><Link href="/feedback">মতামত দিন</Link></div><div><span>আরও</span><Link href="/sections/gallery">গ্যালারি</Link><Link href="/contact">যোগাযোগ</Link><Link href="/admin">Admin</Link></div></div>
+        <div className="footer-links"><div><span>তথ্য</span><Link href="/news">সংবাদ</Link><Link href="/profiles">প্রার্থী ও দায়িত্বশীল</Link><Link href="/areas">এলাকা</Link><Link href="/election">নির্বাচন ফলাফল</Link></div><div><span>অংশগ্রহণ</span><Link href="/join">যোগদানের আগ্রহ</Link><Link href="/report-problem">সমস্যা জানান</Link><Link href="/feedback">মতামত দিন</Link></div><div><span>আরও</span><Link href="/sections/gallery">গ্যালারি</Link><Link href="/contact">যোগাযোগ</Link><Link href="/privacy">গোপনীয়তা নীতি</Link></div></div>
       </div>
-      <div className="footer-bottom"><span>Daudkandi &amp; Meghna · Cumilla–1</span><p>এটি সরকারি ওয়েবসাইট নয় · উৎসভিত্তিক তথ্য প্রকাশ করা হয়</p></div>
+      <div className="footer-bottom"><span>Daudkandi &amp; Meghna · Cumilla–1</span><p>এটি সরকারি ওয়েবসাইট নয় · উৎসভিত্তিক তথ্য প্রকাশ করা হয় · <Link href="/privacy">Privacy Policy</Link></p></div>
     </footer>
   </body></html>;
 }
