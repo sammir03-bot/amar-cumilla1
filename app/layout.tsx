@@ -3,6 +3,7 @@ import Link from 'next/link';
 import {getElectionSettings} from '../lib/election';
 import './globals.css';
 import './site-modern.css';
+import './nav-icons.css';
 
 const siteUrl='https://amar-cumilla1.vercel.app';
 export const dynamic='force-dynamic';
