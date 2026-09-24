@@ -87,14 +87,14 @@ export default async function Home(){
       {candidateItems.length?<div className={people.peopleRail}>{candidateItems.map(({profile,image})=><Link href={'/profiles/'+profile.slug} className={people.peopleCard} key={profile.id}><div className={people.peoplePhoto}>{image?<ContentImage src={image} alt={profile.name}/>:<span>{profile.name.slice(0,1)}</span>}</div><div className={people.peopleCopy}><small>প্রার্থী পরিচিতি</small><h3>{profile.name}</h3>{profile.designation&&<strong>{profile.designation}</strong>}<p>{profileArea(profile)||'কুমিল্লা–১'}</p></div><div className={people.peopleBar}>বিস্তারিত পরিচিতি <b>→</b></div></Link>)}</div>:<div className={people.peopleEmpty}><strong>এখনও কোনো প্রার্থী পরিচিতি প্রকাশিত হয়নি</strong><span>প্রার্থী তালিকা প্রকাশিত হলে এখানে দেখা যাবে।</span></div>}
     </section>
 
-    <section className={engage.section} aria-labelledby="engagement-title">
-      <div className={engage.head}><span>আপনার অংশগ্রহণ</span><h2 id="engagement-title">আপনার কথা সরাসরি আমাদের কাছে</h2><p>যোগদানের আগ্রহ, এলাকার সমস্যা অথবা গঠনমূলক মতামত—সঠিক ফর্মটি বেছে পাঠান। জমা হওয়া তথ্য প্রয়োজন অনুযায়ী অনুমোদিত দায়িত্বশীলদের কাছে পৌঁছাবে।</p></div>
-      <div className={engage.grid}><Link href="/join" className={`${engage.card} ${engage.join}`}><i>01</i><small>JOIN</small><h3>জামায়াতে ইসলামী সম্পর্কে জানতে ও যুক্ত হওয়ার আগ্রহ</h3><p>যোগাযোগের তথ্য ও আগ্রহ জানান। এটি সরাসরি সদস্যপদ অনুমোদন নয়।</p><b>ফর্ম খুলুন →</b></Link><Link href="/report-problem" className={`${engage.card} ${engage.problem}`}><i>02</i><small>LOCAL ISSUE</small><h3>এলাকার সমস্যা জানান</h3><p>রাস্তা, পানি, ড্রেনেজ, শিক্ষা, স্বাস্থ্য বা অন্য স্থানীয় সমস্যা বিস্তারিত লিখুন।</p><b>সমস্যা জানান →</b></Link><Link href="/feedback" className={`${engage.card} ${engage.feedback}`}><i>03</i><small>YOUR VOICE</small><h3>মতামত ও পরামর্শ দিন</h3><p>এলাকার উন্নয়ন, জনসেবা বা ওয়েবসাইট সম্পর্কে গঠনমূলক মতামত পাঠান।</p><b>মতামত দিন →</b></Link></div>
-    </section>
-
     <section className={styles.latestSection}>
       <div className={styles.sectionTop}><div><span className={styles.sectionKicker}>সর্বশেষ আপডেট</span><h2>সংবাদ ও কার্যক্রম</h2></div><Link href="/news">সব সংবাদ →</Link></div>
       <div className={styles.latestGrid}>{latest.map(({post,image})=><Link href={`/posts/${post.slug}`} className={styles.latestCard} key={post.id}><div className={styles.latestImage}>{image?<ContentImage key={image} src={image} alt={post.title}/>:<span>ঘটনার ছবি যুক্ত হয়নি</span>}</div><div className={styles.latestCopy}><small>{post.published_at?bnDate(post.published_at):'সংবাদ'}</small><h3>{post.title}</h3><p>{post.body.slice(0,120)}{post.body.length>120?'…':''}</p><b>পড়ুন →</b></div></Link>)}</div>
+    </section>
+
+    <section className={engage.section} aria-labelledby="engagement-title">
+      <div className={engage.head}><span>আপনার অংশগ্রহণ</span><h2 id="engagement-title">আপনার কথা সরাসরি আমাদের কাছে</h2><p>যোগদানের আগ্রহ, এলাকার সমস্যা অথবা গঠনমূলক মতামত—সঠিক ফর্মটি বেছে পাঠান। জমা হওয়া তথ্য প্রয়োজন অনুযায়ী অনুমোদিত দায়িত্বশীলদের কাছে পৌঁছাবে।</p></div>
+      <div className={engage.grid}><Link href="/join" className={`${engage.card} ${engage.join}`}><i>01</i><small>JOIN</small><h3>জামায়াতে ইসলামী সম্পর্কে জানতে ও যুক্ত হওয়ার আগ্রহ</h3><p>যোগাযোগের তথ্য ও আগ্রহ জানান। এটি সরাসরি সদস্যপদ অনুমোদন নয়।</p><b>ফর্ম খুলুন →</b></Link><Link href="/report-problem" className={`${engage.card} ${engage.problem}`}><i>02</i><small>LOCAL ISSUE</small><h3>এলাকার সমস্যা জানান</h3><p>রাস্তা, পানি, ড্রেনেজ, শিক্ষা, স্বাস্থ্য বা অন্য স্থানীয় সমস্যা বিস্তারিত লিখুন।</p><b>সমস্যা জানান →</b></Link><Link href="/feedback" className={`${engage.card} ${engage.feedback}`}><i>03</i><small>YOUR VOICE</small><h3>মতামত ও পরামর্শ দিন</h3><p>এলাকার উন্নয়ন, জনসেবা বা ওয়েবসাইট সম্পর্কে গঠনমূলক মতামত পাঠান।</p><b>মতামত দিন →</b></Link></div>
     </section>
 
     <section className={styles.areaSection}>
