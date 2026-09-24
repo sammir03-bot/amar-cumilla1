@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
+import {Suspense} from 'react';
 import {getElectionSettings} from '../lib/election';
 import './globals.css';
 import './site-modern.css';
@@ -31,11 +32,14 @@ function NavIcon({name}:{name:string}){
   return <svg className="nav-mini-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]}/></svg>;
 }
 
-export default async function Layout({children}:{children:React.ReactNode}){
+async function ElectionBanner(){
   let electionLive=false;
   try{const settings=await getElectionSettings();electionLive=!!settings?.live_mode&&!!settings?.public_enabled;}catch{/* Keep the site available if the election module is temporarily unavailable. */}
+  return electionLive?<Link className="global-election-live" href="/election"><span><i/> LIVE</span><strong>দাউদকান্দি–মেঘনা ইউনিয়ন নির্বাচন ফলাফল</strong><b>ফলাফল দেখুন →</b></Link>:null;
+}
+export default function Layout({children}:{children:React.ReactNode}){
   return <html lang="bn"><body>
-    {electionLive&&<Link className="global-election-live" href="/election"><span><i/> LIVE</span><strong>দাউদকান্দি–মেঘনা ইউনিয়ন নির্বাচন ফলাফল</strong><b>ফলাফল দেখুন →</b></Link>}
+    <Suspense fallback={null}><ElectionBanner/></Suspense>
     <header className="site-header">
       <div className="header-inner">
         <Link className="brand brand-logo-only" href="/" aria-label="Amar Cumilla–1 — Home"><img src="/logo.svg" alt="Amar Cumilla–1" width="88" height="88"/></Link>

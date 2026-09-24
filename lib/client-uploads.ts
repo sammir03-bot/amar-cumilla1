@@ -4,6 +4,7 @@ import {inspectMedia,MAX_MEDIA_BYTES} from './upload-types';
 /** Media goes directly to private Storage, avoiding the hosting request-size limit. */
 export async function uploadSelectedFiles(form:FormData,mode:'post'|'library'|'profile',progress:(message:string)=>void){
  const name=mode==='post'?'media_files':mode==='library'?'file':'photo_file';
+ if(mode==='profile'&&form.get('photo_mode')!=='upload'){form.delete(name);return {cleanup:async()=>{}};}
  const files=form.getAll(name).filter((f):f is File=>f instanceof File&&f.size>0);
  const empty={cleanup:async()=>{}};
  if(!files.length)return empty;

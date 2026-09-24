@@ -2,6 +2,7 @@ import 'server-only';
 import {cache} from 'react';
 import {mediaUrl} from './content';
 import {publicDb} from './supabase';
+import type {SupabaseClient} from '@supabase/supabase-js';
 
 export type ProfileType='candidate'|'responsible';
 export type Profile={
@@ -50,6 +51,18 @@ export const getProfile=cache(async(slug:string)=>{
 export async function profilePhoto(profile:Pick<Profile,'photo_path'|'photo_url'>){
   const raw=profile.photo_path||profile.photo_url;
   return raw?await mediaUrl(raw):null;
+}
+
+/** One Storage request for a list, instead of a request for every profile. */
+export async function profilePhotos<T extends Pick<Profile,'photo_path'|'photo_url'>>(profiles:T[],db:SupabaseClient=publicDb()){
+ const paths=[...new Set(profiles.flatMap(p=>p.photo_path?[p.photo_path]:[]))];
+ const urls=new Map<string,string>();
+ if(paths.length){
+  const {data,error}=await db.storage.from('cumilla-media').createSignedUrls(paths,300);
+  if(error)console.error('Profile photo signing failed',error.name);
+  for(const item of data??[])if(item.path&&item.signedUrl)urls.set(item.path,item.signedUrl);
+ }
+ return profiles.map(profile=>({profile,image:profile.photo_path?urls.get(profile.photo_path)??null:profile.photo_url?'/media-proxy?url='+encodeURIComponent(profile.photo_url):null}));
 }
 
 export function profileArea(profile:Pick<Profile,'area_name'|'union_name'|'upazila'>){

@@ -1,4 +1,5 @@
 import 'server-only';
+import {cache} from 'react';
 import {publicDb} from './supabase';
 
 export type ElectionSettings={
@@ -11,11 +12,11 @@ export type ElectionCandidate={id:string;election_id:string;name:string;symbol:s
 export type ElectionCentre={id:string;election_id:string;centre_code:string;name:string;total_voters:number;invalid_votes:number;status:'pending'|'reported'|'verified'|'official';reported_at:string|null;verified_at:string|null;sort_order:number;updated_at:string};
 export type ElectionResult={id:string;centre_id:string;candidate_id:string;votes:number;updated_at:string};
 
-export async function getElectionSettings(){
+export const getElectionSettings=cache(async()=>{
   const {data,error}=await publicDb().from('cumilla_election_settings').select('*').eq('id',1).maybeSingle();
   if(error)throw new Error('নির্বাচন সেটিংস আনা যায়নি');
   return data as ElectionSettings|null;
-}
+});
 
 export async function getElectionOverview(){
   const db=publicDb();

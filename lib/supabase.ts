@@ -1,4 +1,5 @@
 import 'server-only';
+import {cache} from 'react';
 import {createServerClient} from '@supabase/ssr';
 import {createClient} from '@supabase/supabase-js';
 import {cookies} from 'next/headers';
@@ -15,10 +16,11 @@ export async function sessionDb(){
  const jar=await cookies();const {url,key}=config();
  return createServerClient(url,key,{cookies:{getAll:()=>jar.getAll(),setAll(items){try{items.forEach(({name,value,options})=>jar.set(name,value,options));}catch{/* Render-only cookie writes are handled by proxy. */}}}});
 }
-export async function requireStaff(){
+// Deduplicate layout/page checks within this render only, never across users.
+export const requireStaff=cache(async()=>{
  const db=await sessionDb();const {data:{user},error}=await db.auth.getUser();
  if(error||!user||!user.email_confirmed_at) redirect('/login');
  const {data:staff}=await db.from('cumilla_staff').select('role').eq('user_id',user.id).maybeSingle();
  if(!staff) redirect('/login?error=permission');
  return {db,user,role:staff.role as 'admin'|'editor'|'publisher'};
-}
+});

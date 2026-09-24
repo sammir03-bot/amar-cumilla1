@@ -2,9 +2,9 @@ import ContentImage from '../components/content-image';
 import {postCoverPath} from '../lib/post-cover';
 import type {Metadata} from 'next';
 import Link from 'next/link';
-import {bnDate,getAreas,getPosts,mediaUrl,type Post} from '../lib/content';
+import {bnDate,getAreas,getHomeNews,mediaUrl,type Post} from '../lib/content';
 import {getElectionOverview,getElectionSettings} from '../lib/election';
-import {getProfiles,profileArea,profilePhoto} from '../lib/profiles';
+import {getProfiles,profileArea,profilePhotos} from '../lib/profiles';
 import ElectionLiveRefresh from '../components/election-live-refresh';
 import styles from './home-modern.module.css';
 import people from './home-profiles.module.css';
@@ -36,15 +36,17 @@ const featureLinks=[
 ] as const;
 
 export default async function Home(){
-  const [{posts:news},areas,electionSettings,responsibleProfiles,candidateProfiles]=await Promise.all([
-    getPosts('news'),getAreas(),getElectionSettings(),getProfiles('responsible'),getProfiles('candidate'),
+  const [news,areas,electionSettings,profiles]=await Promise.all([
+    getHomeNews(),getAreas(),getElectionSettings(),getProfiles(),
   ]);
   const liveElection=!!electionSettings?.live_mode&&!!electionSettings?.public_enabled;
   const electionOverview=liveElection?await getElectionOverview():[];
-  const items=await Promise.all(news.slice(0,12).map(async post=>({post,image:await postImage(post)})));
-  const latest=items.filter(item=>item.image).slice(0,5);
-  const responsibleItems=await Promise.all(responsibleProfiles.filter(p=>p.featured).map(async profile=>({profile,image:await profilePhoto(profile)})));
-  const candidateItems=await Promise.all(candidateProfiles.filter(p=>p.featured).map(async profile=>({profile,image:await profilePhoto(profile)})));
+  const [latest,profileItems]=await Promise.all([
+    Promise.all(news.map(async post=>({post,image:await postImage(post)}))),
+    profilePhotos(profiles.filter(p=>p.featured)),
+  ]);
+  const responsibleItems=profileItems.filter(item=>item.profile.profile_type==='responsible');
+  const candidateItems=profileItems.filter(item=>item.profile.profile_type==='candidate');
   const featuredAreas=['municipality','gouripur','manikarchar','govindapur'].map(slug=>areas.find(area=>area.slug===slug)).filter(Boolean);
 
   return <div className={styles.page}>
@@ -75,14 +77,14 @@ export default async function Home(){
 
     <section className={`${people.peopleSection} ${people.peopleLeadership}`} aria-labelledby="leadership-title">
       <div className={people.peopleHead}><div><span className={people.peopleKicker}>LOCAL LEADERSHIP</span><h2 id="leadership-title">স্থানীয় দায়িত্বশীলদের পরিচিতি</h2><p>দাউদকান্দি ও মেঘনার প্রকাশিত দায়িত্বশীলদের ছবি, দায়িত্ব, এলাকা ও সংক্ষিপ্ত পরিচয় পাশাপাশি দেখুন।</p></div><Link href="/profiles?type=responsible">সব পরিচিতি →</Link></div>
-      {responsibleItems.length?<div className={people.peopleRail}>{responsibleItems.map(({profile,image})=><Link href={'/profiles/'+profile.slug} className={people.peopleCard} key={profile.id}><div className={people.peoplePhoto}>{image?<img src={image} alt={profile.name}/>:<span>{profile.name.slice(0,1)}</span>}</div><div className={people.peopleCopy}><small>স্থানীয় দায়িত্বশীল</small><h3>{profile.name}</h3>{profile.designation&&<strong>{profile.designation}</strong>}<p>{profileArea(profile)||'কুমিল্লা–১'}</p></div><div className={people.peopleBar}>PROFILE <b>→</b></div></Link>)}</div>:<div className={people.peopleEmpty}><strong>পরিচিতি প্রস্তুত হচ্ছে</strong><span>প্রকাশিত স্থানীয় দায়িত্বশীলদের পরিচিতি এখানে দেখা যাবে।</span></div>}
+      {responsibleItems.length?<div className={people.peopleRail}>{responsibleItems.map(({profile,image})=><Link href={'/profiles/'+profile.slug} className={people.peopleCard} key={profile.id}><div className={people.peoplePhoto}>{image?<ContentImage src={image} alt={profile.name}/>:<span>{profile.name.slice(0,1)}</span>}</div><div className={people.peopleCopy}><small>স্থানীয় দায়িত্বশীল</small><h3>{profile.name}</h3>{profile.designation&&<strong>{profile.designation}</strong>}<p>{profileArea(profile)||'কুমিল্লা–১'}</p></div><div className={people.peopleBar}>বিস্তারিত পরিচিতি <b>→</b></div></Link>)}</div>:<div className={people.peopleEmpty}><strong>পরিচিতি প্রস্তুত হচ্ছে</strong><span>প্রকাশিত স্থানীয় দায়িত্বশীলদের পরিচিতি এখানে দেখা যাবে।</span></div>}
     </section>
 
     <section className={styles.motto}><span/> <p>“দাউদকান্দি ও মেঘনার তথ্য এক জায়গায়”</p> <span/></section>
 
     <section className={`${people.peopleSection} ${people.peopleCandidates}`} aria-labelledby="candidate-title">
       <div className={people.peopleHead}><div><span className={people.peopleKicker}>CANDIDATE PROFILE</span><h2 id="candidate-title">প্রার্থী পরিচিতি</h2><p>দাউদকান্দি ও মেঘনার প্রকাশিত প্রার্থীদের ছবি, এলাকা, পদবি ও বিস্তারিত পরিচয় এখানে একসঙ্গে দেখুন।</p></div><Link href="/profiles?type=candidate">সব প্রার্থী →</Link></div>
-      {candidateItems.length?<div className={people.peopleRail}>{candidateItems.map(({profile,image})=><Link href={'/profiles/'+profile.slug} className={people.peopleCard} key={profile.id}><div className={people.peoplePhoto}>{image?<img src={image} alt={profile.name}/>:<span>{profile.name.slice(0,1)}</span>}</div><div className={people.peopleCopy}><small>প্রার্থী পরিচিতি</small><h3>{profile.name}</h3>{profile.designation&&<strong>{profile.designation}</strong>}<p>{profileArea(profile)||'কুমিল্লা–১'}</p></div><div className={people.peopleBar}>OFFICIAL PROFILE <b>→</b></div></Link>)}</div>:<div className={people.peopleEmpty}><strong>এখনও কোনো প্রার্থী পরিচিতি প্রকাশিত হয়নি</strong><span>প্রার্থী তালিকা প্রকাশিত হলে এখানে দেখা যাবে।</span></div>}
+      {candidateItems.length?<div className={people.peopleRail}>{candidateItems.map(({profile,image})=><Link href={'/profiles/'+profile.slug} className={people.peopleCard} key={profile.id}><div className={people.peoplePhoto}>{image?<ContentImage src={image} alt={profile.name}/>:<span>{profile.name.slice(0,1)}</span>}</div><div className={people.peopleCopy}><small>প্রার্থী পরিচিতি</small><h3>{profile.name}</h3>{profile.designation&&<strong>{profile.designation}</strong>}<p>{profileArea(profile)||'কুমিল্লা–১'}</p></div><div className={people.peopleBar}>বিস্তারিত পরিচিতি <b>→</b></div></Link>)}</div>:<div className={people.peopleEmpty}><strong>এখনও কোনো প্রার্থী পরিচিতি প্রকাশিত হয়নি</strong><span>প্রার্থী তালিকা প্রকাশিত হলে এখানে দেখা যাবে।</span></div>}
     </section>
 
     <section className={engage.section} aria-labelledby="engagement-title">

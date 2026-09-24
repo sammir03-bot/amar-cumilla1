@@ -8,7 +8,8 @@ export async function proxy(request:NextRequest){
   items.forEach(({name,value})=>request.cookies.set(name,value));response=NextResponse.next({request});
   items.forEach(({name,value,options})=>response.cookies.set(name,value,options));
  }}});
- await db.auth.getUser();
+ // Refresh/verify the JWT here; requireStaff still checks the live session and role.
+ await db.auth.getClaims();
  response.headers.set('Cache-Control','private, no-store');return response;
 }
 export const config={matcher:['/admin/:path*','/login','/auth/:path*']};
