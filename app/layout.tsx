@@ -19,7 +19,13 @@ export const metadata:Metadata={
   openGraph:{type:'website',locale:'bn_BD',url:siteUrl,siteName:'Amar Cumilla–1',title:'Amar Cumilla–1',description:'দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, নেতৃত্ব, কর্মসূচি ও স্থানীয় তথ্য।',images:[{url:'/home-hero-image',width:1600,height:900,alt:'Amar Cumilla–1'}]},
 };
 
-const menuItems=[['/','Home','home'],['/about','About',''],['/news','News','news'],['/sections/event','Activities',''],['/join','Join','join']] as const;
+const menuItems=[
+  ['/','Home','home','হোম'],
+  ['/about','About','',''],
+  ['/news','News','news','খবর'],
+  ['/sections/event','Activities','',''],
+  ['/join','Join','join','যোগ দিন']
+] as const;
 const allItems=[['/','হোম'],['/about','পরিচিতি'],['/profiles','প্রার্থী ও দায়িত্বশীল'],['/news','সংবাদ'],['/sections/event','কর্মসূচি'],['/areas','এলাকা'],['/election','নির্বাচন ফলাফল'],['/join','যোগদানের আগ্রহ'],['/report-problem','সমস্যা জানান'],['/feedback','মতামত/পরামর্শ'],['/sections/gallery','গ্যালারি'],['/contact','যোগাযোগ'],['/privacy','গোপনীয়তা নীতি']] as const;
 
 function NavIcon({name}:{name:string}){
@@ -41,7 +47,7 @@ export default function Layout({children}:{children:React.ReactNode}){
     <header className="site-header">
       <div className="header-inner">
         <Link className="brand brand-logo-only" href="/" aria-label="Amar Cumilla–1 — Home"><img src="/logo.svg" alt="Amar Cumilla–1" width="88" height="88"/></Link>
-        <nav className="desktop-nav demo-nav" aria-label="Primary navigation">{menuItems.map(([href,label,icon],i)=><Link aria-label={icon?label:undefined} className={`${i===0?'active ':''}${icon?'nav-link-with-icon':''}`.trim()} href={href} key={href}><NavIcon name={icon}/><span>{label}</span></Link>)}</nav>
+        <nav className="desktop-nav demo-nav" aria-label="Primary navigation">{menuItems.map(([href,label,icon,mobileLabel],i)=><Link aria-label={icon?label:undefined} className={`${i===0?'active ':''}${icon?'nav-link-with-icon':''}`.trim()} href={href} key={href}><NavIcon name={icon}/><span className="nav-label-desktop">{label}</span>{mobileLabel&&<span className="nav-label-mobile">{mobileLabel}</span>}</Link>)}</nav>
         <details className="mobile-nav demo-menu">
           <summary><span className="menu-bars" aria-hidden="true"><i/><i/><i/></span><b>MENU</b></summary>
           <nav>{allItems.map(([href,label])=><Link href={href} key={href}>{label}</Link>)}</nav>
