@@ -13,6 +13,11 @@ export const metadata:Metadata={
   metadataBase:new URL(siteUrl),
   title:{default:'Amar Cumilla–1',template:'%s | Amar Cumilla–1'},
   description:'দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, নেতৃত্ব, কর্মসূচি, এলাকা পরিচিতি ও স্থানীয় তথ্য।',
+  icons:{
+    icon:[{url:'/favicon',type:'image/png',sizes:'512x512'}],
+    shortcut:[{url:'/favicon',type:'image/png'}],
+    apple:[{url:'/favicon',type:'image/png',sizes:'512x512'}],
+  },
   robots:{index:true,follow:true,googleBot:{index:true,follow:true,'max-image-preview':'large','max-snippet':-1,'max-video-preview':-1}},
   verification:process.env.GOOGLE_SITE_VERIFICATION?{google:process.env.GOOGLE_SITE_VERIFICATION}:undefined,
   openGraph:{type:'website',locale:'bn_BD',url:siteUrl,siteName:'Amar Cumilla–1',title:'Amar Cumilla–1',description:'দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, নেতৃত্ব, কর্মসূচি ও স্থানীয় তথ্য।',images:[{url:'/home-hero-image',width:1600,height:900,alt:'Amar Cumilla–1'}]},
