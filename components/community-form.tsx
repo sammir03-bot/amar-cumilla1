@@ -26,7 +26,7 @@ export default function CommunityForm({kind,kicker,title,description,subjectLabe
     </section>
 
     <section className={styles.formShell}>
-      {sent&&<div className={styles.success}><strong>ধন্যবাদ।</strong><span>আপনার তথ্য নিরাপদভাবে গ্রহণ করা হয়েছে। দায়িত্বশীলরা Admin Panel থেকে এটি পর্যালোচনা করবেন।</span></div>}
+      {sent&&<div className={styles.success}><strong>ধন্যবাদ।</strong><span>আপনার তথ্য গ্রহণ করা হয়েছে। প্রয়োজন অনুযায়ী অনুমোদিত দায়িত্বশীলরা এটি পর্যালোচনা করবেন।</span></div>}
       {error&&<div className={styles.error}><strong>জমা হয়নি।</strong><span>প্রয়োজনীয় ঘরগুলো ঠিকভাবে পূরণ করে আবার চেষ্টা করুন।</span></div>}
 
       <form action={submitCommunityForm} className={styles.form}>
@@ -50,9 +50,9 @@ export default function CommunityForm({kind,kicker,title,description,subjectLabe
 
         <label className={styles.message}>{messageLabel}<textarea name="message" required minLength={3} maxLength={6000} rows={8} placeholder={messagePlaceholder}/></label>
 
-        <label className={styles.consent}><input type="checkbox" name="consent" required/><span>আমি সম্মতি দিচ্ছি যে এই ফর্মে দেওয়া তথ্য কেবল যোগাযোগ, আবেদন/সমস্যা/মতামত পর্যালোচনা এবং প্রয়োজনীয় ফলো-আপের জন্য সাইটের অনুমোদিত Admin/Staff দেখতে পারবেন।</span></label>
+        <label className={styles.consent}><input type="checkbox" name="consent" required/><span>আমি <Link href="/privacy">গোপনীয়তা নীতি</Link> পড়েছি এবং সম্মতি দিচ্ছি যে এই ফর্মে দেওয়া তথ্য যোগাযোগ, আবেদন/সমস্যা/মতামত পর্যালোচনা ও প্রয়োজনীয় ফলো-আপের জন্য অনুমোদিত দায়িত্বশীলরা ব্যবহার করতে পারবেন।</span></label>
 
-        <div className={styles.actions}><button type="submit">{button} <b>→</b></button><Link href="/">হোমে ফিরুন</Link></div>
+        <div className={styles.actions}><button type="submit">{button} <b>→</b></button><Link href="/privacy">গোপনীয়তা নীতি</Link><Link href="/">হোমে ফিরুন</Link></div>
       </form>
     </section>
   </main>;
