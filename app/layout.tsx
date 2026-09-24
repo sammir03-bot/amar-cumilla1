@@ -12,7 +12,7 @@ export const dynamic='force-dynamic';
 export const metadata:Metadata={
   metadataBase:new URL(siteUrl),
   title:{default:'Amar Cumilla–1',template:'%s | Amar Cumilla–1'},
-  description:'দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, নেতৃত্ব, কর্মসূচি, এলাকা পরিচিতি ও স্থানীয় তথ্য।',
+  description:'কুমিল্লা–১, দাউদকান্দি ও মেঘনায় বাংলাদেশ জামায়াতে ইসলামী সম্পর্কিত প্রকাশিত সংবাদ, স্থানীয় দায়িত্বশীল, কার্যক্রম, এলাকা ও নির্বাচনী তথ্য।',
   icons:{
     icon:[{url:'/favicon',type:'image/png',sizes:'512x512'}],
     shortcut:[{url:'/favicon',type:'image/png'}],
@@ -20,7 +20,7 @@ export const metadata:Metadata={
   },
   robots:{index:true,follow:true,googleBot:{index:true,follow:true,'max-image-preview':'large','max-snippet':-1,'max-video-preview':-1}},
   verification:process.env.GOOGLE_SITE_VERIFICATION?{google:process.env.GOOGLE_SITE_VERIFICATION}:undefined,
-  openGraph:{type:'website',locale:'bn_BD',url:siteUrl,siteName:'Amar Cumilla–1',title:'Amar Cumilla–1',description:'দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, নেতৃত্ব, কর্মসূচি ও স্থানীয় তথ্য।',images:[{url:'/home-hero-image',width:1600,height:900,alt:'Amar Cumilla–1'}]},
+  openGraph:{type:'website',locale:'bn_BD',url:siteUrl,siteName:'Amar Cumilla–1',title:'Amar Cumilla–1',description:'কুমিল্লা–১, দাউদকান্দি ও মেঘনার প্রকাশিত স্থানীয় ও রাজনৈতিক তথ্য।',images:[{url:'/home-hero-image',width:1600,height:900,alt:'Amar Cumilla–1'}]},
 };
 
 const menuItems=[
@@ -30,7 +30,7 @@ const menuItems=[
   ['/sections/event','Activities','',''],
   ['/join','Join','join','যোগ দিন']
 ] as const;
-const allItems=[['/','হোম'],['/about','পরিচিতি'],['/profiles','প্রার্থী ও দায়িত্বশীল'],['/news','সংবাদ'],['/search','সাইটে খুঁজুন'],['/sections/event','কর্মসূচি'],['/areas','এলাকা'],['/election','নির্বাচন ফলাফল'],['/join','যোগদানের আগ্রহ'],['/report-problem','সমস্যা জানান'],['/feedback','মতামত/পরামর্শ'],['/sections/gallery','গ্যালারি'],['/editorial-policy','সম্পাদকীয় ও তথ্য যাচাই নীতি'],['/contact','যোগাযোগ'],['/privacy','গোপনীয়তা নীতি']] as const;
+const allItems=[['/','হোম'],['/about','পরিচিতি'],['/topics','বিষয়ভিত্তিক তথ্য'],['/profiles','প্রার্থী ও দায়িত্বশীল'],['/news','সংবাদ'],['/search','সাইটে খুঁজুন'],['/sections/event','কর্মসূচি'],['/areas','এলাকা'],['/election','নির্বাচন ফলাফল'],['/join','যোগদানের আগ্রহ'],['/report-problem','সমস্যা জানান'],['/feedback','মতামত/পরামর্শ'],['/sections/gallery','গ্যালারি'],['/editorial-policy','সম্পাদকীয় ও তথ্য যাচাই নীতি'],['/contact','যোগাযোগ'],['/privacy','গোপনীয়তা নীতি']] as const;
 
 function NavIcon({name}:{name:string}){
   if(!name)return null;
@@ -46,7 +46,19 @@ async function ElectionBanner(){
   return electionLive?<Link className="global-election-live" href="/election"><span><i/> LIVE</span><strong>দাউদকান্দি–মেঘনা ইউনিয়ন নির্বাচন ফলাফল</strong><b>ফলাফল দেখুন →</b></Link>:null;
 }
 export default function Layout({children}:{children:React.ReactNode}){
+  const websiteSchema={
+    '@context':'https://schema.org',
+    '@type':'WebSite',
+    '@id':siteUrl+'/#website',
+    url:siteUrl,
+    name:'Amar Cumilla–1',
+    alternateName:['Amar Cumilla 1','আমার কুমিল্লা ১','আমার কুমিল্লা-১'],
+    description:'কুমিল্লা–১, দাউদকান্দি ও মেঘনার প্রকাশিত স্থানীয় ও রাজনৈতিক তথ্য।',
+    inLanguage:'bn-BD',
+  };
+  const websiteJson=JSON.stringify(websiteSchema).replace(/</g,'\\u003c');
   return <html lang="bn"><body>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{__html:websiteJson}}/>
     <Suspense fallback={null}><ElectionBanner/></Suspense>
     <header className="site-header">
       <div className="header-inner">
@@ -67,7 +79,7 @@ export default function Layout({children}:{children:React.ReactNode}){
     <footer className="site-footer">
       <div className="footer-top">
         <div className="footer-brand"><img src="/logo.svg" alt="" width="58" height="58"/><div><strong>Amar Cumilla–1</strong><p>দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, নেতৃত্ব, কার্যক্রম ও স্থানীয় তথ্য।</p></div></div>
-        <div className="footer-links"><div><span>তথ্য</span><Link href="/news">সংবাদ</Link><Link href="/search">সাইটে খুঁজুন</Link><Link href="/profiles">প্রার্থী ও দায়িত্বশীল</Link><Link href="/areas">এলাকা</Link><Link href="/election">নির্বাচন ফলাফল</Link></div><div><span>অংশগ্রহণ</span><Link href="/join">যোগদানের আগ্রহ</Link><Link href="/report-problem">সমস্যা জানান</Link><Link href="/feedback">মতামত দিন</Link></div><div><span>আরও</span><Link href="/sections/gallery">গ্যালারি</Link><Link href="/editorial-policy">সম্পাদকীয় ও তথ্য যাচাই নীতি</Link><Link href="/contact">যোগাযোগ</Link><Link href="/privacy">গোপনীয়তা নীতি</Link></div></div>
+        <div className="footer-links"><div><span>তথ্য</span><Link href="/topics">বিষয়ভিত্তিক তথ্য</Link><Link href="/news">সংবাদ</Link><Link href="/search">সাইটে খুঁজুন</Link><Link href="/profiles">প্রার্থী ও দায়িত্বশীল</Link><Link href="/areas">এলাকা</Link><Link href="/election">নির্বাচন ফলাফল</Link></div><div><span>অংশগ্রহণ</span><Link href="/join">যোগদানের আগ্রহ</Link><Link href="/report-problem">সমস্যা জানান</Link><Link href="/feedback">মতামত দিন</Link></div><div><span>আরও</span><Link href="/sections/gallery">গ্যালারি</Link><Link href="/editorial-policy">সম্পাদকীয় ও তথ্য যাচাই নীতি</Link><Link href="/contact">যোগাযোগ</Link><Link href="/privacy">গোপনীয়তা নীতি</Link></div></div>
       </div>
       <div className="footer-bottom"><span>Daudkandi &amp; Meghna · Cumilla–1</span><p>এটি সরকারি ওয়েবসাইট নয় · উৎসভিত্তিক তথ্য প্রকাশ করা হয় · <Link href="/editorial-policy">Editorial Policy</Link> · <Link href="/privacy">Privacy Policy</Link></p></div>
     </footer>
