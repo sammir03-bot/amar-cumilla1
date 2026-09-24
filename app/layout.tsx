@@ -17,8 +17,18 @@ export const metadata:Metadata={
   openGraph:{type:'website',locale:'bn_BD',url:siteUrl,siteName:'Amar Cumilla–1',title:'Amar Cumilla–1',description:'দাউদকান্দি ও মেঘনার প্রকাশিত সংবাদ, নেতৃত্ব, কর্মসূচি ও স্থানীয় তথ্য।',images:[{url:'/home-hero-image',width:1600,height:900,alt:'Amar Cumilla–1'}]},
 };
 
-const menuItems=[['/','Home'],['/about','About'],['/news','News'],['/sections/event','Activities'],['/join','Join']] as const;
+const menuItems=[['/','Home','home'],['/about','About',''],['/news','News','news'],['/sections/event','Activities',''],['/join','Join','join']] as const;
 const allItems=[['/about','পরিচিতি'],['/profiles','প্রার্থী ও দায়িত্বশীল'],['/news','সংবাদ'],['/sections/event','কর্মসূচি'],['/areas','এলাকা'],['/election','নির্বাচন ফলাফল'],['/join','যোগদানের আগ্রহ'],['/report-problem','সমস্যা জানান'],['/feedback','মতামত/পরামর্শ'],['/sections/gallery','গ্যালারি'],['/contact','যোগাযোগ'],['/privacy','গোপনীয়তা নীতি']] as const;
+
+function NavIcon({name}:{name:string}){
+  if(!name)return null;
+  const paths:Record<string,string>={
+    home:'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z',
+    news:'M4 5h12v14H4z M8 9h4 M8 13h4 M8 17h4 M16 8h4v9a2 2 0 0 1-2 2h-2',
+    join:'M15 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M8.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M18 8v6 M15 11h6'
+  };
+  return <svg className="nav-mini-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]}/></svg>;
+}
 
 export default async function Layout({children}:{children:React.ReactNode}){
   let electionLive=false;
@@ -28,7 +38,7 @@ export default async function Layout({children}:{children:React.ReactNode}){
     <header className="site-header">
       <div className="header-inner">
         <Link className="brand brand-logo-only" href="/" aria-label="Amar Cumilla–1 — Home"><img src="/logo.svg" alt="Amar Cumilla–1" width="88" height="88"/></Link>
-        <nav className="desktop-nav demo-nav" aria-label="Primary navigation">{menuItems.map(([href,label],i)=><Link className={i===0?'active':''} href={href} key={href}>{label}</Link>)}</nav>
+        <nav className="desktop-nav demo-nav" aria-label="Primary navigation">{menuItems.map(([href,label,icon],i)=><Link className={`${i===0?'active ':''}${icon?'nav-link-with-icon':''}`.trim()} href={href} key={href}><NavIcon name={icon}/><span>{label}</span></Link>)}</nav>
         <details className="mobile-nav demo-menu">
           <summary><span className="menu-bars" aria-hidden="true"><i/><i/><i/></span><b>MENU</b></summary>
           <nav>{allItems.map(([href,label])=><Link href={href} key={href}>{label}</Link>)}</nav>
