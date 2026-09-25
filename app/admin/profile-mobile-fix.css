@@ -1,0 +1,20 @@
+/* Mobile profile editor: keep save/publish controls in normal document flow.
+   The previous sticky action bar sat above the fixed bottom navigation and
+   covered profile fields while scrolling on phones. */
+@media (max-width: 700px) {
+  .profile-workspace .admin-form-actions {
+    position: static;
+    bottom: auto;
+    z-index: auto;
+    margin-top: 4px;
+    padding: 12px;
+    background: #fff;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  .profile-workspace .studio-save-hint {
+    max-width: none;
+    text-align: center;
+  }
+}
