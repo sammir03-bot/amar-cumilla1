@@ -7,6 +7,7 @@
 .cover{
   position:relative;
   min-height:190px;
+  aspect-ratio:16/9;
   overflow:hidden;
   display:flex;
   align-items:flex-end;
@@ -56,6 +57,16 @@
   backdrop-filter:blur(8px);
   font-size:11px;
   font-weight:800;
+}
+.coverInitial{
+  position:absolute;
+  top:-16px;
+  right:10px;
+  font-size:132px;
+  line-height:1;
+  font-weight:900;
+  color:rgba(244,212,124,.22);
+  pointer-events:none;
 }
 .coverLogo{
   width:46px;

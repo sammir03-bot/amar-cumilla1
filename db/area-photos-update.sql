@@ -1,0 +1,21 @@
+-- Area photo updates for public.cumilla_areas.
+-- Photos live in Supabase (image_url / image_credit / image_license /
+-- image_source_url). This file is the SQL route for applying a VERIFIED
+-- photo; the same fields can be set from the Admin Panel area editor.
+-- Full sourcing record, licences and honesty rules: docs/area-photos-manifest.md
+--
+-- Pattern (uncomment and fill only with a photo whose licence has been
+-- read on its source page and which genuinely depicts the area/upazila):
+--
+-- update public.cumilla_areas
+--   set image_url = '<direct photo URL>',
+--       image_credit = '<Photographer> / Wikimedia Commons',
+--       image_license = '<e.g. CC BY-SA 4.0>',
+--       image_source_url = '<source file page URL>'
+--   where upazila = '<daudkandi|meghna>' and slug = '<area slug>';
+--
+-- As of 2026-11-12 there are deliberately NO active statements below:
+-- no union-specific openly-licensed photo could be fully verified in the
+-- sourcing pass (see the manifest's "Sources checked"). The existing
+-- Biteshwar hero (Mayaseer 14 / Wikimedia Commons, CC BY-SA 4.0) is
+-- already set in the database and must not be overwritten by this file.

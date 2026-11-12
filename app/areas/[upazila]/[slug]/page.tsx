@@ -32,6 +32,8 @@ export default async function Area({params}:Props){
     if(xLocal!==yLocal)return xLocal-yLocal;
     return new Date(y.published_at??0).valueOf()-new Date(x.published_at??0).valueOf();
   });
+  const leaderIds=new Set(sortedLeaders.slice(0,6).map(p=>p.id));
+  const updates=posts.filter(p=>p.kind!=='leader'&&!leaderIds.has(p.id));
   const upazila=upazilaNames[a.upazila]??a.upazila;
   const sections=[[a.description,'পরিচিতি'],[a.villages,'গ্রাম ও ওয়ার্ড'],[a.institutions,'শিক্ষাপ্রতিষ্ঠান ও গুরুত্বপূর্ণ স্থান'],[a.services,'জনসেবার তথ্য']] as const;
 
@@ -50,6 +52,6 @@ export default async function Area({params}:Props){
 
     {sortedLeaders.length>0&&<section className={styles.news}><div className={styles.newsHead}><div><p className="eyebrow">সাংগঠনিক পরিচিতি</p><h2>এই এলাকার সঙ্গে সংশ্লিষ্ট নেতৃত্ব</h2><p>ইউনিয়ন/পৌরসভাভিত্তিক পরিচিতিকে আগে দেখানো হয়, এরপর উপজেলা পর্যায়ের সংশ্লিষ্ট নেতৃত্ব।</p></div></div><PostCards posts={sortedLeaders.slice(0,6)}/></section>}
 
-    <section className={styles.news}><div className={styles.newsHead}><div><p className="eyebrow">স্থানীয় আপডেট</p><h2>এই এলাকার সংবাদ ও কার্যক্রম</h2></div></div><PostCards posts={posts}/></section>
+    {updates.length>0&&<section className={styles.news}><div className={styles.newsHead}><div><p className="eyebrow">স্থানীয় আপডেট</p><h2>এই এলাকার সংবাদ ও কার্যক্রম</h2></div></div><PostCards posts={updates}/></section>}
   </div>;
 }

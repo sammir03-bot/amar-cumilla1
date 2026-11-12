@@ -1,1 +1,5 @@
-export default function Loading(){return <section role="status"><p>তথ্য লোড হচ্ছে…</p></section>;}
+import PageSkeleton from '../components/page-skeleton';
+
+export default function Loading() {
+  return <PageSkeleton/>;
+}

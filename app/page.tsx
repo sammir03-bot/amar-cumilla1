@@ -58,7 +58,7 @@ export default async function Home(){
           const pct=item.centresTotal?Math.round(item.centresReported/item.centresTotal*100):0;
           const leader=item.candidates[0];
           return <Link href={`/election/${item.election.upazila}/${item.election.union_slug}`} className={styles.liveUnionCard} key={item.election.id}>
-            <small>{item.election.upazila==='daudkandi'?'দাউদকান্দি':'মেঘনা'}</small><h3>{item.election.union_name}</h3><div className={styles.liveUnionProgress}><span style={{width:`${pct}%`}}/></div><b>{item.centresReported}/{item.centresTotal} কেন্দ্র</b>{leader?<p><strong>{leader.name}</strong><span>{leader.votes.toLocaleString('bn-BD')} ভোট</span></p>:<p><strong>প্রার্থী যোগ করা হয়নি</strong><span>ফলাফল প্রকাশের অপেক্ষায়</span></p>}<em>বিস্তারিত ফল →</em>
+            <small>{item.election.upazila==='daudkandi'?'দাউদকান্দি':'মেঘনা'}</small><h3>{item.election.union_name}</h3><div className={styles.liveUnionProgress}><span style={{width:`${pct}%`}}/></div><b>{item.centresReported}/{item.centresTotal} কেন্দ্র</b>{leader?<p><strong>{leader.name}</strong><span>{leader.votes.toLocaleString('bn-BD')} ভোট</span></p>:<p><strong>প্রার্থী তালিকা অপেক্ষমাণ</strong><span>ফলাফল প্রকাশের অপেক্ষায়</span></p>}<em>বিস্তারিত ফল →</em>
           </Link>})}</div>:<div className={styles.liveEmpty}><strong>লাইভ ফলাফল চালু আছে</strong><span>ইউনিয়নভিত্তিক ফল প্রকাশ শুরু হলে এখানে দেখা যাবে।</span></div>}
         <p className={styles.liveDisclaimer}>{electionSettings?.note}</p>
       </section>
@@ -89,7 +89,7 @@ export default async function Home(){
 
     <section className={styles.latestSection}>
       <div className={styles.sectionTop}><div><span className={styles.sectionKicker}>সর্বশেষ আপডেট</span><h2>সংবাদ ও কার্যক্রম</h2></div><Link href="/news">সব সংবাদ →</Link></div>
-      <div className={styles.latestGrid}>{latest.map(({post,image})=><Link href={`/posts/${post.slug}`} className={styles.latestCard} key={post.id}><div className={styles.latestImage}>{image?<ContentImage key={image} src={image} alt={post.title}/>:<span>ঘটনার ছবি যুক্ত হয়নি</span>}</div><div className={styles.latestCopy}><small>{post.published_at?bnDate(post.published_at):'সংবাদ'}</small><h3>{post.title}</h3><p>{post.body.slice(0,120)}{post.body.length>120?'…':''}</p><b>পড়ুন →</b></div></Link>)}</div>
+      <div className={styles.latestGrid}>{latest.map(({post,image})=><Link href={`/posts/${post.slug}`} className={styles.latestCard} key={post.id}><div className={styles.latestImage}>{image?<ContentImage key={image} src={image} alt={post.title}/>:<span aria-hidden="true">{post.title.trim().slice(0,1)||'ক'}</span>}</div><div className={styles.latestCopy}><small>{post.published_at?bnDate(post.published_at):'সংবাদ'}</small><h3>{post.title}</h3><p>{post.body.slice(0,120)}{post.body.length>120?'…':''}</p><b>পড়ুন →</b></div></Link>)}</div>
     </section>
 
     <section className={engage.section} aria-labelledby="engagement-title">
@@ -99,7 +99,7 @@ export default async function Home(){
 
     <section className={styles.areaSection}>
       <div className={styles.sectionTop}><div><span className={styles.sectionKicker}>দাউদকান্দি — মেঘনা</span><h2>এলাকাকে জানুন</h2></div><Link href="/areas">সব এলাকা →</Link></div>
-      <div className={styles.areaGrid}>{featuredAreas.map(area=>area&&<Link className={styles.areaCard} href={`/areas/${area.upazila}/${area.slug}`} key={area.id}>{area.image_url&&<img src={area.image_url} alt={`${area.name} এলাকার দৃশ্য`}/>}<i/><div><small>{area.upazila}</small><h3>{area.name}</h3><b>তথ্য দেখুন →</b></div></Link>)}</div>
+      <div className={styles.areaGrid}>{featuredAreas.map(area=>area&&<Link className={styles.areaCard} href={`/areas/${area.upazila}/${area.slug}`} key={area.id}>{area.image_url&&<img src={area.image_url} alt={`${area.name} এলাকার দৃশ্য`} loading="lazy"/>}<i/><div><small>{area.upazila}</small><h3>{area.name}</h3><b>তথ্য দেখুন →</b></div></Link>)}</div>
     </section>
   </div>;
 }
