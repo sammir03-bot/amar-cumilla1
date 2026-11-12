@@ -42,9 +42,9 @@ export default async function UnionElection({params}:{params:Promise<{upazila:st
         const isLeader=hasResults&&!data.tied&&index===0;
         const isTiedLeader=hasResults&&data.tied&&candidate.votes===data.candidates[0]?.votes;
         return <article className={`${styles.candidate} ${(isLeader||isTiedLeader)?styles.candidateLeader:''}`} key={candidate.id}>
-          {candidate.photo_url&&<img src={candidate.photo_url} alt={`${candidate.name} এর ছবি`}/>}<small>{isLeader?(data.election.status==='official'?'সর্বোচ্চ ভোট':'বর্তমানে এগিয়ে'):isTiedLeader?'সমানভাবে এগিয়ে':'প্রার্থী'}</small><h3>{candidate.name}</h3><span>{candidate.symbol||'প্রতীক পরে যোগ করা হবে'}</span><b>{candidate.votes.toLocaleString('bn-BD')}</b><span>ভোট</span>
+          {candidate.photo_url&&<img src={candidate.photo_url} alt={`${candidate.name} এর ছবি`}/>}<small>{isLeader?(data.election.status==='official'?'সর্বোচ্চ ভোট':'বর্তমানে এগিয়ে'):isTiedLeader?'সমানভাবে এগিয়ে':'প্রার্থী'}</small><h3>{candidate.name}</h3><span>{candidate.symbol||'প্রতীক এখনো ঘোষিত হয়নি'}</span><b>{candidate.votes.toLocaleString('bn-BD')}</b><span>ভোট</span>
         </article>;
-      })}</div>:<div className={styles.empty}>এখনো কোনো প্রার্থী যোগ করা হয়নি।</div>}
+      })}</div>:<div className={styles.empty}>এই ইউনিয়নের প্রার্থী তালিকা এখনো প্রকাশিত হয়নি।</div>}
 
       <ElectionCentreBrowser centres={data.centres}/>
     </section>

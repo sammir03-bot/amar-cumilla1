@@ -10,11 +10,12 @@ export async function PostCards({posts}:{posts:Post[]}){
   if(!posts.length)return <p className="notice">এই বিভাগে এখনো কোনো তথ্য প্রকাশিত হয়নি।</p>;
   const images=await postCoverImages(posts);
   return <div className="grid">{posts.map(p=>{const imageUrl=images.get(p.id)??null;return <Link className={`card ${styles.card}`} key={p.id} href={'/posts/'+p.slug}>
-    <div className={styles.cover}>
+    <div className={`${styles.cover} ${imageUrl?'':styles.coverText}`}>
       {imageUrl&&<><ContentImage key={imageUrl} className={styles.coverImage} src={imageUrl} alt={p.title}/><span className={styles.coverShade}/></>}
+      {!imageUrl&&<span className={styles.coverInitial} aria-hidden="true">{p.title.trim().slice(0,1)||'ক'}</span>}
       <div className={styles.coverInner}>
         <span className={styles.coverBadge}>{kinds[p.kind]}</span>
-        {!imageUrl&&<span style={{fontSize:14,color:"#dbe9e4"}}>ঘটনার ছবি যুক্ত হয়নি</span>}
+        {!imageUrl&&<img className={styles.coverLogo} src="/logo.svg" alt=""/>}
       </div>
     </div>
     <div className={styles.content}>

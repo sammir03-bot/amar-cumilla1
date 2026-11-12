@@ -31,9 +31,10 @@ export default async function Areas({searchParams}:{searchParams:Promise<{q?:str
 
     <div className={styles.filtersWrap}><form className="filters"><label>এলাকার নাম<input name="q" defaultValue={q} placeholder="যেমন: গৌরীপুর" maxLength={100}/></label><label>উপজেলা<select name="upazila" defaultValue={upazila}><option value="">সব উপজেলা</option><option value="daudkandi">দাউদকান্দি</option><option value="meghna">মেঘনা</option></select></label><button>খুঁজুন</button><Link href="/areas">সব দেখুন</Link></form></div>
 
-    {results.length?<div className={styles.areaGrid}>{results.map(a=><Link className={styles.areaCard} href={`/areas/${a.upazila}/${a.slug}`} key={`${a.upazila}/${a.slug}`}>
-      {a.image_url?<img className={styles.thumb} src={a.image_url} alt={`${a.name} এলাকার দৃশ্য`} loading="lazy"/>:<div className={styles.thumbFallback}/>} 
-      <div className={styles.cardCopy}><small>{upazilaNames[a.upazila]} · {a.kind==='municipality'?'পৌরসভা':'ইউনিয়ন'}</small><h2>{a.name}</h2><p>পরিচিতি, শিক্ষা, সেবা ও তথ্যসূত্র →</p></div>
-    </Link>)}</div>:<div className={styles.empty}>প্রকাশিত তালিকায় কোনো এলাকা পাওয়া যায়নি। অন্য নাম দিয়ে খুঁজুন।</div>}
+    {results.length?<div className={styles.areaGrid}>{results.map(a=>{const intro=a.description?.split('\n')[0].trim();return <Link className={`${styles.areaCard} ${a.upazila==='meghna'?styles.areaCardMeghna:''}`} href={`/areas/${a.upazila}/${a.slug}`} key={`${a.upazila}/${a.slug}`}>
+      {a.image_url?<img className={styles.thumb} src={a.image_url} alt={`${a.name} এলাকার দৃশ্য`} loading="lazy"/>:<div className={styles.thumbFallback}/>}
+      <span className={styles.cardInitial} aria-hidden="true">{a.name.slice(0,1)}</span>
+      <div className={styles.cardCopy}><small>{upazilaNames[a.upazila]} · {a.kind==='municipality'?'পৌরসভা':'ইউনিয়ন'}</small><h2>{a.name}</h2><p>{intro?`${intro.slice(0,90)}${intro.length>90?'…':''}`:'পরিচিতি, শিক্ষা, সেবা ও তথ্যসূত্র'}</p><span className={styles.cardMore}>বিস্তারিত দেখুন →</span></div>
+    </Link>})}</div>:<div className={styles.empty}>প্রকাশিত তালিকায় কোনো এলাকা পাওয়া যায়নি। অন্য নাম দিয়ে খুঁজুন।</div>}
   </div>;
 }

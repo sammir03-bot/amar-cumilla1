@@ -1,0 +1,16 @@
+.wrap{max-width:1280px;margin:0 auto;padding:48px 32px 80px}
+.srOnly{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hero{background:linear-gradient(135deg,#052e27,#0b5545);border-radius:26px;padding:38px 34px;display:grid;gap:14px;margin-bottom:26px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.card{background:#fff;border:1px solid #dfe7e2;border-radius:18px;overflow:hidden;padding-bottom:20px;display:grid;gap:12px}
+.block{display:block;border-radius:8px;background:#e7f1ed;animation:pulse 1.4s ease-in-out infinite}
+.hero .block{background:rgba(255,255,255,.22)}
+.kicker{width:150px;height:13px}
+.title{width:min(480px,80%);height:42px}
+.line{width:min(620px,92%);height:16px}
+.image{height:auto;aspect-ratio:16/9;border-radius:0}
+.cardLine{height:18px;margin:6px 20px 0}
+.cardLineShort{height:14px;width:55%;margin:0 20px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+@media(max-width:800px){.wrap{padding:34px 20px 60px}.grid{grid-template-columns:1fr}.hero{padding:28px 22px}}
+@media(prefers-reduced-motion:reduce){.block{animation:none}}
