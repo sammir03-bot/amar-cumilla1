@@ -35,7 +35,7 @@ function AreaIcon(){return <svg {...iconProps} aria-hidden="true"><path d="M17.6
 function LeadersIcon(){return <svg {...iconProps} aria-hidden="true"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>}
 
 const featureLinks=[
-  {href:'/news',title:'সর্বশেষ খবর',desc:'দাউদকান্দি ও মেঘনার টাটকা ও ভেরিফাইড নিউজ আপডেট।',Icon:NewsIcon},
+  {href:'/news',title:'সর্বশেষ খবর',desc:'দাউদকান্দি ও মেঘনার সর্বশেষ ও ভেরিফাইড নিউজ আপডেট।',Icon:NewsIcon},
   {href:'/sections/event',title:'সামাজিক কার্যক্রম',desc:'এলাকার বিভিন্ন উন্নয়নমূলক ও সামাজিক উদ্যোগের তথ্য।',Icon:CommunityIcon},
   {href:'/areas',title:'এলাকার আপডেট',desc:'দাউদকান্দি ও মেঘনার প্রতিটি ইউনিয়নের সর্বশেষ আপডেট।',Icon:AreaIcon},
   {href:'/profiles?type=responsible',title:'স্থানীয় নেতৃত্ব',desc:'দায়িত্বশীল ও নেতৃবৃন্দের পরিচিতি।',Icon:LeadersIcon},
