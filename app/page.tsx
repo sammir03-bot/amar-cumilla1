@@ -28,11 +28,17 @@ async function postImage(post:Post){
   return raw?await mediaUrl(raw):null;
 }
 
+const iconProps={fill:'none',stroke:'currentColor',viewBox:'0 0 24 24',strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round'} as const;
+function NewsIcon(){return <svg {...iconProps} aria-hidden="true"><path d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>}
+function CommunityIcon(){return <svg {...iconProps} aria-hidden="true"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>}
+function AreaIcon(){return <svg {...iconProps} aria-hidden="true"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>}
+function LeadersIcon(){return <svg {...iconProps} aria-hidden="true"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>}
+
 const featureLinks=[
-  ['▤','LATEST NEWS','/news'],
-  ['●●●','COMMUNITY ACTIVITIES','/sections/event'],
-  ['◆','AREA UPDATES','/areas'],
-  ['●●','LOCAL LEADERSHIP','/profiles?type=responsible'],
+  {href:'/news',title:'সর্বশেষ খবর',desc:'দাউদকান্দি ও মেঘনার টাটকা ও ভেরিফাইড নিউজ আপডেট।',Icon:NewsIcon},
+  {href:'/sections/event',title:'সামাজিক কার্যক্রম',desc:'এলাকার বিভিন্ন উন্নয়নমূলক ও সামাজিক উদ্যোগের তথ্য।',Icon:CommunityIcon},
+  {href:'/areas',title:'এলাকার আপডেট',desc:'দাউদকান্দি ও মেঘনার প্রতিটি ইউনিয়নের সর্বশেষ আপডেট।',Icon:AreaIcon},
+  {href:'/profiles?type=responsible',title:'স্থানীয় নেতৃত্ব',desc:'দায়িত্বশীল ও নেতৃবৃন্দের পরিচিতি।',Icon:LeadersIcon},
 ] as const;
 
 export default async function Home(){
@@ -70,8 +76,8 @@ export default async function Home(){
         <div className={styles.heroCopy}><span>AMAR</span><h1>CUMILLA–1</h1><strong>DAUDKANDI &amp; MEGHNA</strong></div>
         <div className={styles.heroNote}><span>LOCAL INFORMATION</span><b>People · Community · Area</b></div>
         <div className={styles.heroCollage} aria-label="কুমিল্লা-১ এলাকার স্থানীয় কার্যক্রম"><figure className={`${styles.heroPhoto} ${styles.heroPhotoMain}`}><img src="/home-hero-image" alt="কুমিল্লা-১ এলাকার মানুষের সঙ্গে স্থানীয় কার্যক্রম" fetchPriority="high"/></figure><figure className={`${styles.heroPhoto} ${styles.heroPhotoSmall}`}><img src="/march-image" alt="দাউদকান্দিতে স্থানীয় জনসমাগম ও কার্যক্রমের দৃশ্য"/></figure></div>
-        <p className={styles.heroIntro}>Verified local news, community leadership, community initiatives, and area updates in one place.</p>
-        <div className={styles.featureStrip}>{featureLinks.map(([icon,label,href])=><Link href={href} key={href}><i>{icon}</i><span>{label}</span></Link>)}</div>
+        <div className={styles.heroIntro}><p>দাউদকান্দি ও মেঘনার <b>সংবাদ</b>, <b>নেতৃত্ব</b>, <b>কর্মসূচি</b> ও <b>এলাকার আপডেট</b> — এক জায়গায়।</p></div>
+        <div className={styles.featureMedallions}>{featureLinks.map(({href,title,desc,Icon})=><Link href={href} key={href} className={styles.medallionLink}><span className={styles.medallionIcon}><Icon/></span><span className={styles.medallionText}><strong>{title}</strong><small>{desc}</small></span></Link>)}</div>
       </div>
     </section>
 
